@@ -1,0 +1,252 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum SchoolType {
+  PUBLIC
+  PRIVATE
+  INTERNATIONAL
+}
+
+enum SchoolLevel {
+  ELEMENTARY
+  MIDDLE
+  HIGH
+  K12
+}
+
+enum Curriculum {
+  MONGOLIAN_NATIONAL
+  CAMBRIDGE
+  IB
+  AP
+  DUAL_LANGUAGE
+}
+
+enum UserRole {
+  PARENT
+  STUDENT
+  ALUMNI
+  EDUCATOR
+  ADMIN
+}
+
+enum ReviewTag {
+  DORMITORY
+  LIBRARY
+  FOOD_CANTEEN
+  EXTRACURRICULARS
+  ACADEMICS
+  FACILITIES
+  TEACHERS
+  ENVIRONMENT
+}
+
+model User {
+  id           String        @id @default(cuid())
+  email        String        @unique
+  name         String
+  role         UserRole      @default(PARENT)
+  isVerified   Boolean       @default(false)
+  avatarUrl    String?
+  createdAt    DateTime      @default(now())
+
+  reviews      Review[]
+  ratings      Rating[]
+  savedSchools SavedSchool[]
+  reportsFiled Report[]      @relation("ReporterUser")
+  compareLists CompareList[]
+}
+
+model School {
+  id                  String       @id @default(cuid())
+  schoolNumber        String?
+  nameEn              String
+  nameMn              String
+  logoUrl             String?
+  coverImageUrl       String?
+
+  type                SchoolType
+  level               SchoolLevel
+  curriculum          Curriculum[]
+  teachingLanguages   String[]
+
+  aimagCity           String
+  district            String?
+  khoroo              String?
+  address             String?
+  latitude            Float
+  longitude           Float
+
+  phone               String?
+  website             String?
+  email               String?
+
+  studentTeacherRatio String?
+  accreditation       String?
+  tuitionMinAnnual    Int?
+  tuitionMaxAnnual    Int?
+  applicationDeadline DateTime?
+  entranceExamInfo    String?      @db.Text
+  catchmentAreaInfo   String?      @db.Text
+
+  avgOverall          Float?       @default(0)
+  avgAcademics        Float?       @default(0)
+  avgFacilities       Float?       @default(0)
+  avgDorms            Float?       @default(0)
+  avgLibrary          Float?       @default(0)
+  avgTeachers         Float?       @default(0)
+  avgEnvironment      Float?       @default(0)
+  reviewCount         Int          @default(0)
+
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+
+  facilities          Facility[]
+  dormitory           Dormitory?
+  images              SchoolImage[]
+  reviews             Review[]
+  ratings             Rating[]
+  savedBy             SavedSchool[]
+  compareEntries      CompareListSchool[]
+  tags                SchoolTagOnSchool[]
+
+  @@index([aimagCity, district])
+  @@index([level, type])
+}
+
+model Facility {
+  id          String  @id @default(cuid())
+  schoolId    String
+  school      School  @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  nameEn      String
+  nameMn      String
+  category    String
+  description String? @db.Text
+  imageUrl    String?
+}
+
+model Dormitory {
+  id               String  @id @default(cuid())
+  schoolId         String  @unique
+  school           School  @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  roomCapacity     Int?
+  livingConditions String? @db.Text
+  boardingRules    String? @db.Text
+  monthlyFeeAmount Int?
+  safetyInfo       String? @db.Text
+  imageUrls        String[]
+}
+
+model SchoolImage {
+  id       String @id @default(cuid())
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  url      String
+  caption  String?
+  order    Int    @default(0)
+}
+
+model SchoolTag {
+  id      String @id @default(cuid())
+  labelEn String @unique
+  labelMn String
+
+  schools SchoolTagOnSchool[]
+}
+
+model SchoolTagOnSchool {
+  schoolId String
+  tagId    String
+  school   School    @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  tag      SchoolTag @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([schoolId, tagId])
+}
+
+model Review {
+  id         String      @id @default(cuid())
+  schoolId   String
+  userId     String
+  school     School      @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  bodyText   String      @db.Text
+  tags       ReviewTag[]
+  isVerified Boolean     @default(false)
+  status     String      @default("PUBLISHED")
+
+  createdAt  DateTime    @default(now())
+
+  rating     Rating?
+  reports    Report[]
+
+  @@index([schoolId, status])
+}
+
+model Rating {
+  id          String   @id @default(cuid())
+  schoolId    String
+  userId      String
+  reviewId    String?  @unique
+  school      School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  review      Review?  @relation(fields: [reviewId], references: [id])
+
+  academics   Int
+  facilities  Int
+  dorms       Int?
+  library     Int?
+  teachers    Int
+  environment Int
+
+  createdAt   DateTime @default(now())
+
+  @@unique([schoolId, userId])
+}
+
+model Report {
+  id         String   @id @default(cuid())
+  reviewId   String
+  reporterId String
+  review     Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  reporter   User     @relation("ReporterUser", fields: [reporterId], references: [id])
+
+  reason     String
+  status     String   @default("PENDING")
+  createdAt  DateTime @default(now())
+}
+
+model SavedSchool {
+  userId    String
+  schoolId  String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  school    School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@id([userId, schoolId])
+}
+
+model CompareList {
+  id        String              @id @default(cuid())
+  userId    String
+  user      User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime            @default(now())
+  schools   CompareListSchool[]
+}
+
+model CompareListSchool {
+  compareListId String
+  schoolId      String
+  compareList   CompareList @relation(fields: [compareListId], references: [id], onDelete: Cascade)
+  school        School      @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@id([compareListId, schoolId])
+}
