@@ -41,11 +41,18 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           <a
             key={school.id}
             href={`/school/${school.id}`}
-            className="rounded-xl border border-zinc-200 p-4 transition-shadow hover:shadow-md dark:border-zinc-800"
+            className="rounded-[var(--radius-card)] border border-zinc-200 p-4 transition-colors hover:border-accent/40 dark:border-zinc-800"
           >
-            <div className="text-sm text-zinc-500">
-              {school.district ?? school.aimagCity}
-              {school.schoolNumber ? ` · ${school.schoolNumber}` : ""}
+            <div className="flex flex-wrap items-center gap-x-2 text-sm text-zinc-500">
+              <span>{school.district ?? school.aimagCity}</span>
+              {school.schoolNumber && (
+                <>
+                  <span aria-hidden className="text-zinc-300 dark:text-zinc-700">
+                    |
+                  </span>
+                  <span>{school.schoolNumber}</span>
+                </>
+              )}
             </div>
             <div className="mt-1 font-medium">{school.nameEn}</div>
             <div className="mt-2 flex items-center gap-2 text-sm text-zinc-500">

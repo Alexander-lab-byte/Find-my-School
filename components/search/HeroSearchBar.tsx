@@ -29,7 +29,7 @@ export function HeroSearchBar() {
       />
       <button
         type="submit"
-        className="rounded-full bg-black px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
+        className="rounded-full bg-accent px-5 py-2 text-sm font-medium text-accent-foreground transition-opacity hover:opacity-90"
       >
         Search
       </button>

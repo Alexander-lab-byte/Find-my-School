@@ -9,7 +9,7 @@ export default function SchoolNotFound() {
       </p>
       <a
         href="/search"
-        className="mt-6 inline-block text-[#2F5A66] underline decoration-[#2F5A66]/30 underline-offset-4 hover:decoration-[#2F5A66] dark:text-[#9FC7D1]"
+        className="mt-6 inline-block text-accent underline decoration-accent/30 underline-offset-4 hover:decoration-accent"
       >
         Back to search
       </a>

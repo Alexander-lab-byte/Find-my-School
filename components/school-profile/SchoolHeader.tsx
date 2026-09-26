@@ -11,7 +11,7 @@ export function SchoolHeader({ school }: { school: School }) {
     .join(", ");
 
   return (
-    <header className="border-b border-zinc-200 bg-[#2F5A66]/[0.06] dark:border-zinc-800 dark:bg-[#2F5A66]/10">
+    <header className="border-b border-zinc-200 bg-accent/[0.06] dark:border-zinc-800">
       <div className="mx-auto max-w-4xl px-6 py-10">
         <div className="flex flex-wrap items-start gap-2">
           <Badge tone="accent">{TYPE_LABELS[school.type]}</Badge>
@@ -19,10 +19,10 @@ export function SchoolHeader({ school }: { school: School }) {
           {school.schoolNumber && <Badge>{school.schoolNumber}</Badge>}
         </div>
 
-        <h1 className="mt-4 text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-4xl">
+        <h1 className="mt-4 font-display text-4xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-5xl">
           {school.nameEn}
         </h1>
-        <p className="mt-1 text-lg text-zinc-600 dark:text-zinc-400">{school.nameMn}</p>
+        <p className="mt-1.5 text-lg text-zinc-600 dark:text-zinc-400">{school.nameMn}</p>
 
         <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-zinc-600 dark:text-zinc-400">
           <span>{location}</span>
@@ -32,7 +32,7 @@ export function SchoolHeader({ school }: { school: School }) {
               href={school.website}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#2F5A66] underline decoration-[#2F5A66]/30 underline-offset-4 hover:decoration-[#2F5A66] dark:text-[#9FC7D1]"
+              className="text-accent underline decoration-accent/30 underline-offset-4 hover:decoration-accent"
             >
               {school.website.replace(/^https?:\/\//, "")}
             </a>
