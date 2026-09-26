@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import type { ReviewTag } from "@prisma/client";
 import { CategoryStarInput } from "./CategoryStarInput";
 import { submitReview } from "@/app/school/[id]/reviews/actions";
@@ -167,7 +168,19 @@ export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: b
         />
       </div>
 
-      {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+      {error && (
+        <p className="text-sm text-red-600 dark:text-red-400">
+          {error}
+          {error.toLowerCase().includes("log in") && (
+            <>
+              {" "}
+              <Link href="/login" className="underline underline-offset-4">
+                Log in
+              </Link>
+            </>
+          )}
+        </p>
+      )}
 
       <button
         type="submit"

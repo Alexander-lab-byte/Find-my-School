@@ -19,6 +19,9 @@ type SubmitReviewInput = {
 
 export async function submitReview(input: SubmitReviewInput) {
   const user = await getCurrentUser();
+  if (!user) {
+    throw new Error("Please log in to leave a review.");
+  }
 
   const existing = await prisma.rating.findUnique({
     where: { schoolId_userId: { schoolId: input.schoolId, userId: user.id } },
