@@ -76,3 +76,18 @@ export function getSchoolAdmissions(id: string) {
     },
   });
 }
+
+export function getSchoolReviews(id: string) {
+  return prisma.review.findMany({
+    where: { schoolId: id, status: "PUBLISHED" },
+    orderBy: { createdAt: "desc" },
+    include: {
+      rating: true,
+      user: { select: { name: true, role: true, isVerified: true } },
+    },
+  });
+}
+
+export function getSchoolHasDorm(id: string) {
+  return prisma.dormitory.findUnique({ where: { schoolId: id }, select: { id: true } });
+}

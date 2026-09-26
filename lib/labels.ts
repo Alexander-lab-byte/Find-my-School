@@ -1,4 +1,4 @@
-import type { SchoolType, SchoolLevel, Curriculum } from "@prisma/client";
+import type { SchoolType, SchoolLevel, Curriculum, ReviewTag, UserRole } from "@prisma/client";
 
 export const TYPE_LABELS: Record<SchoolType, string> = {
   PUBLIC: "Public",
@@ -19,6 +19,25 @@ export const CURRICULUM_LABELS: Record<Curriculum, string> = {
   IB: "International Baccalaureate",
   AP: "Advanced Placement",
   DUAL_LANGUAGE: "Dual-language",
+};
+
+export const REVIEW_TAG_LABELS: Record<ReviewTag, string> = {
+  DORMITORY: "Dormitory",
+  LIBRARY: "Library",
+  FOOD_CANTEEN: "Food & Canteen",
+  EXTRACURRICULARS: "Extracurriculars",
+  ACADEMICS: "Academics",
+  FACILITIES: "Facilities",
+  TEACHERS: "Teachers",
+  ENVIRONMENT: "Environment",
+};
+
+export const ROLE_LABELS: Record<UserRole, string> = {
+  PARENT: "Parent",
+  STUDENT: "Student",
+  ALUMNI: "Alumni",
+  EDUCATOR: "Educator",
+  ADMIN: "Admin",
 };
 
 export function formatTuition(min: number | null, max: number | null) {
