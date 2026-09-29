@@ -1,12 +1,11 @@
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { headers } from "next/headers";
 import { signOut } from "@/app/(auth)/actions";
 
 export async function Header() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // Set by lib/supabase/middleware.ts — avoids a second network round
+  // trip to Supabase's Auth server just to decide which nav links show.
+  const isSignedIn = (await headers()).get("x-user-signed-in") === "1";
 
   return (
     <header className="border-b border-zinc-200 dark:border-zinc-800">
@@ -24,7 +23,7 @@ export async function Header() {
           >
             Search
           </Link>
-          {user ? (
+          {isSignedIn ? (
             <form action={signOut}>
               <button
                 type="submit"

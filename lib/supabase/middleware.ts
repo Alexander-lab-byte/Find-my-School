@@ -25,7 +25,23 @@ export async function updateSession(request: NextRequest) {
 
   // Refreshes the auth token if needed — required reading, not optional,
   // per Supabase's Next.js App Router guidance (do not remove).
-  await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // Forward a lightweight "is someone logged in" flag as a request header,
+  // so Server Components (the nav header) can read it via next/headers
+  // with zero extra network cost, instead of each one calling getUser()
+  // again. That duplicate round trip to Supabase's Auth server was
+  // running on every single page load, everywhere in the app.
+  // Important: this flag only controls which nav links render (Log in
+  // vs Log out) — it is NOT used to authorize anything. Anything that
+  // actually needs a verified user (submitting a review, etc.) still
+  // calls getUser() itself in lib/current-user.ts.
+  const cookiesToCarry = supabaseResponse.cookies.getAll();
+  request.headers.set("x-user-signed-in", user ? "1" : "0");
+  supabaseResponse = NextResponse.next({ request });
+  cookiesToCarry.forEach((cookie) => supabaseResponse.cookies.set(cookie));
 
   return supabaseResponse;
 }
