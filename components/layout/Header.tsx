@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { headers } from "next/headers";
 import { signOut } from "@/app/(auth)/actions";
+import { MobileMenu } from "@/components/layout/MobileMenu";
 
 export async function Header() {
   // Set by lib/supabase/middleware.ts — avoids a second network round
@@ -8,7 +9,7 @@ export async function Header() {
   const isSignedIn = (await headers()).get("x-user-signed-in") === "1";
 
   return (
-    <header className="border-b border-zinc-200 dark:border-zinc-800">
+    <header className="relative border-b border-zinc-200 dark:border-zinc-800">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
         <Link
           href="/"
@@ -16,13 +17,22 @@ export async function Header() {
         >
           Find My School
         </Link>
-        <nav className="flex items-center gap-4 text-sm">
+
+        <nav className="hidden items-center gap-4 text-sm md:flex">
           <Link
             href="/search"
             className="text-zinc-600 transition-colors hover:text-accent dark:text-zinc-400"
           >
             Search
           </Link>
+          {isSignedIn && (
+            <Link
+              href="/saved"
+              className="text-zinc-600 transition-colors hover:text-accent dark:text-zinc-400"
+            >
+              Saved
+            </Link>
+          )}
           {isSignedIn ? (
             <form action={signOut}>
               <button
@@ -49,6 +59,8 @@ export async function Header() {
             </>
           )}
         </nav>
+
+        <MobileMenu isSignedIn={isSignedIn} />
       </div>
     </header>
   );
