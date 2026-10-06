@@ -1,112 +1,122 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import type { Curriculum, Prisma, SchoolLevel, SchoolType } from "@prisma/client";
-import { prisma } from "@/lib/prisma";
+import {
+  SEARCH_PAGE_SIZE,
+  getDistricts,
+  hasActiveFilters,
+  parsePage,
+  parseSchoolFilters,
+  parseSort,
+  searchSchools,
+} from "@/lib/schools";
+import { ActiveFilters } from "@/components/search/ActiveFilters";
 import { FilterBar } from "@/components/search/FilterBar";
-import { StarRating } from "@/components/common/StarRating";
-import { CURRICULUM_LABELS, LEVEL_LABELS, TYPE_LABELS } from "@/lib/labels";
+import { Pagination } from "@/components/search/Pagination";
+import { SchoolCard } from "@/components/search/SchoolCard";
+import { SearchInput, SortSelect } from "@/components/search/SearchControls";
+import { PendingArea, SearchNavigationProvider } from "@/components/search/SearchNavigation";
+import { Icon } from "@/components/common/Icon";
 
-type SearchPageProps = {
-  searchParams: Promise<{
-    q?: string;
-    level?: string;
-    type?: string;
-    curriculum?: string;
-    dorm?: string;
-  }>;
+export const metadata: Metadata = {
+  title: "Browse schools",
 };
 
-// Only accept values that really exist, so a bad URL can never crash the query.
-function pick<T extends string>(value: string | undefined, allowed: Record<string, string>) {
-  return value && value in allowed ? (value as T) : undefined;
-}
+type SearchPageProps = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const params = await searchParams;
+  const filters = parseSchoolFilters(params);
+  const sort = parseSort(params.sort);
+  const page = parsePage(params.page);
 
-  const q = params.q?.trim();
-  const level = pick<SchoolLevel>(params.level, LEVEL_LABELS);
-  const type = pick<SchoolType>(params.type, TYPE_LABELS);
-  const curriculum = pick<Curriculum>(params.curriculum, CURRICULUM_LABELS);
-  const dorm = params.dorm === "true";
+  const [{ schools, total }, districts] = await Promise.all([
+    searchSchools({ filters, sort, page }),
+    getDistricts(),
+  ]);
 
-  const where: Prisma.SchoolWhereInput = {
-    AND: [
-      q
-        ? {
-            OR: [
-              { nameEn: { contains: q, mode: "insensitive" } },
-              { nameMn: { contains: q, mode: "insensitive" } },
-              { schoolNumber: { contains: q, mode: "insensitive" } },
-              { district: { contains: q, mode: "insensitive" } },
-            ],
-          }
-        : {},
-      level ? { level } : {},
-      type ? { type } : {},
-      curriculum ? { curriculum: { has: curriculum } } : {},
-      dorm ? { dormitory: { isNot: null } } : {},
-    ],
-  };
-
-  const schools = await prisma.school.findMany({
-    where,
-    take: 30,
-    orderBy: [{ avgOverall: "desc" }, { nameEn: "asc" }],
-  });
-
-  const hasActiveFilters = Boolean(q || level || type || curriculum || dorm);
+  const pageCount = Math.max(1, Math.ceil(total / SEARCH_PAGE_SIZE));
+  const isFiltered = hasActiveFilters(filters);
 
   return (
-    <div className="mx-auto w-full max-w-5xl px-6 py-10">
-      <h1 className="font-display text-3xl font-semibold text-zinc-900 dark:text-zinc-50">
-        {q ? `Results for “${q}”` : "All schools"}
-      </h1>
-
-      <div className="mt-6">
-        <FilterBar />
-      </div>
-
-      <p className="mt-6 text-sm text-zinc-500">
-        {schools.length} {schools.length === 1 ? "school" : "schools"} found
-      </p>
-
-      <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {schools.map((school) => (
-          <Link
-            key={school.id}
-            href={`/school/${school.id}`}
-            className="rounded-[var(--radius-card)] border border-zinc-200 p-4 transition-colors hover:border-accent/40 dark:border-zinc-800"
-          >
-            <div className="text-sm text-zinc-500">{school.district ?? school.aimagCity}</div>
-            <div className="mt-1 font-medium text-zinc-900 dark:text-zinc-100">{school.nameEn}</div>
-            <div className="text-sm text-zinc-500">{school.nameMn}</div>
-            <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-xs text-zinc-500">
-              <span>{TYPE_LABELS[school.type]}</span>
-              <span>{LEVEL_LABELS[school.level]}</span>
-              {school.schoolNumber && <span>{school.schoolNumber}</span>}
+    <SearchNavigationProvider>
+      <main>
+        <div className="border-b border-line bg-surface">
+          <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">Directory</p>
+            <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+              {filters.q ? <>Results for “{filters.q}”</> : "Browse schools"}
+            </h1>
+            <p className="mt-2 max-w-2xl text-muted">
+              Narrow the list by type, level, curriculum, or district. Results update as you go.
+            </p>
+            <div className="mt-6 max-w-3xl">
+              <SearchInput />
             </div>
-            <div className="mt-3">
-              <StarRating value={school.avgOverall || null} count={school.reviewCount} size="sm" />
-            </div>
-          </Link>
-        ))}
-      </div>
-
-      {schools.length === 0 && (
-        <div className="mt-4 rounded-[var(--radius-card)] border border-dashed border-zinc-300 p-8 text-center dark:border-zinc-700">
-          <p className="text-zinc-600 dark:text-zinc-400">
-            No schools match{hasActiveFilters ? " these filters" : " yet"}.
-          </p>
-          {hasActiveFilters && (
-            <Link
-              href="/search"
-              className="mt-2 inline-block text-sm text-accent underline underline-offset-4"
-            >
-              Clear everything and start over
-            </Link>
-          )}
+          </div>
         </div>
-      )}
-    </div>
+
+        <div className="mx-auto grid max-w-6xl gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[260px_minmax(0,1fr)]">
+          <aside className="lg:sticky lg:top-6 lg:self-start">
+            <FilterBar districts={districts} />
+          </aside>
+
+          <section aria-label="Results" className="space-y-5">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <p className="text-sm text-muted" aria-live="polite">
+                <span className="font-semibold text-foreground">{total}</span>{" "}
+                {total === 1 ? "school" : "schools"}
+                {isFiltered ? " match your search" : " listed"}
+              </p>
+              <SortSelect value={sort} />
+            </div>
+
+            <ActiveFilters />
+
+            <PendingArea>
+              {schools.length > 0 ? (
+                <div className="space-y-8">
+                  <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                    {schools.map((school) => (
+                      <SchoolCard key={school.id} school={school} />
+                    ))}
+                  </div>
+                  <Pagination page={page} pageCount={pageCount} params={params} />
+                </div>
+              ) : (
+                <div className="rounded-xl border border-dashed border-line-strong bg-surface px-6 py-14 text-center">
+                  <span className="mx-auto flex size-12 items-center justify-center rounded-full bg-surface-muted text-subtle">
+                    <Icon name="search" className="size-5" />
+                  </span>
+                  <h2 className="mt-4 font-display text-xl font-semibold text-foreground">
+                    {total > 0
+                      ? "This page is empty"
+                      : isFiltered
+                        ? "No schools match your search"
+                        : "No schools have been added yet"}
+                  </h2>
+                  <p className="mx-auto mt-2 max-w-md text-sm text-muted">
+                    {total > 0
+                      ? "There are fewer results than this page number."
+                      : isFiltered
+                        ? "Try removing a filter, or search by district or city instead."
+                        : "Check back soon — we're adding schools across Mongolia."}
+                  </p>
+                  {(isFiltered || total > 0) && (
+                    <Link
+                      href="/search"
+                      className="mt-6 inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
+                    >
+                      Show all schools
+                    </Link>
+                  )}
+                </div>
+              )}
+            </PendingArea>
+          </section>
+        </div>
+      </main>
+    </SearchNavigationProvider>
   );
 }

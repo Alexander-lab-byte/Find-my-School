@@ -1,6 +1,13 @@
 import { notFound } from "next/navigation";
 import { getSchoolDormitory } from "@/lib/schools";
+import { Icon } from "@/components/common/Icon";
 import { StarRating } from "@/components/common/StarRating";
+import {
+  Fact,
+  FactGrid,
+  ProfileSection,
+  ProseCard,
+} from "@/components/school-profile/ProfileSection";
 
 export default async function SchoolDormitoryPage({
   params,
@@ -14,54 +21,54 @@ export default async function SchoolDormitoryPage({
 
   if (!school.dormitory) {
     return (
-      <p className="text-zinc-500">This school does not offer on-campus dormitory housing.</p>
+      <div className="rounded-xl border border-dashed border-line-strong bg-surface px-6 py-14 text-center">
+        <span className="mx-auto flex size-12 items-center justify-center rounded-full bg-surface-muted text-subtle">
+          <Icon name="bed" className="size-5" />
+        </span>
+        <h2 className="mt-4 font-display text-xl font-semibold text-foreground">
+          No on-campus housing
+        </h2>
+        <p className="mx-auto mt-2 max-w-md text-sm text-muted">
+          This school does not offer dormitory accommodation.
+        </p>
+      </div>
     );
   }
 
   const dorm = school.dormitory;
 
   return (
-    <div className="space-y-8">
-      <StarRating value={school.avgDorms} size="md" />
-
-      <dl className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <div>
-          <dt className="text-sm text-zinc-500">Room capacity</dt>
-          <dd className="mt-1 text-zinc-900 dark:text-zinc-100">
-            {dorm.roomCapacity ? `${dorm.roomCapacity} students per room` : "Not reported"}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-sm text-zinc-500">Monthly fee</dt>
-          <dd className="mt-1 text-zinc-900 dark:text-zinc-100">
-            {dorm.monthlyFeeAmount ? `₮${dorm.monthlyFeeAmount.toLocaleString()} / month` : "Not reported"}
-          </dd>
-        </div>
-      </dl>
+    <div className="space-y-10">
+      <FactGrid>
+        <Fact label="Dormitory rating">
+          <StarRating value={school.avgDorms} size="sm" />
+        </Fact>
+        <Fact label="Room capacity">
+          {dorm.roomCapacity ? `${dorm.roomCapacity} students per room` : "Not reported"}
+        </Fact>
+        <Fact label="Monthly fee">
+          {dorm.monthlyFeeAmount
+            ? `₮${dorm.monthlyFeeAmount.toLocaleString()} / month`
+            : "Not reported"}
+        </Fact>
+      </FactGrid>
 
       {dorm.livingConditions && (
-        <section>
-          <h2 className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
-            Living conditions
-          </h2>
-          <p className="mt-2 text-zinc-600 dark:text-zinc-400">{dorm.livingConditions}</p>
-        </section>
+        <ProfileSection title="Living conditions">
+          <ProseCard>{dorm.livingConditions}</ProseCard>
+        </ProfileSection>
       )}
 
       {dorm.boardingRules && (
-        <section>
-          <h2 className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
-            Boarding rules
-          </h2>
-          <p className="mt-2 text-zinc-600 dark:text-zinc-400">{dorm.boardingRules}</p>
-        </section>
+        <ProfileSection title="Boarding rules">
+          <ProseCard>{dorm.boardingRules}</ProseCard>
+        </ProfileSection>
       )}
 
       {dorm.safetyInfo && (
-        <section>
-          <h2 className="text-lg font-medium text-zinc-900 dark:text-zinc-100">Safety</h2>
-          <p className="mt-2 text-zinc-600 dark:text-zinc-400">{dorm.safetyInfo}</p>
-        </section>
+        <ProfileSection title="Safety">
+          <ProseCard>{dorm.safetyInfo}</ProseCard>
+        </ProfileSection>
       )}
     </div>
   );

@@ -1,6 +1,11 @@
 import Link from "next/link";
 import { headers } from "next/headers";
 import { signOut } from "@/app/(auth)/actions";
+import { Icon } from "@/components/common/Icon";
+import { Logo } from "@/components/layout/Logo";
+
+const NAV_LINK =
+  "rounded-lg px-3 py-2 font-medium text-muted transition-colors hover:bg-surface-muted hover:text-foreground";
 
 export async function Header() {
   // Set by lib/supabase/middleware.ts — avoids a second network round
@@ -8,41 +13,29 @@ export async function Header() {
   const isSignedIn = (await headers()).get("x-user-signed-in") === "1";
 
   return (
-    <header className="border-b border-zinc-200 dark:border-zinc-800">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-        <Link
-          href="/"
-          className="font-display text-lg font-semibold text-zinc-900 dark:text-zinc-100"
-        >
-          Find My School
-        </Link>
-        <nav className="flex items-center gap-4 text-sm">
-          <Link
-            href="/search"
-            className="text-zinc-600 transition-colors hover:text-accent dark:text-zinc-400"
-          >
-            Search
+    <header className="border-b border-line bg-surface">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+        <Logo />
+        <nav className="flex items-center gap-1 text-sm">
+          <Link href="/search" className={`${NAV_LINK} flex items-center gap-2`}>
+            <Icon name="search" className="size-4" />
+            <span className="hidden sm:inline">Browse schools</span>
+            <span className="sr-only sm:hidden">Browse schools</span>
           </Link>
           {isSignedIn ? (
             <form action={signOut}>
-              <button
-                type="submit"
-                className="text-zinc-600 transition-colors hover:text-accent dark:text-zinc-400"
-              >
+              <button type="submit" className={NAV_LINK}>
                 Log out
               </button>
             </form>
           ) : (
             <>
-              <Link
-                href="/login"
-                className="text-zinc-600 transition-colors hover:text-accent dark:text-zinc-400"
-              >
+              <Link href="/login" className={NAV_LINK}>
                 Log in
               </Link>
               <Link
                 href="/register"
-                className="rounded-full bg-accent px-4 py-1.5 font-medium text-accent-foreground transition-opacity hover:opacity-90"
+                className="ml-1 hidden rounded-lg bg-accent px-4 py-2 font-medium text-accent-foreground transition-colors hover:bg-accent-hover sm:inline-block"
               >
                 Sign up
               </Link>

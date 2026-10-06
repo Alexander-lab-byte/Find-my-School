@@ -1,26 +1,41 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import { AuthCard } from "@/components/auth/AuthCard";
 import { LoginForm } from "@/components/auth/LoginForm";
+import { safeNextPath } from "@/lib/navigation";
 
-export default function LoginPage() {
+export const metadata: Metadata = {
+  title: "Log in",
+};
+
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ next?: string; error?: string }>;
+}) {
+  const { next: rawNext, error } = await searchParams;
+  const next = safeNextPath(rawNext);
+  const registerHref = next === "/" ? "/register" : `/register?next=${encodeURIComponent(next)}`;
+
   return (
-    <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center px-6 py-16">
-      <h1 className="font-display text-3xl font-semibold text-zinc-900 dark:text-zinc-50">
-        Log in
-      </h1>
-      <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-        Welcome back to Find My School Mongolia.
-      </p>
-
-      <div className="mt-8">
-        <LoginForm />
-      </div>
-
-      <p className="mt-6 text-center text-sm text-zinc-500">
-        Don&apos;t have an account?{" "}
-        <Link href="/register" className="text-accent underline underline-offset-4">
-          Sign up
-        </Link>
-      </p>
-    </div>
+    <AuthCard
+      title="Welcome back"
+      description="Log in to Find My School Mongolia to rate and review schools."
+      footer={
+        <>
+          Don&apos;t have an account?{" "}
+          <Link href={registerHref} className="font-medium text-accent underline-offset-4 hover:underline">
+            Sign up
+          </Link>
+        </>
+      }
+    >
+      {error === "auth-callback-failed" && (
+        <p role="alert" className="mb-6 rounded-lg bg-danger-soft px-3 py-2.5 text-sm text-danger">
+          That sign-in link didn&apos;t work or has expired. Please log in again.
+        </p>
+      )}
+      <LoginForm next={next} />
+    </AuthCard>
   );
 }

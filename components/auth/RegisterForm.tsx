@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
-export function RegisterForm() {
+export function RegisterForm({ next }: { next: string }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -39,51 +39,51 @@ export function RegisterForm() {
       return;
     }
 
-    router.push("/");
+    router.push(next);
     router.refresh();
   }
 
   if (checkEmail) {
     return (
-      <div className="rounded-[var(--radius-card)] border border-accent/30 bg-accent/5 p-6 text-center">
-        <p className="font-medium text-zinc-900 dark:text-zinc-100">Check your email</p>
-        <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-          We sent a confirmation link to {email}.
-        </p>
+      <div className="rounded-xl border border-accent/30 bg-accent-soft p-6 text-center">
+        <p className="font-medium text-foreground">Check your email</p>
+        <p className="mt-1 text-sm text-muted">We sent a confirmation link to {email}.</p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-5">
       <div>
-        <label htmlFor="name" className="text-sm text-zinc-700 dark:text-zinc-300">
+        <label htmlFor="name" className="text-sm font-medium text-foreground">
           Name
         </label>
         <input
           id="name"
           type="text"
           required
+          autoComplete="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="mt-1 w-full rounded-lg border border-zinc-200 p-2.5 text-sm outline-none focus:border-accent dark:border-zinc-700 dark:bg-zinc-900"
+          className="field mt-1.5"
         />
       </div>
       <div>
-        <label htmlFor="email" className="text-sm text-zinc-700 dark:text-zinc-300">
+        <label htmlFor="email" className="text-sm font-medium text-foreground">
           Email
         </label>
         <input
           id="email"
           type="email"
           required
+          autoComplete="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="mt-1 w-full rounded-lg border border-zinc-200 p-2.5 text-sm outline-none focus:border-accent dark:border-zinc-700 dark:bg-zinc-900"
+          className="field mt-1.5"
         />
       </div>
       <div>
-        <label htmlFor="password" className="text-sm text-zinc-700 dark:text-zinc-300">
+        <label htmlFor="password" className="text-sm font-medium text-foreground">
           Password
         </label>
         <input
@@ -91,20 +91,29 @@ export function RegisterForm() {
           type="password"
           required
           minLength={8}
+          autoComplete="new-password"
+          aria-describedby="password-hint"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="mt-1 w-full rounded-lg border border-zinc-200 p-2.5 text-sm outline-none focus:border-accent dark:border-zinc-700 dark:bg-zinc-900"
+          className="field mt-1.5"
         />
+        <p id="password-hint" className="mt-1.5 text-xs text-subtle">
+          At least 8 characters.
+        </p>
       </div>
 
-      {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+      {error && (
+        <p role="alert" className="rounded-lg bg-danger-soft px-3 py-2.5 text-sm text-danger">
+          {error}
+        </p>
+      )}
 
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
+        className="w-full rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover disabled:opacity-50"
       >
-        {isSubmitting ? "Creating account…" : "Sign up"}
+        {isSubmitting ? "Creating account…" : "Create account"}
       </button>
     </form>
   );

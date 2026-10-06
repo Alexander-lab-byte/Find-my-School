@@ -1,26 +1,35 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import { AuthCard } from "@/components/auth/AuthCard";
 import { RegisterForm } from "@/components/auth/RegisterForm";
+import { safeNextPath } from "@/lib/navigation";
 
-export default function RegisterPage() {
+export const metadata: Metadata = {
+  title: "Create an account",
+};
+
+export default async function RegisterPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ next?: string }>;
+}) {
+  const next = safeNextPath((await searchParams).next);
+  const loginHref = next === "/" ? "/login" : `/login?next=${encodeURIComponent(next)}`;
+
   return (
-    <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center px-6 py-16">
-      <h1 className="font-display text-3xl font-semibold text-zinc-900 dark:text-zinc-50">
-        Create an account
-      </h1>
-      <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-        Join Find My School Mongolia to rate and review schools.
-      </p>
-
-      <div className="mt-8">
-        <RegisterForm />
-      </div>
-
-      <p className="mt-6 text-center text-sm text-zinc-500">
-        Already have an account?{" "}
-        <Link href="/login" className="text-accent underline underline-offset-4">
-          Log in
-        </Link>
-      </p>
-    </div>
+    <AuthCard
+      title="Create an account"
+      description="Join Find My School Mongolia to rate and review schools. It's free."
+      footer={
+        <>
+          Already have an account?{" "}
+          <Link href={loginHref} className="font-medium text-accent underline-offset-4 hover:underline">
+            Log in
+          </Link>
+        </>
+      }
+    >
+      <RegisterForm next={next} />
+    </AuthCard>
   );
 }
