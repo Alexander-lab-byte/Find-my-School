@@ -25,7 +25,7 @@ export function SchoolCard({ school }: { school: SchoolCardData }) {
           <h3 className="font-display text-lg font-semibold leading-snug text-foreground transition-colors group-hover:text-accent">
             {school.nameEn}
           </h3>
-          {school.nameMn && <p className="mt-0.5 text-sm text-muted">{school.nameMn}</p>}
+          {school.nameMn && school.nameMn !== school.nameEn && <p className="mt-0.5 text-sm text-muted">{school.nameMn}</p>}
         </div>
       </div>
 

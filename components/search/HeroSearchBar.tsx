@@ -138,7 +138,7 @@ export function HeroSearchBar() {
                     <span className="block truncate text-sm font-medium text-foreground">
                       {school.nameEn}
                     </span>
-                    {school.nameMn && (
+                    {school.nameMn && school.nameMn !== school.nameEn && (
                       <span className="block truncate text-xs text-muted">{school.nameMn}</span>
                     )}
                   </span>

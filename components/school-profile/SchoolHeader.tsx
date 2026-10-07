@@ -36,7 +36,7 @@ export function SchoolHeader({ school, isSaved }: { school: School; isSaved: boo
               <h1 className="mt-3 text-balance font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
                 {school.nameEn}
               </h1>
-              {school.nameMn && <p className="mt-1 text-lg text-muted">{school.nameMn}</p>}
+              {school.nameMn && school.nameMn !== school.nameEn && <p className="mt-1 text-lg text-muted">{school.nameMn}</p>}
 
               <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted">
                 <span className="inline-flex items-center gap-1.5">

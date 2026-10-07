@@ -7,6 +7,10 @@ import { Curriculum, SchoolLevel, SchoolType, type Prisma } from "@prisma/client
  * added only where a public source confirms them (school sites, Wikipedia):
  * leave a field out rather than guess.
  *
+ * nameMn is left out where no official Mongolian name is known. The live
+ * database fills those with nameEn (older deployments required a value);
+ * the UI hides a Mongolian name that just repeats the English one.
+ *
  * Re-run safely with `npm run db:import` — records are matched on nameEn.
  */
 type SchoolSeed = Omit<Prisma.SchoolCreateInput, "aimagCity"> & { aimagCity?: string };

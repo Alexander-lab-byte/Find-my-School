@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: SchoolLayoutProps): Promise<M
 
   return {
     title: school.nameEn,
-    description: `Ratings, reviews, fees, and admissions for ${school.nameEn}${school.nameMn ? ` (${school.nameMn})` : ""}, ${
+    description: `Ratings, reviews, fees, and admissions for ${school.nameEn}${school.nameMn && school.nameMn !== school.nameEn ? ` (${school.nameMn})` : ""}, ${
       school.district ?? school.aimagCity
     }.`,
   };
