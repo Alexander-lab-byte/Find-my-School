@@ -1,14 +1,16 @@
 import Link from "next/link";
 import type { getSchoolHeader } from "@/lib/schools";
 import { Badge, TYPE_TONE } from "@/components/common/Badge";
+import { BackButton } from "@/components/common/BackButton";
 import { Icon } from "@/components/common/Icon";
 import { SchoolMonogram } from "@/components/common/SchoolMonogram";
 import { Stars } from "@/components/common/StarRating";
+import { SaveButton } from "@/components/school-profile/SaveButton";
 import { LEVEL_LABELS, TYPE_LABELS } from "@/lib/labels";
 
 type School = NonNullable<Awaited<ReturnType<typeof getSchoolHeader>>>;
 
-export function SchoolHeader({ school }: { school: School }) {
+export function SchoolHeader({ school, isSaved }: { school: School; isSaved: boolean }) {
   const location = [school.khoroo && `Khoroo ${school.khoroo}`, school.district, school.aimagCity]
     .filter(Boolean)
     .join(", ");
@@ -17,13 +19,10 @@ export function SchoolHeader({ school }: { school: School }) {
   return (
     <header className="border-b border-line bg-surface">
       <div className="mx-auto max-w-5xl px-4 pb-8 pt-6 sm:px-6 sm:pb-10">
-        <Link
-          href="/search"
-          className="inline-flex items-center gap-1.5 text-sm text-muted transition-colors hover:text-accent"
-        >
-          <Icon name="arrow-left" className="size-4" />
-          All schools
-        </Link>
+        <div className="flex items-start justify-between gap-4">
+          <BackButton fallbackHref="/search" label="Back to search" />
+          <SaveButton schoolId={school.id} initialSaved={isSaved} />
+        </div>
 
         <div className="mt-6 flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
           <div className="flex min-w-0 gap-4 sm:gap-5">

@@ -314,3 +314,20 @@ export function getSchoolReviews(id: string) {
     },
   });
 }
+
+export async function getIsSchoolSaved(schoolId: string, userId: string | null) {
+  if (!userId) return false;
+  const row = await prisma.savedSchool.findUnique({
+    where: { userId_schoolId: { userId, schoolId } },
+    select: { userId: true },
+  });
+  return Boolean(row);
+}
+
+export function getSavedSchoolsForUser(userId: string) {
+  return prisma.savedSchool.findMany({
+    where: { userId },
+    orderBy: { createdAt: "desc" },
+    select: { school: { select: schoolCardSelect } },
+  });
+}
