@@ -1,5 +1,9 @@
 "use client";
 
+import { useState } from "react";
+
+const RATING_WORDS = ["Poor", "Fair", "Good", "Very good", "Excellent"];
+
 type CategoryStarInputProps = {
   label: string;
   value: number;
@@ -8,27 +12,40 @@ type CategoryStarInputProps = {
 };
 
 export function CategoryStarInput({ label, value, onChange, required }: CategoryStarInputProps) {
+  const [hovered, setHovered] = useState(0);
+  const shown = hovered || value;
+
   return (
-    <div className="flex items-center justify-between py-1.5">
-      <span className="text-sm text-zinc-700 dark:text-zinc-300">
+    <div className="flex items-center justify-between gap-3 py-2">
+      <span className="text-sm text-foreground">
         {label}
-        {required && <span className="text-accent"> *</span>}
+        {required && (
+          <span className="text-accent" aria-hidden>
+            {" "}
+            *
+          </span>
+        )}
       </span>
-      <div className="flex gap-0.5">
+      <div
+        className="flex"
+        role="group"
+        aria-label={`${label}${required ? " (required)" : ""}`}
+        onMouseLeave={() => setHovered(0)}
+      >
         {[1, 2, 3, 4, 5].map((n) => (
           <button
             key={n}
             type="button"
             onClick={() => onChange(n)}
-            aria-label={`${n} star${n > 1 ? "s" : ""}`}
+            onMouseEnter={() => setHovered(n)}
+            aria-label={`${n} star${n > 1 ? "s" : ""}, ${RATING_WORDS[n - 1]}`}
             aria-pressed={n === value}
-            className={`text-xl leading-none transition-colors ${
-              n <= value
-                ? "text-amber-500"
-                : "text-zinc-300 hover:text-amber-300 dark:text-zinc-700"
-            }`}
+            title={RATING_WORDS[n - 1]}
+            className={`rounded p-0.5 transition-colors ${n <= shown ? "text-star" : "text-star-empty"}`}
           >
-            ★
+            <svg viewBox="0 0 24 24" fill="currentColor" className="size-5.5" aria-hidden>
+              <path d="M12 2.5l2.92 5.92 6.53.95-4.72 4.6 1.11 6.5L12 17.4l-5.84 3.07 1.11-6.5-4.72-4.6 6.53-.95z" />
+            </svg>
           </button>
         ))}
       </div>

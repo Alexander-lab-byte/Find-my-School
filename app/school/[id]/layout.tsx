@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { getSchoolHeader, getIsSchoolSaved } from "@/lib/schools";
@@ -9,6 +10,19 @@ type SchoolLayoutProps = {
   children: React.ReactNode;
   params: Promise<{ id: string }>;
 };
+
+export async function generateMetadata({ params }: SchoolLayoutProps): Promise<Metadata> {
+  const { id } = await params;
+  const school = await getSchoolHeader(id);
+  if (!school) return { title: "School not found" };
+
+  return {
+    title: school.nameEn,
+    description: `Ratings, reviews, fees, and admissions for ${school.nameEn} (${school.nameMn}), ${
+      school.district ?? school.aimagCity
+    }.`,
+  };
+}
 
 export default async function SchoolLayout({ children, params }: SchoolLayoutProps) {
   const { id } = await params;
@@ -26,12 +40,12 @@ export default async function SchoolLayout({ children, params }: SchoolLayoutPro
   return (
     <div className="flex flex-1 flex-col">
       <SchoolHeader school={school} isSaved={isSaved} />
-      <div className="sticky top-0 z-10 bg-white/90 backdrop-blur dark:bg-black/90">
-        <div className="mx-auto max-w-4xl px-6">
-          <SchoolTabs schoolId={school.id} />
+      <div className="sticky top-0 z-10 border-b border-line bg-background/90 backdrop-blur">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6">
+          <SchoolTabs schoolId={school.id} reviewCount={school.reviewCount} />
         </div>
       </div>
-      <main className="mx-auto w-full max-w-4xl flex-1 px-6 py-8">{children}</main>
+      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-10 sm:px-6">{children}</main>
     </div>
   );
 }

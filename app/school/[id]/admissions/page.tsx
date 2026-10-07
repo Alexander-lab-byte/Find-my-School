@@ -1,6 +1,13 @@
 import { notFound } from "next/navigation";
 import { getSchoolAdmissions } from "@/lib/schools";
-import { formatTuition } from "@/lib/labels";
+import { formatDate, formatTuition } from "@/lib/labels";
+import {
+  EmptyNote,
+  Fact,
+  FactGrid,
+  ProfileSection,
+  ProseCard,
+} from "@/components/school-profile/ProfileSection";
 
 export default async function SchoolAdmissionsPage({
   params,
@@ -13,48 +20,36 @@ export default async function SchoolAdmissionsPage({
   if (!school) notFound();
 
   return (
-    <div className="space-y-8">
-      <dl className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <div>
-          <dt className="text-sm text-zinc-500">Tuition</dt>
-          <dd className="mt-1 text-zinc-900 dark:text-zinc-100">
-            {school.type === "PUBLIC"
-              ? "Free (public school)"
-              : formatTuition(school.tuitionMinAnnual, school.tuitionMaxAnnual)}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-sm text-zinc-500">Application deadline</dt>
-          <dd className="mt-1 text-zinc-900 dark:text-zinc-100">
-            {school.applicationDeadline
-              ? new Date(school.applicationDeadline).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })
-              : "Rolling / not specified"}
-          </dd>
-        </div>
-      </dl>
+    <div className="space-y-10">
+      <FactGrid columns={2}>
+        <Fact label="Annual tuition">
+          {school.type === "PUBLIC"
+            ? "Free (public school)"
+            : formatTuition(school.tuitionMinAnnual, school.tuitionMaxAnnual)}
+        </Fact>
+        <Fact label="Application deadline">
+          {school.applicationDeadline
+            ? formatDate(school.applicationDeadline)
+            : "Rolling / not specified"}
+        </Fact>
+      </FactGrid>
 
-      <section>
-        <h2 className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
-          Entrance requirements
-        </h2>
-        <p className="mt-2 text-zinc-600 dark:text-zinc-400">
-          {school.entranceExamInfo ?? "No entrance exam information has been added yet."}
-        </p>
-      </section>
+      <ProfileSection title="Entrance requirements">
+        {school.entranceExamInfo ? (
+          <ProseCard>{school.entranceExamInfo}</ProseCard>
+        ) : (
+          <EmptyNote>No entrance exam information has been added yet.</EmptyNote>
+        )}
+      </ProfileSection>
 
       {school.type === "PUBLIC" && (
-        <section>
-          <h2 className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
-            Catchment area
-          </h2>
-          <p className="mt-2 text-zinc-600 dark:text-zinc-400">
-            {school.catchmentAreaInfo ?? "No catchment area information has been added yet."}
-          </p>
-        </section>
+        <ProfileSection title="Catchment area">
+          {school.catchmentAreaInfo ? (
+            <ProseCard>{school.catchmentAreaInfo}</ProseCard>
+          ) : (
+            <EmptyNote>No catchment area information has been added yet.</EmptyNote>
+          )}
+        </ProfileSection>
       )}
     </div>
   );

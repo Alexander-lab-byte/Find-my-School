@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
-export function LoginForm() {
+export function LoginForm({ next }: { next: string }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -26,45 +26,51 @@ export function LoginForm() {
       return;
     }
 
-    router.push("/");
+    router.push(next);
     router.refresh();
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-5">
       <div>
-        <label htmlFor="email" className="text-sm text-zinc-700 dark:text-zinc-300">
+        <label htmlFor="email" className="text-sm font-medium text-foreground">
           Email
         </label>
         <input
           id="email"
           type="email"
           required
+          autoComplete="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="mt-1 w-full rounded-lg border border-zinc-200 p-2.5 text-sm outline-none focus:border-accent dark:border-zinc-700 dark:bg-zinc-900"
+          className="field mt-1.5"
         />
       </div>
       <div>
-        <label htmlFor="password" className="text-sm text-zinc-700 dark:text-zinc-300">
+        <label htmlFor="password" className="text-sm font-medium text-foreground">
           Password
         </label>
         <input
           id="password"
           type="password"
           required
+          autoComplete="current-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="mt-1 w-full rounded-lg border border-zinc-200 p-2.5 text-sm outline-none focus:border-accent dark:border-zinc-700 dark:bg-zinc-900"
+          className="field mt-1.5"
         />
       </div>
 
-      {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+      {error && (
+        <p role="alert" className="rounded-lg bg-danger-soft px-3 py-2.5 text-sm text-danger">
+          {error}
+        </p>
+      )}
 
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
+        className="w-full rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover disabled:opacity-50"
       >
         {isSubmitting ? "Logging in…" : "Log in"}
       </button>

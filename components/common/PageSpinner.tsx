@@ -4,7 +4,7 @@ export function PageSpinner() {
       <div
         role="status"
         aria-label="Loading"
-        className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-200 border-t-accent dark:border-zinc-700"
+        className="size-8 animate-spin rounded-full border-2 border-line border-t-accent"
       />
     </div>
   );

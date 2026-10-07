@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { Icon } from "@/components/common/Icon";
 
 export function BackButton({
   fallbackHref,
@@ -26,9 +27,9 @@ export function BackButton({
     <button
       type="button"
       onClick={handleClick}
-      className="inline-flex items-center gap-1.5 text-sm text-zinc-500 transition-colors hover:text-accent dark:text-zinc-400"
+      className="inline-flex items-center gap-1.5 text-sm text-muted transition-colors hover:text-accent"
     >
-      <span aria-hidden>←</span>
+      <Icon name="arrow-left" className="size-4" />
       {label}
     </button>
   );
