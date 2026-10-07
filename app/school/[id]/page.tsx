@@ -13,6 +13,7 @@ import { Badge } from "@/components/common/Badge";
 import { Icon, type IconName } from "@/components/common/Icon";
 import { RatingSummary } from "@/components/reviews/RatingSummary";
 import { Fact, FactGrid, ProfileSection } from "@/components/school-profile/ProfileSection";
+import { SchoolHighlights } from "@/components/school-profile/SchoolHighlights";
 
 type Contact = {
   icon: IconName;
@@ -53,6 +54,14 @@ export default async function SchoolOverviewPage({
   return (
     <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_280px]">
       <div className="space-y-10">
+        <SchoolHighlights
+          foundedYear={school.foundedYear}
+          studentTeacherRatio={school.studentTeacherRatio}
+          curriculum={school.curriculum}
+          graduateDestinations={school.graduateDestinations}
+          notableAchievements={school.notableAchievements}
+        />
+
         <ProfileSection title="At a glance">
           <FactGrid>
             <Fact label="School type">{TYPE_LABELS[school.type]}</Fact>
@@ -65,7 +74,7 @@ export default async function SchoolOverviewPage({
                 ? school.teachingLanguages.map((l) => LANGUAGE_LABELS[l] ?? l).join(", ")
                 : "Not reported"}
             </Fact>
-            <Fact label="Student–teacher ratio">{school.studentTeacherRatio ?? "Not reported"}</Fact>
+            <Fact label="Accreditation">{school.accreditation ?? "Not reported"}</Fact>
             <Fact label="Dormitory">{school.dormitory ? "Available" : "Not offered"}</Fact>
           </FactGrid>
         </ProfileSection>
@@ -78,10 +87,6 @@ export default async function SchoolOverviewPage({
               </Badge>
             ))}
           </div>
-          <p className="mt-3 text-sm text-muted">
-            <span className="font-medium text-foreground">Accreditation:</span>{" "}
-            {school.accreditation ?? "Not reported"}
-          </p>
         </ProfileSection>
 
         <ProfileSection
@@ -104,7 +109,7 @@ export default async function SchoolOverviewPage({
         </ProfileSection>
       </div>
 
-      <aside className="lg:pt-11">
+      <aside>
         <div className="rounded-xl border border-line bg-surface p-5">
           <h2 className="text-sm font-semibold text-foreground">Contact</h2>
           {contacts.length > 0 ? (

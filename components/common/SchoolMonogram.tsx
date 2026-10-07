@@ -14,6 +14,10 @@ const SIZE_CLASSES = {
 const FILLER_WORDS = new Set(["of", "the", "and", "for", "school"]);
 
 function initials(name: string) {
+  // Numbered state schools are known by their number ("School No. 14" → "14").
+  const number = name.match(/\bNo\.?\s*(\d+)/i);
+  if (number) return number[1];
+
   const words = name.split(/\s+/).filter(Boolean);
   const meaningful = words.filter((w) => !FILLER_WORDS.has(w.toLowerCase()));
   return (meaningful.length > 0 ? meaningful : words)

@@ -60,6 +60,15 @@ export function hasActiveFilters(filters: SchoolFilters) {
   return Boolean(q || level || type || curriculum || district || dorm);
 }
 
+// A K–12 school also teaches elementary, middle, and high school, so picking
+// "High school" should include it rather than only HIGH-only schools.
+const LEVEL_COVERAGE: Record<SchoolLevel, SchoolLevel[]> = {
+  ELEMENTARY: ["ELEMENTARY", "K12"],
+  MIDDLE: ["MIDDLE", "K12"],
+  HIGH: ["HIGH", "K12"],
+  K12: ["K12"],
+};
+
 function buildSchoolWhere(filters: SchoolFilters): Prisma.SchoolWhereInput {
   const { q, level, type, curriculum, district, dorm } = filters;
   return {
@@ -75,7 +84,7 @@ function buildSchoolWhere(filters: SchoolFilters): Prisma.SchoolWhereInput {
             ],
           }
         : {},
-      level ? { level } : {},
+      level ? { level: { in: LEVEL_COVERAGE[level] } } : {},
       type ? { type } : {},
       curriculum ? { curriculum: { has: curriculum } } : {},
       district ? { district: { equals: district, mode: "insensitive" } } : {},
@@ -98,6 +107,7 @@ const SORT_ORDER: Record<SortKey, Prisma.SchoolOrderByWithRelationInput[]> = {
     { nameEn: "asc" },
   ],
   name: [{ nameEn: "asc" }],
+  founded: [{ foundedYear: { sort: "asc", nulls: "last" } }, { nameEn: "asc" }],
 };
 
 export const schoolCardSelect = {
@@ -115,6 +125,9 @@ export const schoolCardSelect = {
   reviewCount: true,
   tuitionMinAnnual: true,
   tuitionMaxAnnual: true,
+  foundedYear: true,
+  studentTeacherRatio: true,
+  graduateDestinations: true,
   dormitory: { select: { id: true } },
 } satisfies Prisma.SchoolSelect;
 
@@ -255,6 +268,9 @@ export function getSchoolOverview(id: string) {
       accreditation: true,
       tuitionMinAnnual: true,
       tuitionMaxAnnual: true,
+      foundedYear: true,
+      graduateDestinations: true,
+      notableAchievements: true,
       address: true,
       phone: true,
       website: true,

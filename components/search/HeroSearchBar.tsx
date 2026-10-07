@@ -8,7 +8,7 @@ import { Icon } from "@/components/common/Icon";
 type Suggestion = {
   id: string;
   nameEn: string;
-  nameMn: string;
+  nameMn: string | null;
   district: string | null;
   aimagCity: string;
 };
@@ -138,7 +138,9 @@ export function HeroSearchBar() {
                     <span className="block truncate text-sm font-medium text-foreground">
                       {school.nameEn}
                     </span>
-                    <span className="block truncate text-xs text-muted">{school.nameMn}</span>
+                    {school.nameMn && (
+                      <span className="block truncate text-xs text-muted">{school.nameMn}</span>
+                    )}
                   </span>
                   <span className="flex shrink-0 items-center gap-1 text-xs text-subtle">
                     <Icon name="map-pin" className="size-3.5" />

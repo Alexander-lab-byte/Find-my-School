@@ -25,14 +25,16 @@ export function SchoolCard({ school }: { school: SchoolCardData }) {
           <h3 className="font-display text-lg font-semibold leading-snug text-foreground transition-colors group-hover:text-accent">
             {school.nameEn}
           </h3>
-          <p className="mt-0.5 text-sm text-muted">{school.nameMn}</p>
+          {school.nameMn && <p className="mt-0.5 text-sm text-muted">{school.nameMn}</p>}
         </div>
       </div>
 
       <div className="mt-4 flex flex-wrap gap-1.5">
         <Badge tone={TYPE_TONE[school.type]}>{TYPE_LABELS[school.type]}</Badge>
         <Badge>{LEVEL_LABELS[school.level]}</Badge>
-        {school.schoolNumber && <Badge>{school.schoolNumber}</Badge>}
+        {school.schoolNumber && !school.nameEn.includes(school.schoolNumber) && (
+          <Badge>{school.schoolNumber}</Badge>
+        )}
         {school.dormitory && <Badge>Dormitory</Badge>}
       </div>
 
@@ -49,13 +51,47 @@ export function SchoolCard({ school }: { school: SchoolCardData }) {
             </span>
           </li>
         )}
-        <li className="flex items-center gap-2">
-          <Icon name="wallet" className="size-4 shrink-0 text-subtle" />
-          <span className="truncate">
-            {tuitionSummary(school.type, school.tuitionMinAnnual, school.tuitionMaxAnnual)}
-          </span>
-        </li>
+        {(school.type === "PUBLIC" || school.tuitionMinAnnual || school.tuitionMaxAnnual) && (
+          <li className="flex items-center gap-2">
+            <Icon name="wallet" className="size-4 shrink-0 text-subtle" />
+            <span className="truncate">
+              {tuitionSummary(school.type, school.tuitionMinAnnual, school.tuitionMaxAnnual)}
+            </span>
+          </li>
+        )}
+        {(school.foundedYear || school.studentTeacherRatio) && (
+          <li className="flex items-center gap-2">
+            <Icon name="calendar" className="size-4 shrink-0 text-subtle" />
+            <span className="truncate">
+              {[
+                school.foundedYear && `Est. ${school.foundedYear}`,
+                school.studentTeacherRatio && `${school.studentTeacherRatio} ratio`,
+              ]
+                .filter(Boolean)
+                .join(" · ")}
+            </span>
+          </li>
+        )}
       </ul>
+
+      {school.graduateDestinations.length > 0 && (
+        <div className="mt-4 rounded-lg bg-surface-muted px-3 py-2.5">
+          <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-[0.08em] text-subtle">
+            <Icon name="graduation" className="size-3.5" />
+            Graduates go to
+          </p>
+          <p className="mt-1 line-clamp-2 text-sm text-foreground">
+            {school.graduateDestinations.slice(0, 3).join(", ")}
+            {school.graduateDestinations.length > 3 && (
+              <span className="whitespace-nowrap text-muted">
+                {" "}
+                +{school.graduateDestinations.length - 3} more
+              </span>
+            )}
+          </p>
+        </div>
+      )}
+
 
       <div className="mt-auto pt-5">
         <div className="flex items-center justify-between gap-3 border-t border-line pt-4">

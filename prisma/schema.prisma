@@ -69,7 +69,7 @@ model School {
   id                  String       @id @default(cuid())
   schoolNumber        String?
   nameEn              String
-  nameMn              String
+  nameMn              String?
   logoUrl             String?
   coverImageUrl       String?
 
@@ -82,8 +82,8 @@ model School {
   district            String?
   khoroo              String?
   address             String?
-  latitude            Float
-  longitude           Float
+  latitude            Float?
+  longitude           Float?
 
   phone               String?
   website             String?
@@ -96,6 +96,10 @@ model School {
   applicationDeadline DateTime?
   entranceExamInfo    String?      @db.Text
   catchmentAreaInfo   String?      @db.Text
+
+  foundedYear          Int?
+  graduateDestinations String[]     @default([])
+  notableAchievements  String[]     @default([])
 
   avgOverall          Float?       @default(0)
   avgAcademics        Float?       @default(0)

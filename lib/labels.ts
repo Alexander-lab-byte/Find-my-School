@@ -40,6 +40,7 @@ export const LANGUAGE_LABELS: Record<string, string> = {
   mn: "Mongolian",
   en: "English",
   ru: "Russian",
+  ja: "Japanese",
 };
 
 export const REVIEW_TAG_LABELS: Record<ReviewTag, string> = {
@@ -65,6 +66,7 @@ export const SORT_LABELS = {
   rating: "Top rated",
   reviews: "Most reviewed",
   name: "Name (A–Z)",
+  founded: "Oldest established",
 };
 
 export type SortKey = keyof typeof SORT_LABELS;
