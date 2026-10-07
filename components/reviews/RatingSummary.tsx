@@ -1,4 +1,4 @@
-import { Stars } from "@/components/common/StarRating";
+import { StarRating } from "@/components/common/StarRating";
 
 type RatingSummaryProps = {
   overall: number | null;
@@ -16,7 +16,10 @@ export function RatingSummary({ overall, count, categories }: RatingSummaryProps
         <p className="font-display text-5xl font-semibold text-foreground">
           {hasRatings ? overall!.toFixed(1) : "—"}
         </p>
-        <Stars value={hasRatings ? overall : 0} className="mt-2 text-xl" />
+        <StarRating
+          value={hasRatings ? overall : 0}
+          size="lg"
+        />
         <p className="mt-2 text-sm text-muted">
           {hasRatings ? `${count} ${count === 1 ? "review" : "reviews"}` : "No reviews yet"}
         </p>

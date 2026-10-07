@@ -40,9 +40,34 @@ export const ROLE_LABELS: Record<UserRole, string> = {
   ADMIN: "Admin",
 };
 
+export const CURRICULUM_SHORT_LABELS: Record<Curriculum, string> = {
+  MONGOLIAN_NATIONAL: "National curriculum",
+  CAMBRIDGE: "Cambridge",
+  IB: "IB",
+  AP: "AP",
+  DUAL_LANGUAGE: "Dual-language",
+};
+
+export const SORT_LABELS = {
+  rating: "Top rated",
+  reviews: "Most reviewed",
+  name: "Name (A–Z)",
+};
+
+export type SortKey = keyof typeof SORT_LABELS;
+
 export function formatTuition(min: number | null, max: number | null) {
   if (!min && !max) return "Free (public school)";
   const fmt = (n: number) => `₮${(n / 1_000_000).toFixed(1)}M`;
   if (min && max && min !== max) return `${fmt(min)}–${fmt(max)} / year`;
   return `${fmt(min ?? max ?? 0)} / year`;
+}
+export function tuitionSummary(
+  type: SchoolType,
+  min: number | null,
+  max: number | null
+) {
+  if (type === "PUBLIC") return "Free (public school)";
+  if (!min && !max) return "Fees not listed";
+  return formatTuition(min, max);
 }

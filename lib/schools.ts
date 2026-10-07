@@ -1,4 +1,27 @@
 import { prisma } from "@/lib/prisma";
+import type { Curriculum, Prisma, SchoolLevel, SchoolType } from "@prisma/client";
+
+const schoolCardSelect = {
+  id: true,
+  schoolNumber: true,
+  nameEn: true,
+  nameMn: true,
+  logoUrl: true,
+  type: true,
+  level: true,
+  curriculum: true,
+  aimagCity: true,
+  district: true,
+  tuitionMinAnnual: true,
+  tuitionMaxAnnual: true,
+  avgOverall: true,
+  reviewCount: true,
+  dormitory: { select: { id: true } },
+} satisfies Prisma.SchoolSelect;
+
+export type SchoolCardData = Prisma.SchoolGetPayload<{
+  select: typeof schoolCardSelect;
+}>;
 
 export function getSchoolHeader(id: string) {
   return prisma.school.findUnique({

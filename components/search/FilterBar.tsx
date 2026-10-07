@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { CURRICULUM_LABELS, LEVEL_LABELS, TYPE_LABELS } from "@/lib/labels";
 
-const FILTER_KEYS = ["level", "type", "curriculum", "dorm"];
+export const FILTER_KEYS = ["level", "type", "curriculum", "dorm"];
 
 function Chip({
   active,
