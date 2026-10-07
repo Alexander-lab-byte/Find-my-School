@@ -1,14 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { getSchoolOverview } from "@/lib/schools";
 import { ratingCategories } from "@/lib/ratings";
-import {
-  CURRICULUM_LABELS,
-  LANGUAGE_LABELS,
-  LEVEL_LABELS,
-  TYPE_LABELS,
-  tuitionSummary,
-} from "@/lib/labels";
+import { tuitionSummary } from "@/lib/labels";
 import { Badge } from "@/components/common/Badge";
 import { Icon, type IconName } from "@/components/common/Icon";
 import { RatingSummary } from "@/components/reviews/RatingSummary";
@@ -17,7 +12,8 @@ import { SchoolHighlights } from "@/components/school-profile/SchoolHighlights";
 
 type Contact = {
   icon: IconName;
-  label: string;
+  /** Key in the "Overview" namespace. */
+  label: "address" | "phone" | "email" | "website";
   value: string;
   href?: string;
   external?: boolean;
@@ -33,18 +29,26 @@ export default async function SchoolOverviewPage({
 
   if (!school) notFound();
 
+  const t = await getTranslations("Overview");
+  const tCommon = await getTranslations("Common");
+  const tType = await getTranslations("SchoolType");
+  const tLevel = await getTranslations("Level");
+  const tCurriculum = await getTranslations("Curriculum");
+  const tLanguage = await getTranslations("Language");
+  const tTuition = await getTranslations("Tuition");
+
   const contacts: Contact[] = [];
-  if (school.address) contacts.push({ icon: "map-pin", label: "Address", value: school.address });
+  if (school.address) contacts.push({ icon: "map-pin", label: "address", value: school.address });
   if (school.phone) {
-    contacts.push({ icon: "phone", label: "Phone", value: school.phone, href: `tel:${school.phone}` });
+    contacts.push({ icon: "phone", label: "phone", value: school.phone, href: `tel:${school.phone}` });
   }
   if (school.email) {
-    contacts.push({ icon: "mail", label: "Email", value: school.email, href: `mailto:${school.email}` });
+    contacts.push({ icon: "mail", label: "email", value: school.email, href: `mailto:${school.email}` });
   }
   if (school.website) {
     contacts.push({
       icon: "globe",
-      label: "Website",
+      label: "website",
       value: school.website.replace(/^https?:\/\//, "").replace(/\/$/, ""),
       href: school.website,
       external: true,
@@ -62,41 +66,41 @@ export default async function SchoolOverviewPage({
           notableAchievements={school.notableAchievements}
         />
 
-        <ProfileSection title="At a glance">
+        <ProfileSection title={t("atAGlance")}>
           <FactGrid>
-            <Fact label="School type">{TYPE_LABELS[school.type]}</Fact>
-            <Fact label="Grade levels">{LEVEL_LABELS[school.level]}</Fact>
-            <Fact label="Annual tuition">
-              {tuitionSummary(school.type, school.tuitionMinAnnual, school.tuitionMaxAnnual)}
+            <Fact label={t("schoolType")}>{tType(school.type)}</Fact>
+            <Fact label={t("gradeLevels")}>{tLevel(school.level)}</Fact>
+            <Fact label={t("tuition")}>
+              {tuitionSummary(tTuition, school.type, school.tuitionMinAnnual, school.tuitionMaxAnnual)}
             </Fact>
-            <Fact label="Teaching languages">
+            <Fact label={t("languages")}>
               {school.teachingLanguages.length > 0
-                ? school.teachingLanguages.map((l) => LANGUAGE_LABELS[l] ?? l).join(", ")
-                : "Not reported"}
+                ? school.teachingLanguages.map((l) => (tLanguage.has(l) ? tLanguage(l) : l)).join(", ")
+                : tCommon("notReported")}
             </Fact>
-            <Fact label="Accreditation">{school.accreditation ?? "Not reported"}</Fact>
-            <Fact label="Dormitory">{school.dormitory ? "Available" : "Not offered"}</Fact>
+            <Fact label={t("accreditation")}>{school.accreditation ?? tCommon("notReported")}</Fact>
+            <Fact label={t("dormitory")}>{school.dormitory ? t("available") : t("notOffered")}</Fact>
           </FactGrid>
         </ProfileSection>
 
-        <ProfileSection title="Curriculum">
+        <ProfileSection title={t("curriculum")}>
           <div className="flex flex-wrap gap-2">
             {school.curriculum.map((c) => (
               <Badge key={c} tone="accent">
-                {CURRICULUM_LABELS[c]}
+                {tCurriculum(c)}
               </Badge>
             ))}
           </div>
         </ProfileSection>
 
         <ProfileSection
-          title="Community ratings"
+          title={t("ratings")}
           action={
             <Link
               href={`/school/${id}/reviews`}
               className="inline-flex items-center gap-1 text-sm font-medium text-accent hover:underline hover:underline-offset-4"
             >
-              {school.reviewCount > 0 ? "Read all reviews" : "Write the first review"}
+              {school.reviewCount > 0 ? t("readAll") : t("writeFirst")}
               <Icon name="arrow-right" className="size-4" />
             </Link>
           }
@@ -111,14 +115,14 @@ export default async function SchoolOverviewPage({
 
       <aside>
         <div className="rounded-xl border border-line bg-surface p-5">
-          <h2 className="text-sm font-semibold text-foreground">Contact</h2>
+          <h2 className="text-sm font-semibold text-foreground">{t("contact")}</h2>
           {contacts.length > 0 ? (
             <ul className="mt-4 space-y-4 text-sm">
               {contacts.map((contact) => (
                 <li key={contact.label} className="flex gap-3">
                   <Icon name={contact.icon} className="mt-0.5 size-4 shrink-0 text-subtle" />
                   <div className="min-w-0">
-                    <p className="text-xs text-subtle">{contact.label}</p>
+                    <p className="text-xs text-subtle">{t(contact.label)}</p>
                     {contact.href ? (
                       <a
                         href={contact.href}
@@ -136,7 +140,7 @@ export default async function SchoolOverviewPage({
               ))}
             </ul>
           ) : (
-            <p className="mt-3 text-sm text-muted">No contact details have been added yet.</p>
+            <p className="mt-3 text-sm text-muted">{t("noContact")}</p>
           )}
         </div>
       </aside>

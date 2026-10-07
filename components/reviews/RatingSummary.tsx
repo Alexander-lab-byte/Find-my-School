@@ -1,13 +1,17 @@
+import { useTranslations } from "next-intl";
 import { Stars } from "@/components/common/StarRating";
+import type { RatingCategory } from "@/lib/ratings";
 
 type RatingSummaryProps = {
   overall: number | null;
   count: number;
-  categories: { label: string; value: number | null }[];
+  categories: { key: RatingCategory; value: number | null }[];
 };
 
 /** Big overall score beside a bar per category — the school's report card. */
 export function RatingSummary({ overall, count, categories }: RatingSummaryProps) {
+  const t = useTranslations("Ratings");
+  const tCommon = useTranslations("Common");
   const hasRatings = count > 0 && Boolean(overall);
 
   return (
@@ -18,16 +22,16 @@ export function RatingSummary({ overall, count, categories }: RatingSummaryProps
         </p>
         <Stars value={hasRatings ? overall : 0} className="mt-2 text-xl" />
         <p className="mt-2 text-sm text-muted">
-          {hasRatings ? `${count} ${count === 1 ? "review" : "reviews"}` : "No reviews yet"}
+          {hasRatings ? tCommon("reviewCount", { count }) : tCommon("noReviewsYet")}
         </p>
       </div>
 
       <dl className="space-y-3">
-        {categories.map(({ label, value }) => {
+        {categories.map(({ key, value }) => {
           const score = hasRatings && value ? value : null;
           return (
-            <div key={label} className="grid grid-cols-[8.5rem_minmax(0,1fr)] items-center gap-3 text-sm">
-              <dt className="text-muted">{label}</dt>
+            <div key={key} className="grid grid-cols-[8.5rem_minmax(0,1fr)] items-center gap-3 text-sm">
+              <dt className="text-muted">{t(key)}</dt>
               <dd className="flex items-center gap-3">
                 <span aria-hidden className="h-2 flex-1 overflow-hidden rounded-full bg-surface-muted">
                   <span

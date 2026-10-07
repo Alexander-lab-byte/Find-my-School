@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import {
   SEARCH_PAGE_SIZE,
   getDistricts,
@@ -17,9 +18,10 @@ import { SearchInput, SortSelect } from "@/components/search/SearchControls";
 import { PendingArea, SearchNavigationProvider } from "@/components/search/SearchNavigation";
 import { Icon } from "@/components/common/Icon";
 
-export const metadata: Metadata = {
-  title: "Browse schools",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("Metadata");
+  return { title: t("browse") };
+}
 
 type SearchPageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -38,18 +40,19 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
   const pageCount = Math.max(1, Math.ceil(total / SEARCH_PAGE_SIZE));
   const isFiltered = hasActiveFilters(filters);
+  const t = await getTranslations("Search");
 
   return (
     <SearchNavigationProvider>
       <main>
         <div className="border-b border-line bg-surface">
           <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">Directory</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">{t("eyebrow")}</p>
             <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              {filters.q ? <>Results for “{filters.q}”</> : "Browse schools"}
+              {filters.q ? t("resultsFor", { query: filters.q }) : t("title")}
             </h1>
             <p className="mt-2 max-w-2xl text-muted">
-              Narrow the list by type, level, curriculum, or district. Results update as you go.
+              {t("intro")}
             </p>
             <div className="mt-6 max-w-3xl">
               <SearchInput />
@@ -62,12 +65,13 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             <FilterBar districts={districts} />
           </aside>
 
-          <section aria-label="Results" className="space-y-5">
+          <section aria-label={t("results")} className="space-y-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p className="text-sm text-muted" aria-live="polite">
-                <span className="font-semibold text-foreground">{total}</span>{" "}
-                {total === 1 ? "school" : "schools"}
-                {isFiltered ? " match your search" : " listed"}
+                {t.rich(isFiltered ? "countMatching" : "countListed", {
+                  count: total,
+                  b: (chunks) => <span className="font-semibold text-foreground">{chunks}</span>,
+                })}
               </p>
               <SortSelect value={sort} />
             </div>
@@ -91,24 +95,24 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                   </span>
                   <h2 className="mt-4 font-display text-xl font-semibold text-foreground">
                     {total > 0
-                      ? "This page is empty"
+                      ? t("emptyPageTitle")
                       : isFiltered
-                        ? "No schools match your search"
-                        : "No schools have been added yet"}
+                        ? t("noMatchTitle")
+                        : t("noneTitle")}
                   </h2>
                   <p className="mx-auto mt-2 max-w-md text-sm text-muted">
                     {total > 0
-                      ? "There are fewer results than this page number."
+                      ? t("emptyPageBody")
                       : isFiltered
-                        ? "Try removing a filter, or search by district or city instead."
-                        : "Check back soon — we're adding schools across Mongolia."}
+                        ? t("noMatchBody")
+                        : t("noneBody")}
                   </p>
                   {(isFiltered || total > 0) && (
                     <Link
                       href="/search"
                       className="mt-6 inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
                     >
-                      Show all schools
+                      {t("showAll")}
                     </Link>
                   )}
                 </div>

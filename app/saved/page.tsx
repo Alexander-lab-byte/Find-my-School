@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { headers } from "next/headers";
+import { getTranslations } from "next-intl/server";
 import { getCurrentUser } from "@/lib/current-user";
 import { getSavedSchoolsForUser } from "@/lib/schools";
 import { Icon } from "@/components/common/Icon";
 import { SchoolCard } from "@/components/search/SchoolCard";
 
-export const metadata: Metadata = {
-  title: "Saved schools",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("Metadata");
+  return { title: t("saved") };
+}
 
 function EmptyState({ title, body, href, cta }: { title: string; body: string; href: string; cta: string }) {
   return (
@@ -32,28 +34,30 @@ export default async function SavedSchoolsPage() {
   const isSignedIn = (await headers()).get("x-user-signed-in") === "1";
   const user = isSignedIn ? await getCurrentUser() : null;
   const saved = user ? await getSavedSchoolsForUser(user.id) : [];
+  const t = await getTranslations("Saved");
+  const tCommon = await getTranslations("Common");
 
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6">
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">Your list</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">{t("eyebrow")}</p>
       <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-        Saved schools
+        {t("title")}
       </h1>
 
       <div className="mt-8">
         {!user ? (
           <EmptyState
-            title="Log in to see your saved schools"
-            body="Save schools from their profile pages to compare them later."
+            title={t("loginTitle")}
+            body={t("loginBody")}
             href="/login?next=%2Fsaved"
-            cta="Log in"
+            cta={tCommon("logIn")}
           />
         ) : saved.length === 0 ? (
           <EmptyState
-            title="No saved schools yet"
-            body="Tap Save on a school's page to add it here."
+            title={t("emptyTitle")}
+            body={t("emptyBody")}
             href="/search"
-            cta="Browse schools"
+            cta={tCommon("browseSchools")}
           />
         ) : (
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">

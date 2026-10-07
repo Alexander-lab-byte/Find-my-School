@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 
 export function RegisterForm({ next }: { next: string }) {
+  const t = useTranslations("Auth");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -46,8 +48,8 @@ export function RegisterForm({ next }: { next: string }) {
   if (checkEmail) {
     return (
       <div className="rounded-xl border border-accent/30 bg-accent-soft p-6 text-center">
-        <p className="font-medium text-foreground">Check your email</p>
-        <p className="mt-1 text-sm text-muted">We sent a confirmation link to {email}.</p>
+        <p className="font-medium text-foreground">{t("checkEmail")}</p>
+        <p className="mt-1 text-sm text-muted">{t("sentLink", { email })}</p>
       </div>
     );
   }
@@ -56,7 +58,7 @@ export function RegisterForm({ next }: { next: string }) {
     <form onSubmit={handleSubmit} className="space-y-5">
       <div>
         <label htmlFor="name" className="text-sm font-medium text-foreground">
-          Name
+          {t("name")}
         </label>
         <input
           id="name"
@@ -70,7 +72,7 @@ export function RegisterForm({ next }: { next: string }) {
       </div>
       <div>
         <label htmlFor="email" className="text-sm font-medium text-foreground">
-          Email
+          {t("email")}
         </label>
         <input
           id="email"
@@ -84,7 +86,7 @@ export function RegisterForm({ next }: { next: string }) {
       </div>
       <div>
         <label htmlFor="password" className="text-sm font-medium text-foreground">
-          Password
+          {t("password")}
         </label>
         <input
           id="password"
@@ -98,7 +100,7 @@ export function RegisterForm({ next }: { next: string }) {
           className="field mt-1.5"
         />
         <p id="password-hint" className="mt-1.5 text-xs text-subtle">
-          At least 8 characters.
+          {t("passwordHint")}
         </p>
       </div>
 
@@ -113,7 +115,7 @@ export function RegisterForm({ next }: { next: string }) {
         disabled={isSubmitting}
         className="w-full rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover disabled:opacity-50"
       >
-        {isSubmitting ? "Creating account…" : "Create account"}
+        {isSubmitting ? t("creating") : t("createButton")}
       </button>
     </form>
   );

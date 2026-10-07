@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import type { getSchoolHeader } from "@/lib/schools";
 import { Badge, TYPE_TONE } from "@/components/common/Badge";
 import { BackButton } from "@/components/common/BackButton";
@@ -6,21 +7,24 @@ import { Icon } from "@/components/common/Icon";
 import { SchoolMonogram } from "@/components/common/SchoolMonogram";
 import { Stars } from "@/components/common/StarRating";
 import { SaveButton } from "@/components/school-profile/SaveButton";
-import { LEVEL_LABELS, TYPE_LABELS } from "@/lib/labels";
+import { formatLocation, schoolNames } from "@/lib/labels";
 
 type School = NonNullable<Awaited<ReturnType<typeof getSchoolHeader>>>;
 
 export function SchoolHeader({ school, isSaved }: { school: School; isSaved: boolean }) {
-  const location = [school.khoroo && `Khoroo ${school.khoroo}`, school.district, school.aimagCity]
-    .filter(Boolean)
-    .join(", ");
+  const t = useTranslations("Profile");
+  const tCommon = useTranslations("Common");
+  const tType = useTranslations("SchoolType");
+  const tLevel = useTranslations("Level");
+  const location = formatLocation(useTranslations("Place"), school);
+  const { primary, secondary } = schoolNames(school, useLocale());
   const hasRating = school.reviewCount > 0 && Boolean(school.avgOverall);
 
   return (
     <header className="border-b border-line bg-surface">
       <div className="mx-auto max-w-5xl px-4 pb-8 pt-6 sm:px-6 sm:pb-10">
         <div className="flex items-start justify-between gap-4">
-          <BackButton fallbackHref="/search" label="Back to search" />
+          <BackButton fallbackHref="/search" label={tCommon("backToSearch")} />
           <SaveButton schoolId={school.id} initialSaved={isSaved} />
         </div>
 
@@ -29,14 +33,16 @@ export function SchoolHeader({ school, isSaved }: { school: School; isSaved: boo
             <SchoolMonogram name={school.nameEn} type={school.type} logoUrl={school.logoUrl} size="lg" />
             <div className="min-w-0">
               <div className="flex flex-wrap gap-1.5">
-                <Badge tone={TYPE_TONE[school.type]}>{TYPE_LABELS[school.type]}</Badge>
-                <Badge>{LEVEL_LABELS[school.level]}</Badge>
-                {school.schoolNumber && <Badge>{school.schoolNumber}</Badge>}
+                <Badge tone={TYPE_TONE[school.type]}>{tType(school.type)}</Badge>
+                <Badge>{tLevel(school.level)}</Badge>
+                {school.schoolNumber && !school.nameEn.includes(school.schoolNumber) && (
+                  <Badge>{school.schoolNumber}</Badge>
+                )}
               </div>
               <h1 className="mt-3 text-balance font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-                {school.nameEn}
+                {primary}
               </h1>
-              {school.nameMn && school.nameMn !== school.nameEn && <p className="mt-1 text-lg text-muted">{school.nameMn}</p>}
+              {secondary && <p className="mt-1 text-lg text-muted">{secondary}</p>}
 
               <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted">
                 <span className="inline-flex items-center gap-1.5">
@@ -74,17 +80,17 @@ export function SchoolHeader({ school, isSaved }: { school: School; isSaved: boo
                   <span className="font-display text-4xl font-semibold text-foreground">
                     {school.avgOverall!.toFixed(1)}
                   </span>
-                  <span className="text-sm text-muted">out of 5</span>
+                  <span className="text-sm text-muted">{t("outOf5")}</span>
                 </div>
                 <Stars value={school.avgOverall} className="mt-2 text-lg" />
                 <p className="mt-1.5 text-sm text-muted">
-                  Based on {school.reviewCount} {school.reviewCount === 1 ? "review" : "reviews"}
+                  {t("basedOn", { count: school.reviewCount })}
                 </p>
               </>
             ) : (
               <>
-                <p className="font-medium text-foreground">No reviews yet</p>
-                <p className="mt-1 text-sm text-muted">Be the first to share your experience.</p>
+                <p className="font-medium text-foreground">{tCommon("noReviewsYet")}</p>
+                <p className="mt-1 text-sm text-muted">{t("beFirst")}</p>
               </>
             )}
             <Link
@@ -92,7 +98,7 @@ export function SchoolHeader({ school, isSaved }: { school: School; isSaved: boo
               className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
             >
               <Icon name="pencil" className="size-4" />
-              Write a review
+              {tCommon("writeReview")}
             </Link>
           </div>
         </div>

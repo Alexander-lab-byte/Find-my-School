@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Icon } from "@/components/common/Icon";
 import { useSearchNavigation } from "@/components/search/SearchNavigation";
-import { CURRICULUM_LABELS, LEVEL_LABELS, TYPE_LABELS } from "@/lib/labels";
+import { CURRICULA, LEVELS, SCHOOL_TYPES } from "@/lib/labels";
 
 export const FILTER_KEYS = ["type", "level", "curriculum", "district", "dorm"] as const;
 
@@ -55,6 +56,11 @@ function Group({ title, children }: { title: string; children: React.ReactNode }
 }
 
 export function FilterBar({ districts }: { districts: { name: string; count: number }[] }) {
+  const t = useTranslations("Filters");
+  const tType = useTranslations("SchoolType");
+  const tLevel = useTranslations("Level");
+  const tCurriculum = useTranslations("Curriculum");
+  const tPlace = useTranslations("Place");
   const { searchParams, update } = useSearchNavigation();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -80,7 +86,7 @@ export function FilterBar({ districts }: { districts: { name: string; count: num
       >
         <span className="flex items-center gap-2">
           <Icon name="sliders" className="size-4" />
-          Filters
+          {t("filters")}
           {activeCount > 0 && (
             <span className="rounded-full bg-accent px-2 py-0.5 text-xs text-accent-foreground">
               {activeCount}
@@ -98,56 +104,56 @@ export function FilterBar({ districts }: { districts: { name: string; count: num
         className={`${isOpen ? "mt-3 block" : "hidden"} space-y-4 rounded-xl border border-line bg-surface p-4 lg:mt-0 lg:block`}
       >
         <div className="flex items-center justify-between px-2">
-          <h2 className="text-sm font-semibold text-foreground">Filters</h2>
+          <h2 className="text-sm font-semibold text-foreground">{t("filters")}</h2>
           {activeCount > 0 && (
             <button
               type="button"
               onClick={clearAll}
               className="text-xs font-medium text-accent underline-offset-4 hover:underline"
             >
-              Clear all
+              {t("clearAll")}
             </button>
           )}
         </div>
 
-        <Group title="School type">
-          {Object.entries(TYPE_LABELS).map(([value, label]) => (
+        <Group title={t("type")}>
+          {SCHOOL_TYPES.map((value) => (
             <Option
               key={value}
               active={searchParams.get("type") === value}
               onClick={() => toggle("type", value)}
             >
-              {label}
+              {tType(value)}
             </Option>
           ))}
         </Group>
 
-        <Group title="Level">
-          {Object.entries(LEVEL_LABELS).map(([value, label]) => (
+        <Group title={t("level")}>
+          {LEVELS.map((value) => (
             <Option
               key={value}
               active={searchParams.get("level") === value}
               onClick={() => toggle("level", value)}
             >
-              {label}
+              {tLevel(value)}
             </Option>
           ))}
         </Group>
 
-        <Group title="Curriculum">
-          {Object.entries(CURRICULUM_LABELS).map(([value, label]) => (
+        <Group title={t("curriculum")}>
+          {CURRICULA.map((value) => (
             <Option
               key={value}
               active={searchParams.get("curriculum") === value}
               onClick={() => toggle("curriculum", value)}
             >
-              {label}
+              {tCurriculum(value)}
             </Option>
           ))}
         </Group>
 
         {districts.length > 0 && (
-          <Group title="District">
+          <Group title={t("district")}>
             {districts.map(({ name, count }) => (
               <Option
                 key={name}
@@ -155,15 +161,15 @@ export function FilterBar({ districts }: { districts: { name: string; count: num
                 onClick={() => toggle("district", name)}
                 count={count}
               >
-                {name}
+                {tPlace.has(name) ? tPlace(name) : name}
               </Option>
             ))}
           </Group>
         )}
 
-        <Group title="Features">
+        <Group title={t("features")}>
           <Option active={searchParams.get("dorm") === "true"} onClick={() => toggle("dorm", "true")}>
-            Has dormitory
+            {t("hasDorm")}
           </Option>
         </Group>
       </div>

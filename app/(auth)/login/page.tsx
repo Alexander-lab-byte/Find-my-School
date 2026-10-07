@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { AuthCard } from "@/components/auth/AuthCard";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { safeNextPath } from "@/lib/navigation";
 
-export const metadata: Metadata = {
-  title: "Log in",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("Metadata");
+  return { title: t("login") };
+}
 
 export default async function LoginPage({
   searchParams,
@@ -15,24 +17,26 @@ export default async function LoginPage({
 }) {
   const { next: rawNext, error } = await searchParams;
   const next = safeNextPath(rawNext);
+  const t = await getTranslations("Auth");
+  const tCommon = await getTranslations("Common");
   const registerHref = next === "/" ? "/register" : `/register?next=${encodeURIComponent(next)}`;
 
   return (
     <AuthCard
-      title="Welcome back"
-      description="Log in to Find My School Mongolia to rate and review schools."
+      title={t("welcomeBack")}
+      description={t("loginIntro")}
       footer={
         <>
-          Don&apos;t have an account?{" "}
+          {t("noAccount")}{" "}
           <Link href={registerHref} className="font-medium text-accent underline-offset-4 hover:underline">
-            Sign up
+            {tCommon("signUp")}
           </Link>
         </>
       }
     >
       {error === "auth-callback-failed" && (
         <p role="alert" className="mb-6 rounded-lg bg-danger-soft px-3 py-2.5 text-sm text-danger">
-          That sign-in link didn&apos;t work or has expired. Please log in again.
+          {t("callbackFailed")}
         </p>
       )}
       <LoginForm next={next} />

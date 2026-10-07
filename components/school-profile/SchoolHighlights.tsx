@@ -1,6 +1,6 @@
 import type { Curriculum } from "@prisma/client";
+import { useTranslations } from "next-intl";
 import { Icon, type IconName } from "@/components/common/Icon";
-import { CURRICULUM_SHORT_LABELS } from "@/lib/labels";
 
 type SchoolHighlightsProps = {
   foundedYear: number | null;
@@ -42,8 +42,10 @@ export function SchoolHighlights({
   graduateDestinations,
   notableAchievements,
 }: SchoolHighlightsProps) {
+  const t = useTranslations("Highlights");
+  const tCurriculum = useTranslations("CurriculumShort");
   const age = foundedYear ? new Date().getFullYear() - foundedYear : null;
-  const programme = curriculum.map((c) => CURRICULUM_SHORT_LABELS[c]).join(" · ");
+  const programme = curriculum.map((c) => tCurriculum(c)).join(" · ");
   const hasStats = foundedYear || studentTeacherRatio || programme;
 
   if (!hasStats && graduateDestinations.length === 0 && notableAchievements.length === 0) {
@@ -57,24 +59,24 @@ export function SchoolHighlights({
           {foundedYear && (
             <StatTile
               icon="calendar"
-              label="Founded"
+              label={t("founded")}
               value={String(foundedYear)}
-              caption={age && age > 0 ? `${age} years of teaching` : undefined}
+              caption={age && age > 0 ? t("yearsTeaching", { years: age }) : undefined}
             />
           )}
           {studentTeacherRatio && (
             <StatTile
               icon="users"
-              label="Student–teacher"
+              label={t("ratio")}
               value={studentTeacherRatio}
-              caption="students per teacher"
+              caption={t("perTeacher")}
             />
           )}
           {programme && (
             <StatTile
               icon="book"
-              label="Programme"
-              value={curriculum.length > 1 ? `${curriculum.length} tracks` : programme}
+              label={t("programme")}
+              value={curriculum.length > 1 ? t("tracks", { count: curriculum.length }) : programme}
               caption={curriculum.length > 1 ? programme : undefined}
             />
           )}
@@ -90,7 +92,7 @@ export function SchoolHighlights({
           <div className="relative">
             <h2 className="flex items-center gap-2 font-display text-xl font-semibold text-foreground">
               <Icon name="graduation" className="size-5 text-accent" />
-              Where graduates go
+              {t("graduates")}
             </h2>
             <ul className="mt-4 flex flex-wrap gap-2">
               {graduateDestinations.map((destination) => (
@@ -110,7 +112,7 @@ export function SchoolHighlights({
         <section className="rounded-xl border border-line bg-surface p-6">
           <h2 className="flex items-center gap-2 font-display text-xl font-semibold text-foreground">
             <Icon name="trophy" className="size-5 text-star" />
-            Notable achievements
+            {t("achievements")}
           </h2>
           <ul className="mt-4 space-y-3">
             {notableAchievements.map((achievement) => (

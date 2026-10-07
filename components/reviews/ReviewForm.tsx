@@ -2,16 +2,23 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import type { ReviewTag } from "@prisma/client";
 import { CategoryStarInput } from "./CategoryStarInput";
 import { submitReview } from "@/app/school/[id]/reviews/actions";
 
-const TAG_OPTIONS: { value: ReviewTag; label: string }[] = [
-  { value: "DORMITORY", label: "Dormitory" },
-  { value: "LIBRARY", label: "Library" },
-  { value: "FOOD_CANTEEN", label: "Food & Canteen" },
-  { value: "EXTRACURRICULARS", label: "Extracurriculars" },
-];
+const TAG_OPTIONS: ReviewTag[] = ["DORMITORY", "LIBRARY", "FOOD_CANTEEN", "EXTRACURRICULARS"];
+
+type FormError = "RATINGS" | "LENGTH" | "LOGIN_REQUIRED" | "ALREADY_REVIEWED" | "GENERIC";
+
+// Message key in the "ReviewForm" namespace for each error.
+const ERROR_KEYS: Record<FormError, string> = {
+  RATINGS: "errorRatings",
+  LENGTH: "errorLength",
+  LOGIN_REQUIRED: "loginRequired",
+  ALREADY_REVIEWED: "alreadyReviewed",
+  GENERIC: "generic",
+};
 
 const MIN_BODY_LENGTH = 20;
 
@@ -25,6 +32,9 @@ type Ratings = {
 };
 
 export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: boolean }) {
+  const t = useTranslations("ReviewForm");
+  const tRatings = useTranslations("Ratings");
+  const tTag = useTranslations("ReviewTag");
   const [ratings, setRatings] = useState<Ratings>({
     academics: 0,
     facilities: 0,
@@ -35,7 +45,7 @@ export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: b
   });
   const [tags, setTags] = useState<ReviewTag[]>([]);
   const [body, setBody] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<FormError | null>(null);
   const [success, setSuccess] = useState(false);
   const [isPending, startTransition] = useTransition();
 
@@ -54,17 +64,17 @@ export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: b
     setError(null);
 
     if (!ratings.academics || !ratings.facilities || !ratings.teachers || !ratings.environment) {
-      setError("Please rate academics, facilities, teachers, and campus environment.");
+      setError("RATINGS");
       return;
     }
     if (bodyLength < MIN_BODY_LENGTH) {
-      setError("Please write at least a couple of sentences.");
+      setError("LENGTH");
       return;
     }
 
     startTransition(async () => {
       try {
-        await submitReview({
+        const result = await submitReview({
           schoolId,
           bodyText: body.trim(),
           tags,
@@ -75,9 +85,10 @@ export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: b
           dorms: hasDorm && ratings.dorms ? ratings.dorms : undefined,
           library: ratings.library || undefined,
         });
-        setSuccess(true);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+        if (result.ok) setSuccess(true);
+        else setError(result.error);
+      } catch {
+        setError("GENERIC");
       }
     });
   }
@@ -85,8 +96,8 @@ export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: b
   if (success) {
     return (
       <div className="rounded-xl border border-accent/30 bg-accent-soft p-6 text-center">
-        <p className="font-medium text-foreground">Thank you for your review</p>
-        <p className="mt-1 text-sm text-muted">It&apos;s now live on this school&apos;s page.</p>
+        <p className="font-medium text-foreground">{t("thanks")}</p>
+        <p className="mt-1 text-sm text-muted">{t("live")}</p>
       </div>
     );
   }
@@ -94,40 +105,40 @@ export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: b
   return (
     <form onSubmit={handleSubmit} className="space-y-6 rounded-xl border border-line bg-surface p-5">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-subtle">Ratings</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-subtle">{t("ratings")}</p>
         <div className="mt-1 divide-y divide-line">
           <CategoryStarInput
-            label="Academics"
+            label={tRatings("academics")}
             value={ratings.academics}
             onChange={(v) => setRating("academics", v)}
             required
           />
           <CategoryStarInput
-            label="Facilities"
+            label={tRatings("facilities")}
             value={ratings.facilities}
             onChange={(v) => setRating("facilities", v)}
             required
           />
           <CategoryStarInput
-            label="Teachers"
+            label={tRatings("teachers")}
             value={ratings.teachers}
             onChange={(v) => setRating("teachers", v)}
             required
           />
           <CategoryStarInput
-            label="Campus environment"
+            label={tRatings("environment")}
             value={ratings.environment}
             onChange={(v) => setRating("environment", v)}
             required
           />
           <CategoryStarInput
-            label="Library"
+            label={tRatings("library")}
             value={ratings.library}
             onChange={(v) => setRating("library", v)}
           />
           {hasDorm && (
             <CategoryStarInput
-              label="Dormitory"
+              label={tRatings("dorms")}
               value={ratings.dorms}
               onChange={(v) => setRating("dorms", v)}
             />
@@ -137,10 +148,11 @@ export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: b
 
       <div>
         <p className="text-xs font-semibold uppercase tracking-[0.12em] text-subtle">
-          Topics <span className="font-normal normal-case tracking-normal">(optional)</span>
+          {t("topics")}{" "}
+          <span className="font-normal normal-case tracking-normal">{t("optional")}</span>
         </p>
         <div className="mt-2 flex flex-wrap gap-2">
-          {TAG_OPTIONS.filter((t) => hasDorm || t.value !== "DORMITORY").map(({ value, label }) => (
+          {TAG_OPTIONS.filter((tag) => hasDorm || tag !== "DORMITORY").map((value) => (
             <button
               key={value}
               type="button"
@@ -152,7 +164,7 @@ export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: b
                   : "border-line text-muted hover:border-accent/40 hover:text-foreground"
               }`}
             >
-              {label}
+              {tTag(value)}
             </button>
           ))}
         </div>
@@ -163,36 +175,36 @@ export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: b
           htmlFor="review-body"
           className="text-xs font-semibold uppercase tracking-[0.12em] text-subtle"
         >
-          Your review
+          {t("yourReview")}
         </label>
         <textarea
           id="review-body"
           value={body}
           onChange={(e) => setBody(e.target.value)}
           rows={6}
-          placeholder="What stood out — teaching, atmosphere, facilities, communication with families?"
+          placeholder={t("placeholder")}
           className="field mt-2 resize-y leading-6"
         />
         <p
           className={`mt-1.5 text-xs ${bodyLength >= MIN_BODY_LENGTH ? "text-subtle" : "text-muted"}`}
         >
           {bodyLength >= MIN_BODY_LENGTH
-            ? `${bodyLength} characters`
-            : `${MIN_BODY_LENGTH - bodyLength} more characters needed`}
+            ? t("charCount", { count: bodyLength })
+            : t("moreChars", { count: MIN_BODY_LENGTH - bodyLength })}
         </p>
       </div>
 
       {error && (
         <p role="alert" className="rounded-lg bg-danger-soft px-3 py-2.5 text-sm text-danger">
-          {error}
-          {error.toLowerCase().includes("log in") && (
+          {t(ERROR_KEYS[error])}
+          {error === "LOGIN_REQUIRED" && (
             <>
               {" "}
               <Link
                 href={`/login?next=${encodeURIComponent(`/school/${schoolId}/reviews`)}`}
                 className="font-medium underline underline-offset-4"
               >
-                Log in
+                {t("logIn")}
               </Link>
             </>
           )}
@@ -204,7 +216,7 @@ export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: b
         disabled={isPending}
         className="w-full rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover disabled:opacity-50"
       >
-        {isPending ? "Submitting…" : "Submit review"}
+        {isPending ? t("submitting") : t("submit")}
       </button>
     </form>
   );

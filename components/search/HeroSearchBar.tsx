@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { Icon } from "@/components/common/Icon";
+import { schoolNames } from "@/lib/labels";
 
 type Suggestion = {
   id: string;
@@ -19,6 +21,9 @@ type Suggestion = {
  * highlighted) opens the full results page.
  */
 export function HeroSearchBar() {
+  const t = useTranslations("HeroSearch");
+  const tPlace = useTranslations("Place");
+  const locale = useLocale();
   const router = useRouter();
   const listId = useId();
   const [query, setQuery] = useState("");
@@ -87,7 +92,7 @@ export function HeroSearchBar() {
         <input
           type="text"
           role="combobox"
-          aria-label="Search schools"
+          aria-label={t("ariaLabel")}
           aria-expanded={showList}
           aria-controls={listId}
           aria-autocomplete="list"
@@ -101,14 +106,14 @@ export function HeroSearchBar() {
           onFocus={() => setIsOpen(true)}
           onBlur={() => setIsOpen(false)}
           onKeyDown={handleKeyDown}
-          placeholder="Name, number, or district…"
+          placeholder={t("placeholder")}
           className="min-w-0 flex-1 bg-transparent px-1 py-2 text-base text-foreground outline-none placeholder:text-subtle"
         />
         <button
           type="submit"
           className="shrink-0 rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover sm:px-6"
         >
-          Search
+          {t("search")}
         </button>
       </div>
 
@@ -119,8 +124,11 @@ export function HeroSearchBar() {
           onMouseDown={(e) => e.preventDefault()}
           className="absolute inset-x-0 top-full z-20 mt-2 overflow-hidden rounded-xl border border-line bg-surface shadow-[0_20px_40px_-20px_rgb(0_0_0/0.3)]"
         >
-          <ul id={listId} role="listbox" aria-label="Matching schools" className="py-1.5">
-            {suggestions.map((school, i) => (
+          <ul id={listId} role="listbox" aria-label={t("matching")} className="py-1.5">
+            {suggestions.map((school, i) => {
+              const { primary, secondary } = schoolNames(school, locale);
+              const place = school.district ?? school.aimagCity;
+              return (
               <li
                 key={school.id}
                 id={`${listId}-${i}`}
@@ -136,23 +144,24 @@ export function HeroSearchBar() {
                 >
                   <span className="min-w-0">
                     <span className="block truncate text-sm font-medium text-foreground">
-                      {school.nameEn}
+                      {primary}
                     </span>
-                    {school.nameMn && school.nameMn !== school.nameEn && (
-                      <span className="block truncate text-xs text-muted">{school.nameMn}</span>
+                    {secondary && (
+                      <span className="block truncate text-xs text-muted">{secondary}</span>
                     )}
                   </span>
                   <span className="flex shrink-0 items-center gap-1 text-xs text-subtle">
                     <Icon name="map-pin" className="size-3.5" />
-                    {school.district ?? school.aimagCity}
+                    {tPlace.has(place) ? tPlace(place) : place}
                   </span>
                 </Link>
               </li>
-            ))}
+              );
+            })}
           </ul>
           {suggestions.length === 0 && (
             <p className="px-4 pb-1 pt-2 text-sm text-muted">
-              No schools match “{suggestionsFor}” yet.
+              {t("noMatch", { query: suggestionsFor })}
             </p>
           )}
           <button
@@ -160,7 +169,7 @@ export function HeroSearchBar() {
             onClick={goToResults}
             className="flex w-full items-center gap-2 border-t border-line px-4 py-3 text-sm font-medium text-accent transition-colors hover:bg-surface-muted"
           >
-            See all results for “{trimmed}”
+            {t("seeAll", { query: trimmed })}
             <Icon name="arrow-right" className="size-4" />
           </button>
         </div>

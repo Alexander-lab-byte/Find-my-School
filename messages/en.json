@@ -1,0 +1,357 @@
+{
+  "Metadata": {
+    "siteName": "Find My School Mongolia",
+    "description": "Search, compare, and read reviews of schools across Ulaanbaatar and the aimags of Mongolia.",
+    "browse": "Browse schools",
+    "saved": "Saved schools",
+    "login": "Log in",
+    "register": "Create an account",
+    "schoolNotFound": "School not found",
+    "schoolDescription": "Ratings, reviews, fees, and admissions for {name}, {place}."
+  },
+  "Common": {
+    "brand": "Find My School",
+    "tagline": "Mongolia",
+    "homeAria": "Find My School Mongolia, home",
+    "browseSchools": "Browse schools",
+    "logIn": "Log in",
+    "logOut": "Log out",
+    "signUp": "Sign up",
+    "saved": "Saved",
+    "savedSchools": "Saved schools",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "backToSearch": "Back to search",
+    "goHome": "Go home",
+    "tryAgain": "Try again",
+    "writeReview": "Write a review",
+    "notReported": "Not reported",
+    "language": "Language",
+    "noReviewsYet": "No reviews yet",
+    "reviewCount": "{count, plural, one {# review} other {# reviews}}",
+    "schoolCount": "{count, plural, one {# school} other {# schools}}"
+  },
+  "Footer": {
+    "about": "An independent guide to schools in Mongolia — curriculum, fees, dormitories, and reviews from parents, students, alumni, and educators.",
+    "explore": "Explore",
+    "contribute": "Contribute",
+    "allSchools": "All schools",
+    "publicSchools": "Public schools",
+    "privateSchools": "Private schools",
+    "internationalSchools": "International schools",
+    "dormSchools": "Schools with dormitories",
+    "reviewYourSchool": "Review your school",
+    "createAccount": "Create an account",
+    "copyright": "© {year} Find My School Mongolia",
+    "disclaimer": "Reviews reflect the views of individual community members.",
+    "logIn": "Log in"
+  },
+  "Home": {
+    "eyebrow": "Schools across Mongolia",
+    "title": "Choose a school with confidence",
+    "subtitle": "Compare curricula, fees, and dormitories, and read honest reviews from parents, students, alumni, and educators.",
+    "browseLabel": "Browse:",
+    "quickPublic": "Public",
+    "quickPrivate": "Private",
+    "quickInternational": "International",
+    "quickHigh": "High school",
+    "quickDorm": "With dormitory",
+    "directoryEyebrow": "Directory",
+    "directoryTitle": "Schools on Find My School",
+    "directoryDescription": "Sorted by community rating. Open any school for its full profile, fees, and reviews.",
+    "viewAll": "View all {count, plural, one {# school} other {# schools}}",
+    "noSchools": "No schools have been added yet.",
+    "browseEyebrow": "Browse",
+    "browseTitle": "Find the right kind of school",
+    "browseDescription": "Start broad, then narrow down by level, curriculum, and features.",
+    "byDistrict": "By district",
+    "communityEyebrow": "Community",
+    "recentlyReviewed": "Recently reviewed",
+    "ctaTitle": "Know a school well?",
+    "ctaBody": "Your review helps another family make one of the most important decisions they face. It takes about three minutes.",
+    "ctaFind": "Find your school to review",
+    "ctaRegister": "Create a free account"
+  },
+  "HeroSearch": {
+    "placeholder": "Name, number, or district…",
+    "search": "Search",
+    "ariaLabel": "Search schools",
+    "matching": "Matching schools",
+    "noMatch": "No schools match “{query}” yet.",
+    "seeAll": "See all results for “{query}”"
+  },
+  "Search": {
+    "eyebrow": "Directory",
+    "title": "Browse schools",
+    "resultsFor": "Results for “{query}”",
+    "intro": "Narrow the list by type, level, curriculum, or district. Results update as you go.",
+    "inputPlaceholder": "Search by school name, number, district, or city…",
+    "inputLabel": "Search schools",
+    "clear": "Clear search",
+    "countListed": "<b>{count}</b> {count, plural, one {school} other {schools}} listed",
+    "countMatching": "<b>{count}</b> {count, plural, one {school matches} other {schools match}} your search",
+    "sortBy": "Sort by",
+    "emptyPageTitle": "This page is empty",
+    "emptyPageBody": "There are fewer results than this page number.",
+    "noMatchTitle": "No schools match your search",
+    "noMatchBody": "Try removing a filter, or search by district or city instead.",
+    "noneTitle": "No schools have been added yet",
+    "noneBody": "Check back soon — we're adding schools across Mongolia.",
+    "showAll": "Show all schools",
+    "results": "Results"
+  },
+  "Filters": {
+    "filters": "Filters",
+    "clearAll": "Clear all",
+    "type": "School type",
+    "level": "Level",
+    "curriculum": "Curriculum",
+    "district": "District",
+    "features": "Features",
+    "hasDorm": "Has dormitory",
+    "active": "Active filters",
+    "remove": "Remove filter"
+  },
+  "Pagination": {
+    "label": "Pagination",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page {page} of {count}"
+  },
+  "SchoolType": {
+    "PUBLIC": "Public",
+    "PRIVATE": "Private",
+    "INTERNATIONAL": "International"
+  },
+  "SchoolTypePlural": {
+    "PUBLIC": "Public schools",
+    "PRIVATE": "Private schools",
+    "INTERNATIONAL": "International schools"
+  },
+  "SchoolTypeDescription": {
+    "PUBLIC": "State schools following the national curriculum, free to attend.",
+    "PRIVATE": "Independent schools with their own programmes and annual tuition.",
+    "INTERNATIONAL": "Schools teaching international curricula such as IB, Cambridge, or AP."
+  },
+  "Level": {
+    "ELEMENTARY": "Elementary",
+    "MIDDLE": "Middle school",
+    "HIGH": "High school",
+    "K12": "K–12"
+  },
+  "Curriculum": {
+    "MONGOLIAN_NATIONAL": "Mongolian National Curriculum",
+    "CAMBRIDGE": "Cambridge",
+    "IB": "International Baccalaureate",
+    "AP": "Advanced Placement",
+    "DUAL_LANGUAGE": "Dual-language"
+  },
+  "CurriculumShort": {
+    "MONGOLIAN_NATIONAL": "National curriculum",
+    "CAMBRIDGE": "Cambridge",
+    "IB": "IB",
+    "AP": "AP",
+    "DUAL_LANGUAGE": "Dual-language"
+  },
+  "Language": {
+    "mn": "Mongolian",
+    "en": "English",
+    "ru": "Russian",
+    "ja": "Japanese"
+  },
+  "ReviewTag": {
+    "DORMITORY": "Dormitory",
+    "LIBRARY": "Library",
+    "FOOD_CANTEEN": "Food & Canteen",
+    "EXTRACURRICULARS": "Extracurriculars",
+    "ACADEMICS": "Academics",
+    "FACILITIES": "Facilities",
+    "TEACHERS": "Teachers",
+    "ENVIRONMENT": "Environment"
+  },
+  "Role": {
+    "PARENT": "Parent",
+    "STUDENT": "Student",
+    "ALUMNI": "Alumni",
+    "EDUCATOR": "Educator",
+    "ADMIN": "Admin"
+  },
+  "Sort": {
+    "rating": "Top rated",
+    "reviews": "Most reviewed",
+    "name": "Name (A–Z)",
+    "founded": "Oldest established"
+  },
+  "Tuition": {
+    "free": "Free (public school)",
+    "notListed": "Fees not listed",
+    "notReported": "Not reported",
+    "range": "₮{min}M–₮{max}M / year",
+    "single": "₮{amount}M / year"
+  },
+  "Place": {
+    "Ulaanbaatar": "Ulaanbaatar",
+    "khoroo": "Khoroo {number}"
+  },
+  "Card": {
+    "dormitory": "Dormitory",
+    "established": "Est. {year}",
+    "ratio": "{ratio} ratio",
+    "graduatesGoTo": "Graduates go to",
+    "more": "+{count} more"
+  },
+  "Profile": {
+    "sections": "School sections",
+    "overview": "Overview",
+    "facilities": "Facilities",
+    "dorm": "Dormitory",
+    "admissions": "Admissions",
+    "reviews": "Reviews",
+    "outOf5": "out of 5",
+    "basedOn": "Based on {count, plural, one {# review} other {# reviews}}",
+    "beFirst": "Be the first to share your experience.",
+    "save": "Save",
+    "saved": "Saved",
+    "saveLoginRequired": "Please log in to save a school.",
+    "genericError": "Something went wrong. Please try again."
+  },
+  "Highlights": {
+    "founded": "Founded",
+    "yearsTeaching": "{years, plural, one {# year} other {# years}} of teaching",
+    "ratio": "Student–teacher",
+    "perTeacher": "students per teacher",
+    "programme": "Programme",
+    "tracks": "{count} tracks",
+    "graduates": "Where graduates go",
+    "achievements": "Notable achievements"
+  },
+  "Overview": {
+    "atAGlance": "At a glance",
+    "schoolType": "School type",
+    "gradeLevels": "Grade levels",
+    "tuition": "Annual tuition",
+    "languages": "Teaching languages",
+    "accreditation": "Accreditation",
+    "dormitory": "Dormitory",
+    "available": "Available",
+    "notOffered": "Not offered",
+    "curriculum": "Curriculum",
+    "ratings": "Community ratings",
+    "readAll": "Read all reviews",
+    "writeFirst": "Write the first review",
+    "contact": "Contact",
+    "address": "Address",
+    "phone": "Phone",
+    "email": "Email",
+    "website": "Website",
+    "noContact": "No contact details have been added yet."
+  },
+  "Ratings": {
+    "academics": "Academics",
+    "teachers": "Teachers",
+    "facilities": "Facilities",
+    "environment": "Campus environment",
+    "library": "Library",
+    "dorms": "Dormitory"
+  },
+  "Facilities": {
+    "overall": "Facilities overall",
+    "library": "Library",
+    "onCampus": "On campus",
+    "none": "No facility details have been added for this school yet."
+  },
+  "Dorm": {
+    "noneTitle": "No on-campus housing",
+    "noneBody": "This school does not offer dormitory accommodation.",
+    "rating": "Dormitory rating",
+    "capacity": "Room capacity",
+    "perRoom": "{count} students per room",
+    "fee": "Monthly fee",
+    "feeValue": "₮{amount} / month",
+    "living": "Living conditions",
+    "rules": "Boarding rules",
+    "safety": "Safety"
+  },
+  "Admissions": {
+    "tuition": "Annual tuition",
+    "deadline": "Application deadline",
+    "rolling": "Rolling / not specified",
+    "entrance": "Entrance requirements",
+    "entranceNone": "No entrance exam information has been added yet.",
+    "catchment": "Catchment area",
+    "catchmentNone": "No catchment area information has been added yet."
+  },
+  "Reviews": {
+    "heading": "Reviews",
+    "none": "No one has reviewed this school yet. Your review will be the first families see.",
+    "write": "Write a review",
+    "shareTitle": "Share your experience",
+    "shareBody": "Log in or create a free account to rate this school. Reviews show whether you're a parent, student, alumnus, or educator.",
+    "loginToWrite": "Log in to write a review",
+    "createAccount": "Create an account",
+    "verified": "Verified"
+  },
+  "ReviewForm": {
+    "ratings": "Ratings",
+    "required": "(required)",
+    "topics": "Topics",
+    "optional": "(optional)",
+    "yourReview": "Your review",
+    "placeholder": "What stood out — teaching, atmosphere, facilities, communication with families?",
+    "moreChars": "{count} more characters needed",
+    "charCount": "{count} characters",
+    "errorRatings": "Please rate academics, facilities, teachers, and campus environment.",
+    "errorLength": "Please write at least a couple of sentences.",
+    "loginRequired": "Please log in to leave a review.",
+    "alreadyReviewed": "You've already reviewed this school.",
+    "generic": "Something went wrong. Please try again.",
+    "submit": "Submit review",
+    "submitting": "Submitting…",
+    "thanks": "Thank you for your review",
+    "live": "It's now live on this school's page.",
+    "logIn": "Log in",
+    "starLabel": "{count, plural, one {# star} other {# stars}}, {word}",
+    "poor": "Poor",
+    "fair": "Fair",
+    "good": "Good",
+    "veryGood": "Very good",
+    "excellent": "Excellent"
+  },
+  "Auth": {
+    "welcomeBack": "Welcome back",
+    "loginIntro": "Log in to Find My School Mongolia to rate and review schools.",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?",
+    "callbackFailed": "That sign-in link didn't work or has expired. Please log in again.",
+    "createTitle": "Create an account",
+    "registerIntro": "Join Find My School Mongolia to rate and review schools. It's free.",
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "passwordHint": "At least 8 characters.",
+    "loggingIn": "Logging in…",
+    "creating": "Creating account…",
+    "createButton": "Create account",
+    "checkEmail": "Check your email",
+    "sentLink": "We sent a confirmation link to {email}."
+  },
+  "Saved": {
+    "eyebrow": "Your list",
+    "title": "Saved schools",
+    "loginTitle": "Log in to see your saved schools",
+    "loginBody": "Save schools from their profile pages to compare them later.",
+    "emptyTitle": "No saved schools yet",
+    "emptyBody": "Tap Save on a school's page to add it here."
+  },
+  "NotFound": {
+    "title": "This page doesn't exist",
+    "body": "The link may be broken, or the page may have moved.",
+    "schoolTitle": "We couldn't find that school",
+    "schoolBody": "It may have been removed, or the link might be out of date.",
+    "browseAll": "Browse all schools"
+  },
+  "Error": {
+    "title": "Something went wrong",
+    "body": "We couldn't load this page. This is usually temporary — please try again."
+  }
+}

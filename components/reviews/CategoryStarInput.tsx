@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
-const RATING_WORDS = ["Poor", "Fair", "Good", "Very good", "Excellent"];
+// Keys in the "ReviewForm" namespace, from 1 star to 5.
+const RATING_WORDS = ["poor", "fair", "good", "veryGood", "excellent"];
 
 type CategoryStarInputProps = {
   label: string;
@@ -12,6 +14,7 @@ type CategoryStarInputProps = {
 };
 
 export function CategoryStarInput({ label, value, onChange, required }: CategoryStarInputProps) {
+  const t = useTranslations("ReviewForm");
   const [hovered, setHovered] = useState(0);
   const shown = hovered || value;
 
@@ -29,7 +32,7 @@ export function CategoryStarInput({ label, value, onChange, required }: Category
       <div
         className="flex"
         role="group"
-        aria-label={`${label}${required ? " (required)" : ""}`}
+        aria-label={required ? `${label} ${t("required")}` : label}
         onMouseLeave={() => setHovered(0)}
       >
         {[1, 2, 3, 4, 5].map((n) => (
@@ -38,9 +41,9 @@ export function CategoryStarInput({ label, value, onChange, required }: Category
             type="button"
             onClick={() => onChange(n)}
             onMouseEnter={() => setHovered(n)}
-            aria-label={`${n} star${n > 1 ? "s" : ""}, ${RATING_WORDS[n - 1]}`}
+            aria-label={t("starLabel", { count: n, word: t(RATING_WORDS[n - 1]) })}
             aria-pressed={n === value}
-            title={RATING_WORDS[n - 1]}
+            title={t(RATING_WORDS[n - 1])}
             className={`rounded p-0.5 transition-colors ${n <= shown ? "text-star" : "text-star-empty"}`}
           >
             <svg viewBox="0 0 24 24" fill="currentColor" className="size-5.5" aria-hidden>

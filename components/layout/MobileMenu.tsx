@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { signOut } from "@/app/(auth)/actions";
 import { Icon } from "@/components/common/Icon";
 
@@ -9,6 +10,7 @@ const ITEM =
   "rounded-lg px-3 py-2.5 font-medium text-foreground transition-colors hover:bg-surface-muted";
 
 export function MobileMenu({ isSignedIn }: { isSignedIn: boolean }) {
+  const t = useTranslations("Common");
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
 
@@ -18,7 +20,7 @@ export function MobileMenu({ isSignedIn }: { isSignedIn: boolean }) {
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        aria-label={open ? "Close menu" : "Open menu"}
+        aria-label={open ? t("closeMenu") : t("openMenu")}
         className="flex size-9 items-center justify-center rounded-lg border border-line text-muted transition-colors hover:bg-surface-muted"
       >
         {open ? (
@@ -34,17 +36,17 @@ export function MobileMenu({ isSignedIn }: { isSignedIn: boolean }) {
         <div className="absolute inset-x-0 top-full z-30 border-b border-line bg-surface px-4 py-3 shadow-[0_16px_32px_-20px_rgb(0_0_0/0.3)]">
           <nav className="flex flex-col text-sm">
             <Link href="/search" onClick={close} className={ITEM}>
-              Browse schools
+              {t("browseSchools")}
             </Link>
             {isSignedIn && (
               <Link href="/saved" onClick={close} className={ITEM}>
-                Saved schools
+                {t("savedSchools")}
               </Link>
             )}
             {isSignedIn ? (
               <form action={signOut}>
                 <button type="submit" className={`${ITEM} w-full text-left`}>
-                  Log out
+                  {t("logOut")}
                 </button>
               </form>
             ) : (
@@ -54,14 +56,14 @@ export function MobileMenu({ isSignedIn }: { isSignedIn: boolean }) {
                   onClick={close}
                   className="rounded-lg border border-line px-3 py-2.5 text-center font-medium text-foreground"
                 >
-                  Log in
+                  {t("logIn")}
                 </Link>
                 <Link
                   href="/register"
                   onClick={close}
                   className="rounded-lg bg-accent px-3 py-2.5 text-center font-medium text-accent-foreground"
                 >
-                  Sign up
+                  {t("signUp")}
                 </Link>
               </div>
             )}

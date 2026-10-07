@@ -1,94 +1,89 @@
-import type { SchoolType, SchoolLevel, Curriculum, ReviewTag, UserRole } from "@prisma/client";
+import type { SchoolType, SchoolLevel, Curriculum, ReviewTag } from "@prisma/client";
 
-export const TYPE_LABELS: Record<SchoolType, string> = {
-  PUBLIC: "Public",
-  PRIVATE: "Private",
-  INTERNATIONAL: "International",
+// Display text for all of these lives in messages/{en,mn}.json under the
+// matching namespace (SchoolType, Level, Curriculum, ReviewTag, Sort…).
+// These lists are the source of truth for which values exist and in what
+// order filters show them.
+
+export const SCHOOL_TYPES: SchoolType[] = ["PUBLIC", "PRIVATE", "INTERNATIONAL"];
+
+export const LEVELS: SchoolLevel[] = ["ELEMENTARY", "MIDDLE", "HIGH", "K12"];
+
+export const CURRICULA: Curriculum[] = [
+  "MONGOLIAN_NATIONAL",
+  "CAMBRIDGE",
+  "IB",
+  "AP",
+  "DUAL_LANGUAGE",
+];
+
+export const REVIEW_TAGS: ReviewTag[] = [
+  "DORMITORY",
+  "LIBRARY",
+  "FOOD_CANTEEN",
+  "EXTRACURRICULARS",
+  "ACADEMICS",
+  "FACILITIES",
+  "TEACHERS",
+  "ENVIRONMENT",
+];
+
+export const SORT_KEYS = ["rating", "reviews", "name", "founded"] as const;
+export type SortKey = (typeof SORT_KEYS)[number];
+
+/** A next-intl translator scoped to one namespace (from useTranslations or getTranslations). */
+type Translate = {
+  (key: string, values?: Record<string, string | number>): string;
+  has(key: string): boolean;
 };
 
-export const TYPE_DESCRIPTIONS: Record<SchoolType, string> = {
-  PUBLIC: "State schools following the national curriculum, free to attend.",
-  PRIVATE: "Independent schools with their own programmes and annual tuition.",
-  INTERNATIONAL: "Schools teaching international curricula such as IB, Cambridge, or AP.",
-};
+const millions = (n: number) => (n / 1_000_000).toFixed(1);
 
-export const LEVEL_LABELS: Record<SchoolLevel, string> = {
-  ELEMENTARY: "Elementary",
-  MIDDLE: "Middle school",
-  HIGH: "High school",
-  K12: "K–12",
-};
-
-export const CURRICULUM_LABELS: Record<Curriculum, string> = {
-  MONGOLIAN_NATIONAL: "Mongolian National Curriculum",
-  CAMBRIDGE: "Cambridge",
-  IB: "International Baccalaureate",
-  AP: "Advanced Placement",
-  DUAL_LANGUAGE: "Dual-language",
-};
-
-// Compact forms for cards, where the full names would wrap.
-export const CURRICULUM_SHORT_LABELS: Record<Curriculum, string> = {
-  MONGOLIAN_NATIONAL: "National curriculum",
-  CAMBRIDGE: "Cambridge",
-  IB: "IB",
-  AP: "AP",
-  DUAL_LANGUAGE: "Dual-language",
-};
-
-export const LANGUAGE_LABELS: Record<string, string> = {
-  mn: "Mongolian",
-  en: "English",
-  ru: "Russian",
-  ja: "Japanese",
-};
-
-export const REVIEW_TAG_LABELS: Record<ReviewTag, string> = {
-  DORMITORY: "Dormitory",
-  LIBRARY: "Library",
-  FOOD_CANTEEN: "Food & Canteen",
-  EXTRACURRICULARS: "Extracurriculars",
-  ACADEMICS: "Academics",
-  FACILITIES: "Facilities",
-  TEACHERS: "Teachers",
-  ENVIRONMENT: "Environment",
-};
-
-export const ROLE_LABELS: Record<UserRole, string> = {
-  PARENT: "Parent",
-  STUDENT: "Student",
-  ALUMNI: "Alumni",
-  EDUCATOR: "Educator",
-  ADMIN: "Admin",
-};
-
-export const SORT_LABELS = {
-  rating: "Top rated",
-  reviews: "Most reviewed",
-  name: "Name (A–Z)",
-  founded: "Oldest established",
-};
-
-export type SortKey = keyof typeof SORT_LABELS;
-
-export function formatTuition(min: number | null, max: number | null) {
-  if (!min && !max) return "Not reported";
-  const fmt = (n: number) => `₮${(n / 1_000_000).toFixed(1)}M`;
-  if (min && max && min !== max) return `${fmt(min)}–${fmt(max)} / year`;
-  return `${fmt(min ?? max ?? 0)} / year`;
+/** Annual fee range; `t` is scoped to the "Tuition" namespace. */
+export function formatTuition(t: Translate, min: number | null, max: number | null) {
+  if (!min && !max) return t("notReported");
+  if (min && max && min !== max) return t("range", { min: millions(min), max: millions(max) });
+  return t("single", { amount: millions(min ?? max ?? 0) });
 }
 
-/** Short tuition line for cards and fact lists. */
-export function tuitionSummary(type: SchoolType, min: number | null, max: number | null) {
-  if (type === "PUBLIC") return "Free (public school)";
-  if (!min && !max) return "Fees not listed";
-  return formatTuition(min, max);
+/** Short tuition line for cards and fact lists; `t` is scoped to "Tuition". */
+export function tuitionSummary(
+  t: Translate,
+  type: SchoolType,
+  min: number | null,
+  max: number | null
+) {
+  if (type === "PUBLIC") return t("free");
+  if (!min && !max) return t("notListed");
+  return formatTuition(t, min, max);
 }
 
-export function formatDate(date: Date | string) {
-  return new Date(date).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+/** Translated district/city name when known, else as stored; `t` is scoped to "Place". */
+export function placeName(t: Translate, name: string) {
+  return t.has(name) ? t(name) : name;
+}
+
+/** "Khoroo 3, Khan-Uul, Ulaanbaatar" in the active language; `t` is scoped to "Place". */
+export function formatLocation(
+  t: Translate,
+  school: { khoroo?: string | null; district: string | null; aimagCity: string }
+) {
+  return [
+    school.khoroo && t("khoroo", { number: school.khoroo }),
+    school.district && placeName(t, school.district),
+    placeName(t, school.aimagCity),
+  ]
+    .filter(Boolean)
+    .join(", ");
+}
+
+/**
+ * Which name leads. In Mongolian the Mongolian name is the title and the
+ * English one the subtitle, and vice versa. A Mongolian name that only
+ * repeats the English one is ignored.
+ */
+export function schoolNames(school: { nameEn: string; nameMn: string | null }, locale: string) {
+  const nameMn = school.nameMn && school.nameMn !== school.nameEn ? school.nameMn : null;
+  if (locale === "mn" && nameMn) return { primary: nameMn, secondary: school.nameEn };
+  return { primary: school.nameEn, secondary: nameMn };
 }

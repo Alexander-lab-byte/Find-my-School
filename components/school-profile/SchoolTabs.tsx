@@ -2,21 +2,24 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 
+// `label` is a key in the "Profile" message namespace.
 const TABS = [
-  { label: "Overview", segment: "" },
-  { label: "Facilities", segment: "facilities" },
-  { label: "Dormitory", segment: "dorm" },
-  { label: "Admissions", segment: "admissions" },
-  { label: "Reviews", segment: "reviews" },
+  { label: "overview", segment: "" },
+  { label: "facilities", segment: "facilities" },
+  { label: "dorm", segment: "dorm" },
+  { label: "admissions", segment: "admissions" },
+  { label: "reviews", segment: "reviews" },
 ];
 
 export function SchoolTabs({ schoolId, reviewCount }: { schoolId: string; reviewCount: number }) {
+  const t = useTranslations("Profile");
   const pathname = usePathname();
   const base = `/school/${schoolId}`;
 
   return (
-    <nav aria-label="School sections" className="-mb-px flex gap-1 overflow-x-auto">
+    <nav aria-label={t("sections")} className="-mb-px flex gap-1 overflow-x-auto">
       {TABS.map((tab) => {
         const href = tab.segment ? `${base}/${tab.segment}` : base;
         const isActive = pathname === href;
@@ -32,7 +35,7 @@ export function SchoolTabs({ schoolId, reviewCount }: { schoolId: string; review
                 : "border-transparent text-muted hover:border-line-strong hover:text-foreground"
             }`}
           >
-            {tab.label}
+            {t(tab.label)}
             {tab.segment === "reviews" && reviewCount > 0 && (
               <span
                 className={`rounded-full px-1.5 py-0.5 text-xs tabular-nums ${

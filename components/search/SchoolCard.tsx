@@ -1,18 +1,21 @@
 import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import type { SchoolCardData } from "@/lib/schools";
 import { Badge, TYPE_TONE } from "@/components/common/Badge";
 import { Icon } from "@/components/common/Icon";
 import { SchoolMonogram } from "@/components/common/SchoolMonogram";
 import { StarRating } from "@/components/common/StarRating";
-import {
-  CURRICULUM_SHORT_LABELS,
-  LEVEL_LABELS,
-  TYPE_LABELS,
-  tuitionSummary,
-} from "@/lib/labels";
+import { formatLocation, schoolNames, tuitionSummary } from "@/lib/labels";
 
 export function SchoolCard({ school }: { school: SchoolCardData }) {
-  const location = [school.district, school.aimagCity].filter(Boolean).join(", ");
+  const t = useTranslations("Card");
+  const tType = useTranslations("SchoolType");
+  const tLevel = useTranslations("Level");
+  const tCurriculum = useTranslations("CurriculumShort");
+  const tTuition = useTranslations("Tuition");
+  const tPlace = useTranslations("Place");
+  const { primary, secondary } = schoolNames(school, useLocale());
+  const location = formatLocation(tPlace, school);
 
   return (
     <Link
@@ -23,19 +26,19 @@ export function SchoolCard({ school }: { school: SchoolCardData }) {
         <SchoolMonogram name={school.nameEn} type={school.type} logoUrl={school.logoUrl} />
         <div className="min-w-0 flex-1">
           <h3 className="font-display text-lg font-semibold leading-snug text-foreground transition-colors group-hover:text-accent">
-            {school.nameEn}
+            {primary}
           </h3>
-          {school.nameMn && school.nameMn !== school.nameEn && <p className="mt-0.5 text-sm text-muted">{school.nameMn}</p>}
+          {secondary && <p className="mt-0.5 text-sm text-muted">{secondary}</p>}
         </div>
       </div>
 
       <div className="mt-4 flex flex-wrap gap-1.5">
-        <Badge tone={TYPE_TONE[school.type]}>{TYPE_LABELS[school.type]}</Badge>
-        <Badge>{LEVEL_LABELS[school.level]}</Badge>
+        <Badge tone={TYPE_TONE[school.type]}>{tType(school.type)}</Badge>
+        <Badge>{tLevel(school.level)}</Badge>
         {school.schoolNumber && !school.nameEn.includes(school.schoolNumber) && (
           <Badge>{school.schoolNumber}</Badge>
         )}
-        {school.dormitory && <Badge>Dormitory</Badge>}
+        {school.dormitory && <Badge>{t("dormitory")}</Badge>}
       </div>
 
       <ul className="mt-4 space-y-1.5 text-sm text-muted">
@@ -47,7 +50,7 @@ export function SchoolCard({ school }: { school: SchoolCardData }) {
           <li className="flex items-center gap-2">
             <Icon name="book" className="size-4 shrink-0 text-subtle" />
             <span className="truncate">
-              {school.curriculum.map((c) => CURRICULUM_SHORT_LABELS[c]).join(" · ")}
+              {school.curriculum.map((c) => tCurriculum(c)).join(" · ")}
             </span>
           </li>
         )}
@@ -55,7 +58,7 @@ export function SchoolCard({ school }: { school: SchoolCardData }) {
           <li className="flex items-center gap-2">
             <Icon name="wallet" className="size-4 shrink-0 text-subtle" />
             <span className="truncate">
-              {tuitionSummary(school.type, school.tuitionMinAnnual, school.tuitionMaxAnnual)}
+              {tuitionSummary(tTuition, school.type, school.tuitionMinAnnual, school.tuitionMaxAnnual)}
             </span>
           </li>
         )}
@@ -64,8 +67,8 @@ export function SchoolCard({ school }: { school: SchoolCardData }) {
             <Icon name="calendar" className="size-4 shrink-0 text-subtle" />
             <span className="truncate">
               {[
-                school.foundedYear && `Est. ${school.foundedYear}`,
-                school.studentTeacherRatio && `${school.studentTeacherRatio} ratio`,
+                school.foundedYear && t("established", { year: school.foundedYear }),
+                school.studentTeacherRatio && t("ratio", { ratio: school.studentTeacherRatio }),
               ]
                 .filter(Boolean)
                 .join(" · ")}
@@ -78,14 +81,14 @@ export function SchoolCard({ school }: { school: SchoolCardData }) {
         <div className="mt-4 rounded-lg bg-surface-muted px-3 py-2.5">
           <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-[0.08em] text-subtle">
             <Icon name="graduation" className="size-3.5" />
-            Graduates go to
+            {t("graduatesGoTo")}
           </p>
           <p className="mt-1 line-clamp-2 text-sm text-foreground">
             {school.graduateDestinations.slice(0, 3).join(", ")}
             {school.graduateDestinations.length > 3 && (
               <span className="whitespace-nowrap text-muted">
                 {" "}
-                +{school.graduateDestinations.length - 3} more
+                {t("more", { count: school.graduateDestinations.length - 3 })}
               </span>
             )}
           </p>

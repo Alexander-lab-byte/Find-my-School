@@ -1,3 +1,5 @@
+import { useTranslations } from "next-intl";
+
 const STAR_PATH =
   "M12 2.5l2.92 5.92 6.53.95-4.72 4.6 1.11 6.5L12 17.4l-5.84 3.07 1.11-6.5-4.72-4.6 6.53-.95z";
 
@@ -55,6 +57,8 @@ const SIZE_CLASSES = {
 };
 
 export function StarRating({ value, count, size = "md" }: StarRatingProps) {
+  const t = useTranslations("Common");
+
   return (
     <span className={`inline-flex items-center gap-2 ${SIZE_CLASSES[size]}`}>
       <Stars value={value} />
@@ -62,14 +66,11 @@ export function StarRating({ value, count, size = "md" }: StarRatingProps) {
         <span className="text-[0.9em]">
           <span className="font-semibold text-foreground">{value.toFixed(1)}</span>
           {typeof count === "number" && (
-            <span className="text-muted">
-              {" "}
-              ({count} {count === 1 ? "review" : "reviews"})
-            </span>
+            <span className="text-muted"> ({t("reviewCount", { count })})</span>
           )}
         </span>
       ) : (
-        <span className="text-[0.9em] text-muted">No reviews yet</span>
+        <span className="text-[0.9em] text-muted">{t("noReviewsYet")}</span>
       )}
     </span>
   );

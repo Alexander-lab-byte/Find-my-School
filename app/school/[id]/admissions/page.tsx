@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
+import { getFormatter, getTranslations } from "next-intl/server";
 import { getSchoolAdmissions } from "@/lib/schools";
-import { formatDate, formatTuition } from "@/lib/labels";
+import { tuitionSummary } from "@/lib/labels";
 import {
   EmptyNote,
   Fact,
@@ -19,35 +20,37 @@ export default async function SchoolAdmissionsPage({
 
   if (!school) notFound();
 
+  const t = await getTranslations("Admissions");
+  const tTuition = await getTranslations("Tuition");
+  const format = await getFormatter();
+
   return (
     <div className="space-y-10">
       <FactGrid columns={2}>
-        <Fact label="Annual tuition">
-          {school.type === "PUBLIC"
-            ? "Free (public school)"
-            : formatTuition(school.tuitionMinAnnual, school.tuitionMaxAnnual)}
+        <Fact label={t("tuition")}>
+          {tuitionSummary(tTuition, school.type, school.tuitionMinAnnual, school.tuitionMaxAnnual)}
         </Fact>
-        <Fact label="Application deadline">
+        <Fact label={t("deadline")}>
           {school.applicationDeadline
-            ? formatDate(school.applicationDeadline)
-            : "Rolling / not specified"}
+            ? format.dateTime(school.applicationDeadline, { dateStyle: "long" })
+            : t("rolling")}
         </Fact>
       </FactGrid>
 
-      <ProfileSection title="Entrance requirements">
+      <ProfileSection title={t("entrance")}>
         {school.entranceExamInfo ? (
           <ProseCard>{school.entranceExamInfo}</ProseCard>
         ) : (
-          <EmptyNote>No entrance exam information has been added yet.</EmptyNote>
+          <EmptyNote>{t("entranceNone")}</EmptyNote>
         )}
       </ProfileSection>
 
       {school.type === "PUBLIC" && (
-        <ProfileSection title="Catchment area">
+        <ProfileSection title={t("catchment")}>
           {school.catchmentAreaInfo ? (
             <ProseCard>{school.catchmentAreaInfo}</ProseCard>
           ) : (
-            <EmptyNote>No catchment area information has been added yet.</EmptyNote>
+            <EmptyNote>{t("catchmentNone")}</EmptyNote>
           )}
         </ProfileSection>
       )}

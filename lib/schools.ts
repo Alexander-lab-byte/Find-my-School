@@ -2,10 +2,10 @@ import { cache } from "react";
 import type { Curriculum, Prisma, SchoolLevel, SchoolType } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import {
-  CURRICULUM_LABELS,
-  LEVEL_LABELS,
-  SORT_LABELS,
-  TYPE_LABELS,
+  CURRICULA,
+  LEVELS,
+  SCHOOL_TYPES,
+  SORT_KEYS,
   type SortKey,
 } from "@/lib/labels";
 
@@ -31,23 +31,23 @@ function first(value: string | string[] | undefined) {
 }
 
 // Only accept values that really exist, so a bad URL can never crash the query.
-function pick<T extends string>(value: string | undefined, allowed: Record<string, string>) {
-  return value && Object.hasOwn(allowed, value) ? (value as T) : undefined;
+function pick<T extends string>(value: string | undefined, allowed: readonly T[]) {
+  return value && (allowed as readonly string[]).includes(value) ? (value as T) : undefined;
 }
 
 export function parseSchoolFilters(params: RawParams): SchoolFilters {
   return {
     q: first(params.q)?.trim() || undefined,
-    level: pick<SchoolLevel>(first(params.level), LEVEL_LABELS),
-    type: pick<SchoolType>(first(params.type), TYPE_LABELS),
-    curriculum: pick<Curriculum>(first(params.curriculum), CURRICULUM_LABELS),
+    level: pick(first(params.level), LEVELS),
+    type: pick(first(params.type), SCHOOL_TYPES),
+    curriculum: pick(first(params.curriculum), CURRICULA),
     district: first(params.district)?.trim() || undefined,
     dorm: first(params.dorm) === "true",
   };
 }
 
 export function parseSort(value: string | string[] | undefined): SortKey {
-  return pick<SortKey>(first(value), SORT_LABELS) ?? "rating";
+  return pick(first(value), SORT_KEYS) ?? "rating";
 }
 
 export function parsePage(value: string | string[] | undefined) {
@@ -196,7 +196,7 @@ export async function getHomepageData() {
         id: true,
         bodyText: true,
         createdAt: true,
-        school: { select: { id: true, nameEn: true } },
+        school: { select: { id: true, nameEn: true, nameMn: true } },
         user: { select: { name: true, role: true } },
         rating: { select: { academics: true, facilities: true, teachers: true, environment: true } },
       },

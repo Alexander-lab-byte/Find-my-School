@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
+import { getLocale, getTranslations } from "next-intl/server";
 import { getSchoolHeader, getIsSchoolSaved } from "@/lib/schools";
 import { getCurrentUser } from "@/lib/current-user";
+import { placeName, schoolNames } from "@/lib/labels";
 import { SchoolHeader } from "@/components/school-profile/SchoolHeader";
 import { SchoolTabs } from "@/components/school-profile/SchoolTabs";
 
@@ -14,13 +16,16 @@ type SchoolLayoutProps = {
 export async function generateMetadata({ params }: SchoolLayoutProps): Promise<Metadata> {
   const { id } = await params;
   const school = await getSchoolHeader(id);
-  if (!school) return { title: "School not found" };
+  const t = await getTranslations("Metadata");
+  if (!school) return { title: t("schoolNotFound") };
+
+  const { primary, secondary } = schoolNames(school, await getLocale());
+  const name = secondary ? `${primary} (${secondary})` : primary;
+  const place = placeName(await getTranslations("Place"), school.district ?? school.aimagCity);
 
   return {
-    title: school.nameEn,
-    description: `Ratings, reviews, fees, and admissions for ${school.nameEn}${school.nameMn && school.nameMn !== school.nameEn ? ` (${school.nameMn})` : ""}, ${
-      school.district ?? school.aimagCity
-    }.`,
+    title: primary,
+    description: t("schoolDescription", { name, place }),
   };
 }
 

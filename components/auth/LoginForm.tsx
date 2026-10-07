@@ -2,9 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 
 export function LoginForm({ next }: { next: string }) {
+  const t = useTranslations("Auth");
+  const tCommon = useTranslations("Common");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -34,7 +37,7 @@ export function LoginForm({ next }: { next: string }) {
     <form onSubmit={handleSubmit} className="space-y-5">
       <div>
         <label htmlFor="email" className="text-sm font-medium text-foreground">
-          Email
+          {t("email")}
         </label>
         <input
           id="email"
@@ -48,7 +51,7 @@ export function LoginForm({ next }: { next: string }) {
       </div>
       <div>
         <label htmlFor="password" className="text-sm font-medium text-foreground">
-          Password
+          {t("password")}
         </label>
         <input
           id="password"
@@ -72,7 +75,7 @@ export function LoginForm({ next }: { next: string }) {
         disabled={isSubmitting}
         className="w-full rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover disabled:opacity-50"
       >
-        {isSubmitting ? "Logging in…" : "Log in"}
+        {isSubmitting ? t("loggingIn") : tCommon("logIn")}
       </button>
     </form>
   );

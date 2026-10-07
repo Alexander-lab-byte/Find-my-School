@@ -17,18 +17,18 @@ type SubmitReviewInput = {
   library?: number;
 };
 
-export async function submitReview(input: SubmitReviewInput) {
+// Errors come back as codes, not thrown messages: Next.js hides thrown
+// error text in production, and the form translates codes itself.
+type SubmitReviewResult = { ok: true } | { ok: false; error: "LOGIN_REQUIRED" | "ALREADY_REVIEWED" };
+
+export async function submitReview(input: SubmitReviewInput): Promise<SubmitReviewResult> {
   const user = await getCurrentUser();
-  if (!user) {
-    throw new Error("Please log in to leave a review.");
-  }
+  if (!user) return { ok: false, error: "LOGIN_REQUIRED" };
 
   const existing = await prisma.rating.findUnique({
     where: { schoolId_userId: { schoolId: input.schoolId, userId: user.id } },
   });
-  if (existing) {
-    throw new Error("You've already reviewed this school.");
-  }
+  if (existing) return { ok: false, error: "ALREADY_REVIEWED" };
 
   await prisma.$transaction(async (tx) => {
     const review = await tx.review.create({
@@ -96,4 +96,5 @@ export async function submitReview(input: SubmitReviewInput) {
 
   revalidatePath(`/school/${input.schoolId}/reviews`);
   revalidatePath(`/school/${input.schoolId}`);
+  return { ok: true };
 }

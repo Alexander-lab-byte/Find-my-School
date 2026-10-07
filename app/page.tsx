@@ -1,19 +1,21 @@
 import Link from "next/link";
+import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 import type { SchoolType } from "@prisma/client";
 import { getHomepageData } from "@/lib/schools";
 import { reviewAverage } from "@/lib/ratings";
-import { ROLE_LABELS, TYPE_DESCRIPTIONS, TYPE_LABELS, formatDate } from "@/lib/labels";
+import { SCHOOL_TYPES, schoolNames } from "@/lib/labels";
 import { HeroSearchBar } from "@/components/search/HeroSearchBar";
 import { SchoolCard } from "@/components/search/SchoolCard";
 import { Icon, type IconName } from "@/components/common/Icon";
 import { Stars } from "@/components/common/StarRating";
 
-const QUICK_LINKS: [label: string, href: string][] = [
-  ["Public", "/search?type=PUBLIC"],
-  ["Private", "/search?type=PRIVATE"],
-  ["International", "/search?type=INTERNATIONAL"],
-  ["High school", "/search?level=HIGH"],
-  ["With dormitory", "/search?dorm=true"],
+// [message key in "Home", href]
+const QUICK_LINKS: [key: string, href: string][] = [
+  ["quickPublic", "/search?type=PUBLIC"],
+  ["quickPrivate", "/search?type=PRIVATE"],
+  ["quickInternational", "/search?type=INTERNATIONAL"],
+  ["quickHigh", "/search?level=HIGH"],
+  ["quickDorm", "/search?dorm=true"],
 ];
 
 const TYPE_ICONS: Record<SchoolType, IconName> = {
@@ -49,6 +51,14 @@ function SectionHeading({
 
 export default async function Home() {
   const { schools, totalSchools, typeCounts, districts, recentReviews } = await getHomepageData();
+  const t = await getTranslations("Home");
+  const tCommon = await getTranslations("Common");
+  const tType = await getTranslations("SchoolTypePlural");
+  const tTypeDescription = await getTranslations("SchoolTypeDescription");
+  const tRole = await getTranslations("Role");
+  const tPlace = await getTranslations("Place");
+  const format = await getFormatter();
+  const locale = await getLocale();
 
   return (
     <main>
@@ -60,14 +70,13 @@ export default async function Home() {
         />
         <div className="relative mx-auto max-w-6xl px-4 pb-16 pt-16 text-center sm:px-6 sm:pb-20 sm:pt-24">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
-            Schools across Mongolia
+            {t("eyebrow")}
           </p>
           <h1 className="mx-auto mt-4 max-w-3xl text-balance font-display text-4xl font-semibold tracking-tight text-foreground sm:text-6xl">
-            Choose a school with confidence
+            {t("title")}
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-pretty text-lg leading-8 text-muted">
-            Compare curricula, fees, and dormitories, and read honest reviews from parents,
-            students, alumni, and educators.
+            {t("subtitle")}
           </p>
 
           <div className="mt-9 flex justify-center">
@@ -75,14 +84,14 @@ export default async function Home() {
           </div>
 
           <div className="mt-6 flex flex-wrap items-center justify-center gap-2 text-sm">
-            <span className="mr-1 text-subtle">Browse:</span>
-            {QUICK_LINKS.map(([label, href]) => (
+            <span className="mr-1 text-subtle">{t("browseLabel")}</span>
+            {QUICK_LINKS.map(([key, href]) => (
               <Link
-                key={label}
+                key={key}
                 href={href}
                 className="rounded-full border border-line bg-surface px-3.5 py-1.5 text-muted transition-colors hover:border-accent/40 hover:text-accent"
               >
-                {label}
+                {t(key)}
               </Link>
             ))}
           </div>
@@ -92,16 +101,16 @@ export default async function Home() {
       {/* School list — visible straight away, no search needed */}
       <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-16">
         <SectionHeading
-          eyebrow="Directory"
-          title="Schools on Find My School"
-          description="Sorted by community rating. Open any school for its full profile, fees, and reviews."
+          eyebrow={t("directoryEyebrow")}
+          title={t("directoryTitle")}
+          description={t("directoryDescription")}
           action={
             totalSchools > 0 && (
               <Link
                 href="/search"
                 className="inline-flex shrink-0 items-center gap-1.5 text-sm font-medium text-accent hover:underline hover:underline-offset-4"
               >
-                View all {totalSchools} {totalSchools === 1 ? "school" : "schools"}
+                {t("viewAll", { count: totalSchools })}
                 <Icon name="arrow-right" className="size-4" />
               </Link>
             )
@@ -116,7 +125,7 @@ export default async function Home() {
           </div>
         ) : (
           <p className="mt-8 rounded-xl border border-dashed border-line-strong p-10 text-center text-muted">
-            No schools have been added yet.
+            {t("noSchools")}
           </p>
         )}
       </section>
@@ -125,13 +134,13 @@ export default async function Home() {
       <section className="border-y border-line bg-surface">
         <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-16">
           <SectionHeading
-            eyebrow="Browse"
-            title="Find the right kind of school"
-            description="Start broad, then narrow down by level, curriculum, and features."
+            eyebrow={t("browseEyebrow")}
+            title={t("browseTitle")}
+            description={t("browseDescription")}
           />
 
           <div className="mt-8 grid gap-5 md:grid-cols-3">
-            {(Object.keys(TYPE_LABELS) as SchoolType[]).map((type) => {
+            {SCHOOL_TYPES.map((type) => {
               const count = typeCounts[type] ?? 0;
               return (
                 <Link
@@ -143,11 +152,11 @@ export default async function Home() {
                     <Icon name={TYPE_ICONS[type]} className="size-5" />
                   </span>
                   <h3 className="mt-4 font-display text-xl font-semibold text-foreground">
-                    {TYPE_LABELS[type]} schools
+                    {tType(type)}
                   </h3>
-                  <p className="mt-1.5 text-sm leading-6 text-muted">{TYPE_DESCRIPTIONS[type]}</p>
+                  <p className="mt-1.5 text-sm leading-6 text-muted">{tTypeDescription(type)}</p>
                   <p className="mt-4 flex items-center gap-1.5 text-sm font-medium text-accent">
-                    {count} {count === 1 ? "school" : "schools"}
+                    {tCommon("schoolCount", { count })}
                     <Icon
                       name="arrow-right"
                       className="size-4 transition-transform group-hover:translate-x-0.5"
@@ -160,7 +169,7 @@ export default async function Home() {
 
           {districts.length > 0 && (
             <div className="mt-10">
-              <h3 className="text-sm font-semibold text-foreground">By district</h3>
+              <h3 className="text-sm font-semibold text-foreground">{t("byDistrict")}</h3>
               <div className="mt-3 flex flex-wrap gap-2">
                 {districts.map(({ name, count }) => (
                   <Link
@@ -168,7 +177,7 @@ export default async function Home() {
                     href={`/search?district=${encodeURIComponent(name)}`}
                     className="flex items-center gap-2 rounded-full border border-line bg-background px-3.5 py-1.5 text-sm text-muted transition-colors hover:border-accent/40 hover:text-accent"
                   >
-                    {name}
+                    {tPlace.has(name) ? tPlace(name) : name}
                     <span className="text-xs tabular-nums text-subtle">{count}</span>
                   </Link>
                 ))}
@@ -181,7 +190,7 @@ export default async function Home() {
       {/* Recent reviews — only once there are some */}
       {recentReviews.length > 0 && (
         <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-16">
-          <SectionHeading eyebrow="Community" title="Recently reviewed" />
+          <SectionHeading eyebrow={t("communityEyebrow")} title={t("recentlyReviewed")} />
           <div className="mt-8 grid gap-5 md:grid-cols-3">
             {recentReviews.map((review) => (
               <article
@@ -197,10 +206,10 @@ export default async function Home() {
                     href={`/school/${review.school.id}/reviews`}
                     className="font-medium text-accent hover:underline hover:underline-offset-4"
                   >
-                    {review.school.nameEn}
+                    {schoolNames(review.school, locale).primary}
                   </Link>
                   <p className="mt-0.5 text-xs text-subtle">
-                    {ROLE_LABELS[review.user.role]} · {formatDate(review.createdAt)}
+                    {tRole(review.user.role)} · {format.dateTime(review.createdAt, { dateStyle: "long" })}
                   </p>
                 </div>
               </article>
@@ -222,25 +231,24 @@ export default async function Home() {
           />
           <Icon name="message" className="relative mx-auto size-8 opacity-80" />
           <h2 className="relative mx-auto mt-4 max-w-xl text-balance font-display text-3xl font-semibold tracking-tight">
-            Know a school well?
+            {t("ctaTitle")}
           </h2>
           <p className="relative mx-auto mt-3 max-w-xl text-pretty leading-7 opacity-85">
-            Your review helps another family make one of the most important decisions they face.
-            It takes about three minutes.
+            {t("ctaBody")}
           </p>
           <div className="relative mt-8 flex flex-col justify-center gap-3 sm:flex-row">
             <Link
               href="/search"
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-accent-foreground px-5 py-2.5 text-sm font-medium text-accent transition-opacity hover:opacity-90"
             >
-              Find your school to review
+              {t("ctaFind")}
               <Icon name="arrow-right" className="size-4" />
             </Link>
             <Link
               href="/register"
               className="inline-flex items-center justify-center rounded-lg border border-current/30 px-5 py-2.5 text-sm font-medium transition-colors hover:bg-white/10"
             >
-              Create a free account
+              {t("ctaRegister")}
             </Link>
           </div>
         </div>

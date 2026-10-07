@@ -2,11 +2,14 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { toggleSavedSchool } from "@/app/school/[id]/actions";
 
 export function SaveButton({ schoolId, initialSaved }: { schoolId: string; initialSaved: boolean }) {
+  const t = useTranslations("Profile");
+  const tCommon = useTranslations("Common");
   const [saved, setSaved] = useState(initialSaved);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<"LOGIN_REQUIRED" | "GENERIC" | null>(null);
   const [isPending, startTransition] = useTransition();
 
   function handleClick() {
@@ -14,9 +17,10 @@ export function SaveButton({ schoolId, initialSaved }: { schoolId: string; initi
     startTransition(async () => {
       try {
         const result = await toggleSavedSchool(schoolId);
-        setSaved(result.saved);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Something went wrong.");
+        if (result.ok) setSaved(result.saved);
+        else setError(result.error);
+      } catch {
+        setError("GENERIC");
       }
     });
   }
@@ -45,17 +49,17 @@ export function SaveButton({ schoolId, initialSaved }: { schoolId: string; initi
         >
           <path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z" strokeLinejoin="round" />
         </svg>
-        {saved ? "Saved" : "Save"}
+        {saved ? t("saved") : t("save")}
       </button>
       {error && (
         <p role="alert" className="text-right text-xs text-danger">
-          {error}{" "}
-          {error.toLowerCase().includes("log in") && (
+          {error === "LOGIN_REQUIRED" ? t("saveLoginRequired") : t("genericError")}{" "}
+          {error === "LOGIN_REQUIRED" && (
             <Link
               href={`/login?next=${encodeURIComponent(`/school/${schoolId}`)}`}
               className="font-medium underline underline-offset-4"
             >
-              Log in
+              {tCommon("logIn")}
             </Link>
           )}
         </p>

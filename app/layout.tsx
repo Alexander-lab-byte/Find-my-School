@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Geist, Geist_Mono, Source_Serif_4 } from "next/font/google";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -21,25 +23,28 @@ const sourceSerif = Source_Serif_4({
   subsets: ["latin", "cyrillic"],
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "Find My School Mongolia",
-    template: "%s · Find My School Mongolia",
-  },
-  description:
-    "Search, compare, and read reviews of schools across Ulaanbaatar and the aimags of Mongolia.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("Metadata");
+  return {
+    title: { default: t("siteName"), template: `%s · ${t("siteName")}` },
+    description: t("description"),
+  };
+}
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const locale = await getLocale();
+
   return (
     <html
-      lang="en"
+      lang={locale}
       className={`${geistSans.variable} ${geistMono.variable} ${sourceSerif.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-background font-sans text-foreground">
-        <Header />
-        <div className="flex flex-1 flex-col">{children}</div>
-        <Footer />
+        <NextIntlClientProvider>
+          <Header />
+          <div className="flex flex-1 flex-col">{children}</div>
+          <Footer />
+        </NextIntlClientProvider>
       </body>
     </html>
   );

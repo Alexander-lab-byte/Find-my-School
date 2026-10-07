@@ -1,23 +1,30 @@
+import { useFormatter, useTranslations } from "next-intl";
 import type { getSchoolReviews } from "@/lib/schools";
 import { Badge } from "@/components/common/Badge";
 import { Icon } from "@/components/common/Icon";
 import { Stars } from "@/components/common/StarRating";
-import { reviewAverage } from "@/lib/ratings";
-import { REVIEW_TAG_LABELS, ROLE_LABELS, formatDate } from "@/lib/labels";
+import { reviewAverage, type RatingCategory } from "@/lib/ratings";
 
 type Review = Awaited<ReturnType<typeof getSchoolReviews>>[number];
 
 export function ReviewCard({ review }: { review: Review }) {
+  const t = useTranslations("Reviews");
+  const tRatings = useTranslations("Ratings");
+  const tRole = useTranslations("Role");
+  const tTag = useTranslations("ReviewTag");
+  const format = useFormatter();
   const avg = reviewAverage(review.rating);
   const scores = review.rating
-    ? [
-        ["Academics", review.rating.academics],
-        ["Teachers", review.rating.teachers],
-        ["Facilities", review.rating.facilities],
-        ["Environment", review.rating.environment],
-        ["Library", review.rating.library],
-        ["Dorm", review.rating.dorms],
-      ].filter((entry): entry is [string, number] => typeof entry[1] === "number")
+    ? (
+        [
+          ["academics", review.rating.academics],
+          ["teachers", review.rating.teachers],
+          ["facilities", review.rating.facilities],
+          ["environment", review.rating.environment],
+          ["library", review.rating.library],
+          ["dorms", review.rating.dorms],
+        ] as const
+      ).filter((entry): entry is readonly [RatingCategory, number] => typeof entry[1] === "number")
     : [];
 
   return (
@@ -35,11 +42,11 @@ export function ReviewCard({ review }: { review: Review }) {
               <span className="text-sm font-medium text-foreground">{review.user.name}</span>
               <Badge tone={review.user.isVerified ? "verified" : "neutral"}>
                 {review.user.isVerified && <Icon name="shield" className="size-3" />}
-                {review.user.isVerified ? "Verified " : ""}
-                {ROLE_LABELS[review.user.role]}
+                {review.user.isVerified ? `${t("verified")} ` : ""}
+                {tRole(review.user.role)}
               </Badge>
             </div>
-            <p className="mt-0.5 text-xs text-subtle">{formatDate(review.createdAt)}</p>
+            <p className="mt-0.5 text-xs text-subtle">{format.dateTime(new Date(review.createdAt), { dateStyle: "long" })}</p>
           </div>
         </div>
         {avg !== null && (
@@ -54,7 +61,7 @@ export function ReviewCard({ review }: { review: Review }) {
         <div className="mt-4 flex flex-wrap gap-1.5">
           {review.tags.map((tag) => (
             <Badge key={tag} tone="accent">
-              {REVIEW_TAG_LABELS[tag]}
+              {tTag(tag)}
             </Badge>
           ))}
         </div>
@@ -64,9 +71,9 @@ export function ReviewCard({ review }: { review: Review }) {
 
       {scores.length > 0 && (
         <dl className="mt-4 flex flex-wrap gap-x-4 gap-y-1 border-t border-line pt-3 text-xs text-muted">
-          {scores.map(([label, score]) => (
-            <div key={label} className="flex gap-1">
-              <dt>{label}</dt>
+          {scores.map(([key, score]) => (
+            <div key={key} className="flex gap-1">
+              <dt>{tRatings(key)}</dt>
               <dd className="font-medium tabular-nums text-foreground">{score}/5</dd>
             </div>
           ))}

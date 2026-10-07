@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { getSchoolFacilities } from "@/lib/schools";
 import { StarRating } from "@/components/common/StarRating";
 import { EmptyNote, ProfileSection } from "@/components/school-profile/ProfileSection";
@@ -13,28 +14,30 @@ export default async function SchoolFacilitiesPage({
 
   if (!school) notFound();
 
+  const t = await getTranslations("Facilities");
+
   return (
     <div className="space-y-10">
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="rounded-xl border border-line bg-surface p-5">
           <p className="text-xs font-medium uppercase tracking-[0.08em] text-subtle">
-            Facilities overall
+            {t("overall")}
           </p>
           <div className="mt-2">
             <StarRating value={school.avgFacilities} />
           </div>
         </div>
         <div className="rounded-xl border border-line bg-surface p-5">
-          <p className="text-xs font-medium uppercase tracking-[0.08em] text-subtle">Library</p>
+          <p className="text-xs font-medium uppercase tracking-[0.08em] text-subtle">{t("library")}</p>
           <div className="mt-2">
             <StarRating value={school.avgLibrary} />
           </div>
         </div>
       </div>
 
-      <ProfileSection title="On campus">
+      <ProfileSection title={t("onCampus")}>
         {school.facilities.length === 0 ? (
-          <EmptyNote>No facility details have been added for this school yet.</EmptyNote>
+          <EmptyNote>{t("none")}</EmptyNote>
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {school.facilities.map((facility) => (

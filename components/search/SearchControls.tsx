@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Icon } from "@/components/common/Icon";
 import { useSearchNavigation } from "@/components/search/SearchNavigation";
-import { SORT_LABELS, type SortKey } from "@/lib/labels";
+import { SORT_KEYS, type SortKey } from "@/lib/labels";
 
 /** Search box that updates results as you type (debounced) — no button press needed. */
 export function SearchInput() {
+  const t = useTranslations("Search");
   const { searchParams, update } = useSearchNavigation();
   const urlQuery = searchParams.get("q") ?? "";
 
@@ -51,8 +53,8 @@ export function SearchInput() {
         type="search"
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        placeholder="Search by school name, number, district, or city…"
-        aria-label="Search schools"
+        placeholder={t("inputPlaceholder")}
+        aria-label={t("inputLabel")}
         autoComplete="off"
         className="field h-12 rounded-xl pl-12 pr-11 text-base [&::-webkit-search-cancel-button]:hidden"
       />
@@ -60,7 +62,7 @@ export function SearchInput() {
         <button
           type="button"
           onClick={() => setValue("")}
-          aria-label="Clear search"
+          aria-label={t("clear")}
           className="absolute right-3 top-1/2 flex size-7 -translate-y-1/2 items-center justify-center rounded-md text-subtle transition-colors hover:bg-surface-muted hover:text-foreground"
         >
           <Icon name="x" className="size-4" />
@@ -71,19 +73,21 @@ export function SearchInput() {
 }
 
 export function SortSelect({ value }: { value: SortKey }) {
+  const t = useTranslations("Search");
+  const tSort = useTranslations("Sort");
   const { update } = useSearchNavigation();
 
   return (
     <label className="flex items-center gap-2 text-sm text-muted">
-      <span className="whitespace-nowrap">Sort by</span>
+      <span className="whitespace-nowrap">{t("sortBy")}</span>
       <select
         value={value}
         onChange={(e) => update({ sort: e.target.value === "rating" ? null : e.target.value })}
         className="field w-auto cursor-pointer py-2 pr-8 font-medium"
       >
-        {Object.entries(SORT_LABELS).map(([key, label]) => (
+        {SORT_KEYS.map((key) => (
           <option key={key} value={key}>
-            {label}
+            {tSort(key)}
           </option>
         ))}
       </select>
