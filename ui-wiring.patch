@@ -1,0 +1,993 @@
+diff -ruN -x node_modules a/app/(auth)/login/page.tsx b/app/(auth)/login/page.tsx
+--- a/app/(auth)/login/page.tsx	2026-10-08 03:17:35.363380700 +0000
++++ b/app/(auth)/login/page.tsx	2026-10-08 03:17:35.383589171 +0000
+@@ -1,4 +1,5 @@
+ import Link from "next/link";
++import { AuthCard } from "@/components/auth/AuthCard";
+ import { LoginForm } from "@/components/auth/LoginForm";
+ import { safeNextPath } from "@/lib/navigation";
+ 
+@@ -10,24 +11,19 @@
+   const next = safeNextPath((await searchParams).next);
+ 
+   return (
+-    <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center px-6 py-16">
+-      <h1 className="font-display text-3xl font-semibold text-zinc-900 dark:text-zinc-50">
+-        Log in
+-      </h1>
+-      <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+-        Welcome back to Find My School Mongolia.
+-      </p>
+-
+-      <div className="mt-8">
+-        <LoginForm next={next} />
+-      </div>
+-
+-      <p className="mt-6 text-center text-sm text-zinc-500">
+-        Don&apos;t have an account?{" "}
+-        <Link href="/register" className="text-accent underline underline-offset-4">
+-          Sign up
+-        </Link>
+-      </p>
+-    </div>
++    <AuthCard
++      title="Log in"
++      description="Welcome back to Find My School Mongolia."
++      footer={
++        <>
++          Don&apos;t have an account?{" "}
++          <Link href="/register" className="text-accent underline underline-offset-4">
++            Sign up
++          </Link>
++        </>
++      }
++    >
++      <LoginForm next={next} />
++    </AuthCard>
+   );
+ }
+diff -ruN -x node_modules a/app/(auth)/register/page.tsx b/app/(auth)/register/page.tsx
+--- a/app/(auth)/register/page.tsx	2026-10-08 03:17:35.363409303 +0000
++++ b/app/(auth)/register/page.tsx	2026-10-08 03:17:35.383712977 +0000
+@@ -1,26 +1,22 @@
+ import Link from "next/link";
++import { AuthCard } from "@/components/auth/AuthCard";
+ import { RegisterForm } from "@/components/auth/RegisterForm";
+ 
+ export default function RegisterPage() {
+   return (
+-    <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center px-6 py-16">
+-      <h1 className="font-display text-3xl font-semibold text-zinc-900 dark:text-zinc-50">
+-        Create an account
+-      </h1>
+-      <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+-        Join Find My School Mongolia to rate and review schools.
+-      </p>
+-
+-      <div className="mt-8">
+-        <RegisterForm />
+-      </div>
+-
+-      <p className="mt-6 text-center text-sm text-zinc-500">
+-        Already have an account?{" "}
+-        <Link href="/login" className="text-accent underline underline-offset-4">
+-          Log in
+-        </Link>
+-      </p>
+-    </div>
++    <AuthCard
++      title="Create an account"
++      description="Join Find My School Mongolia to rate and review schools."
++      footer={
++        <>
++          Already have an account?{" "}
++          <Link href="/login" className="text-accent underline underline-offset-4">
++            Log in
++          </Link>
++        </>
++      }
++    >
++      <RegisterForm />
++    </AuthCard>
+   );
+ }
+diff -ruN -x node_modules a/app/globals.css b/app/globals.css
+--- a/app/globals.css	2026-10-08 03:17:35.363578611 +0000
++++ b/app/globals.css	2026-10-08 03:17:35.381595568 +0000
+@@ -14,6 +14,8 @@
+   --muted: #52525b;
+   --subtle: #a1a1aa;
+   --accent-hover: #264a54;
++  --tone-private: #a4552f;
++  --tone-international: #5b4fa8;
+ }
+ 
+ @theme inline {
+@@ -33,6 +35,13 @@
+   --color-muted: var(--muted);
+   --color-subtle: var(--subtle);
+   --color-accent-hover: var(--accent-hover);
++  --color-tone-private: var(--tone-private);
++  --color-tone-private-soft: color-mix(in srgb, var(--tone-private) 12%, transparent);
++  --color-tone-international: var(--tone-international);
++  --color-tone-international-soft: color-mix(in srgb, var(--tone-international) 12%, transparent);
++  /* SchoolMonogram uses the short "intl" spelling */
++  --color-tone-intl: var(--tone-international);
++  --color-tone-intl-soft: color-mix(in srgb, var(--tone-international) 12%, transparent);
+   --color-accent-soft: color-mix(in srgb, var(--accent) 10%, transparent);
+ }
+ 
+@@ -50,6 +59,8 @@
+     --muted: #a1a1aa;
+     --subtle: #71717a;
+     --accent-hover: #a6d0d9;
++    --tone-private: #e0a07f;
++    --tone-international: #b3a9ee;
+   }
+ }
+ 
+diff -ruN -x node_modules a/app/layout.tsx b/app/layout.tsx
+--- a/app/layout.tsx	2026-10-08 03:17:35.363587665 +0000
++++ b/app/layout.tsx	2026-10-08 03:17:35.382592553 +0000
+@@ -1,6 +1,7 @@
+ import type { Metadata } from "next";
+ import { Geist, Geist_Mono, Fraunces } from "next/font/google";
+ import { Header } from "@/components/layout/Header";
++import { Footer } from "@/components/layout/Footer";
+ import { CompareBubble } from "@/components/compare/CompareBubble";
+ import "./globals.css";
+ 
+@@ -35,6 +36,7 @@
+       <body className="min-h-full flex flex-col">
+         <Header />
+         {children}
++        <Footer />
+         <CompareBubble />
+       </body>
+     </html>
+diff -ruN -x node_modules a/app/page.tsx b/app/page.tsx
+--- a/app/page.tsx	2026-10-08 03:17:35.363610976 +0000
++++ b/app/page.tsx	2026-10-08 03:17:35.383160194 +0000
+@@ -1,7 +1,9 @@
++import Link from "next/link";
+ import { HeroSearchBar } from "@/components/search/HeroSearchBar";
++import { LEVEL_LABELS, TYPE_LABELS } from "@/lib/labels";
+ 
+-const LEVELS = ["Elementary", "Middle", "High", "K-12"];
+-const TYPES = ["Public", "Private", "International"];
++const CHIP_CLASS =
++  "rounded-full border border-zinc-200 px-3 py-1 text-zinc-600 transition-colors hover:border-accent/40 hover:text-accent dark:border-zinc-800 dark:text-zinc-400";
+ 
+ export default function Home() {
+   return (
+@@ -19,21 +21,15 @@
+         <HeroSearchBar />
+ 
+         <div className="flex flex-wrap justify-center gap-2 text-sm">
+-          {LEVELS.map((level) => (
+-            <span
+-              key={level}
+-              className="rounded-full border border-zinc-200 px-3 py-1 text-zinc-600 transition-colors hover:border-accent/40 hover:text-accent dark:border-zinc-800 dark:text-zinc-400"
+-            >
+-              {level}
+-            </span>
++          {Object.entries(LEVEL_LABELS).map(([value, label]) => (
++            <Link key={value} href={`/search?level=${value}`} className={CHIP_CLASS}>
++              {label}
++            </Link>
+           ))}
+-          {TYPES.map((type) => (
+-            <span
+-              key={type}
+-              className="rounded-full border border-zinc-200 px-3 py-1 text-zinc-600 transition-colors hover:border-accent/40 hover:text-accent dark:border-zinc-800 dark:text-zinc-400"
+-            >
+-              {type}
+-            </span>
++          {Object.entries(TYPE_LABELS).map(([value, label]) => (
++            <Link key={value} href={`/search?type=${value}`} className={CHIP_CLASS}>
++              {label}
++            </Link>
+           ))}
+         </div>
+       </main>
+diff -ruN -x node_modules a/app/school/[id]/admissions/page.tsx b/app/school/[id]/admissions/page.tsx
+--- a/app/school/[id]/admissions/page.tsx	2026-10-08 03:17:35.363688278 +0000
++++ b/app/school/[id]/admissions/page.tsx	2026-10-08 03:17:35.384697715 +0000
+@@ -1,6 +1,13 @@
+ import { notFound } from "next/navigation";
+ import { getSchoolAdmissions } from "@/lib/schools";
+ import { tuitionSummary } from "@/lib/labels";
++import {
++  EmptyNote,
++  Fact,
++  FactGrid,
++  ProfileSection,
++  ProseCard,
++} from "@/components/school-profile/ProfileSection";
+ 
+ export default async function SchoolAdmissionsPage({
+   params,
+@@ -13,46 +20,38 @@
+   if (!school) notFound();
+ 
+   return (
+-    <div className="space-y-8">
+-      <dl className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+-        <div>
+-          <dt className="text-sm text-zinc-500">Tuition</dt>
+-          <dd className="mt-1 text-zinc-900 dark:text-zinc-100">
+-            {tuitionSummary(school.type, school.tuitionMinAnnual, school.tuitionMaxAnnual)}
+-          </dd>
+-        </div>
+-        <div>
+-          <dt className="text-sm text-zinc-500">Application deadline</dt>
+-          <dd className="mt-1 text-zinc-900 dark:text-zinc-100">
+-            {school.applicationDeadline
+-              ? new Date(school.applicationDeadline).toLocaleDateString("en-US", {
+-                  year: "numeric",
+-                  month: "long",
+-                  day: "numeric",
+-                })
+-              : "Rolling / not specified"}
+-          </dd>
+-        </div>
+-      </dl>
++    <div className="space-y-10">
++      <FactGrid columns={2}>
++        <Fact label="Tuition">
++          {tuitionSummary(school.type, school.tuitionMinAnnual, school.tuitionMaxAnnual)}
++        </Fact>
++        <Fact label="Application deadline">
++          {school.applicationDeadline
++            ? new Date(school.applicationDeadline).toLocaleDateString("en-US", {
++                year: "numeric",
++                month: "long",
++                day: "numeric",
++              })
++            : "Rolling / not specified"}
++        </Fact>
++      </FactGrid>
+ 
+-      <section>
+-        <h2 className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
+-          Entrance requirements
+-        </h2>
+-        <p className="mt-2 text-zinc-600 dark:text-zinc-400">
+-          {school.entranceExamInfo ?? "No entrance exam information has been added yet."}
+-        </p>
+-      </section>
++      <ProfileSection title="Entrance requirements">
++        {school.entranceExamInfo ? (
++          <ProseCard>{school.entranceExamInfo}</ProseCard>
++        ) : (
++          <EmptyNote>No entrance exam information has been added yet.</EmptyNote>
++        )}
++      </ProfileSection>
+ 
+       {school.type === "PUBLIC" && (
+-        <section>
+-          <h2 className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
+-            Catchment area
+-          </h2>
+-          <p className="mt-2 text-zinc-600 dark:text-zinc-400">
+-            {school.catchmentAreaInfo ?? "No catchment area information has been added yet."}
+-          </p>
+-        </section>
++        <ProfileSection title="Catchment area">
++          {school.catchmentAreaInfo ? (
++            <ProseCard>{school.catchmentAreaInfo}</ProseCard>
++          ) : (
++            <EmptyNote>No catchment area information has been added yet.</EmptyNote>
++          )}
++        </ProfileSection>
+       )}
+     </div>
+   );
+diff -ruN -x node_modules a/app/school/[id]/dorm/page.tsx b/app/school/[id]/dorm/page.tsx
+--- a/app/school/[id]/dorm/page.tsx	2026-10-08 03:17:35.363708444 +0000
++++ b/app/school/[id]/dorm/page.tsx	2026-10-08 03:17:35.384587746 +0000
+@@ -1,6 +1,13 @@
+ import { notFound } from "next/navigation";
+ import { getSchoolDormitory } from "@/lib/schools";
+ import { StarRating } from "@/components/common/StarRating";
++import {
++  EmptyNote,
++  Fact,
++  FactGrid,
++  ProfileSection,
++  ProseCard,
++} from "@/components/school-profile/ProfileSection";
+ 
+ export default async function SchoolDormitoryPage({
+   params,
+@@ -13,55 +20,41 @@
+   if (!school) notFound();
+ 
+   if (!school.dormitory) {
+-    return (
+-      <p className="text-zinc-500">This school does not offer on-campus dormitory housing.</p>
+-    );
++    return <EmptyNote>This school does not offer on-campus dormitory housing.</EmptyNote>;
+   }
+ 
+   const dorm = school.dormitory;
+ 
+   return (
+-    <div className="space-y-8">
+-      <StarRating value={school.avgDorms} size="md" />
+-
+-      <dl className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+-        <div>
+-          <dt className="text-sm text-zinc-500">Room capacity</dt>
+-          <dd className="mt-1 text-zinc-900 dark:text-zinc-100">
+-            {dorm.roomCapacity ? `${dorm.roomCapacity} students per room` : "Not reported"}
+-          </dd>
+-        </div>
+-        <div>
+-          <dt className="text-sm text-zinc-500">Monthly fee</dt>
+-          <dd className="mt-1 text-zinc-900 dark:text-zinc-100">
+-            {dorm.monthlyFeeAmount ? `₮${dorm.monthlyFeeAmount.toLocaleString()} / month` : "Not reported"}
+-          </dd>
+-        </div>
+-      </dl>
++    <div className="space-y-10">
++      <FactGrid columns={3}>
++        <Fact label="Rating">
++          <StarRating value={school.avgDorms} size="sm" />
++        </Fact>
++        <Fact label="Room capacity">
++          {dorm.roomCapacity ? `${dorm.roomCapacity} students per room` : "Not reported"}
++        </Fact>
++        <Fact label="Monthly fee">
++          {dorm.monthlyFeeAmount ? `₮${dorm.monthlyFeeAmount.toLocaleString()} / month` : "Not reported"}
++        </Fact>
++      </FactGrid>
+ 
+       {dorm.livingConditions && (
+-        <section>
+-          <h2 className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
+-            Living conditions
+-          </h2>
+-          <p className="mt-2 text-zinc-600 dark:text-zinc-400">{dorm.livingConditions}</p>
+-        </section>
++        <ProfileSection title="Living conditions">
++          <ProseCard>{dorm.livingConditions}</ProseCard>
++        </ProfileSection>
+       )}
+ 
+       {dorm.boardingRules && (
+-        <section>
+-          <h2 className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
+-            Boarding rules
+-          </h2>
+-          <p className="mt-2 text-zinc-600 dark:text-zinc-400">{dorm.boardingRules}</p>
+-        </section>
++        <ProfileSection title="Boarding rules">
++          <ProseCard>{dorm.boardingRules}</ProseCard>
++        </ProfileSection>
+       )}
+ 
+       {dorm.safetyInfo && (
+-        <section>
+-          <h2 className="text-lg font-medium text-zinc-900 dark:text-zinc-100">Safety</h2>
+-          <p className="mt-2 text-zinc-600 dark:text-zinc-400">{dorm.safetyInfo}</p>
+-        </section>
++        <ProfileSection title="Safety">
++          <ProseCard>{dorm.safetyInfo}</ProseCard>
++        </ProfileSection>
+       )}
+     </div>
+   );
+diff -ruN -x node_modules a/app/school/[id]/facilities/page.tsx b/app/school/[id]/facilities/page.tsx
+--- a/app/school/[id]/facilities/page.tsx	2026-10-08 03:17:35.363726573 +0000
++++ b/app/school/[id]/facilities/page.tsx	2026-10-08 03:17:35.384471269 +0000
+@@ -1,6 +1,12 @@
+ import { notFound } from "next/navigation";
+ import { getSchoolFacilities } from "@/lib/schools";
+ import { StarRating } from "@/components/common/StarRating";
++import {
++  EmptyNote,
++  Fact,
++  FactGrid,
++  ProfileSection,
++} from "@/components/school-profile/ProfileSection";
+ 
+ export default async function SchoolFacilitiesPage({
+   params,
+@@ -13,42 +19,35 @@
+   if (!school) notFound();
+ 
+   return (
+-    <div className="space-y-8">
+-      <div className="flex flex-wrap gap-x-8 gap-y-2 text-sm">
+-        <div className="flex items-center gap-2">
+-          <span className="text-zinc-500">Facilities overall</span>
+-          <StarRating value={school.avgFacilities} size="sm" />
+-        </div>
+-        <div className="flex items-center gap-2">
+-          <span className="text-zinc-500">Library</span>
+-          <StarRating value={school.avgLibrary} size="sm" />
+-        </div>
+-      </div>
++    <div className="space-y-10">
++      <ProfileSection title="Ratings">
++        <FactGrid columns={2}>
++          <Fact label="Facilities overall">
++            <StarRating value={school.avgFacilities} size="sm" />
++          </Fact>
++          <Fact label="Library">
++            <StarRating value={school.avgLibrary} size="sm" />
++          </Fact>
++        </FactGrid>
++      </ProfileSection>
+ 
+-      {school.facilities.length === 0 ? (
+-        <p className="text-zinc-500">
+-          No facility details have been added for this school yet.
+-        </p>
+-      ) : (
+-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+-          {school.facilities.map((facility) => (
+-            <div
+-              key={facility.id}
+-              className="rounded-xl border border-zinc-200 p-4 dark:border-zinc-800"
+-            >
+-              <div className="text-xs text-zinc-500">{facility.category}</div>
+-              <div className="mt-1 font-medium text-zinc-900 dark:text-zinc-100">
+-                {facility.nameEn}
++      <ProfileSection title="On campus">
++        {school.facilities.length === 0 ? (
++          <EmptyNote>No facility details have been added for this school yet.</EmptyNote>
++        ) : (
++          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
++            {school.facilities.map((facility) => (
++              <div key={facility.id} className="rounded-xl border border-line bg-surface p-4">
++                <div className="text-xs text-subtle">{facility.category}</div>
++                <div className="mt-1 font-medium text-foreground">{facility.nameEn}</div>
++                {facility.description && (
++                  <p className="mt-2 text-sm text-muted">{facility.description}</p>
++                )}
+               </div>
+-              {facility.description && (
+-                <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+-                  {facility.description}
+-                </p>
+-              )}
+-            </div>
+-          ))}
+-        </div>
+-      )}
++            ))}
++          </div>
++        )}
++      </ProfileSection>
+     </div>
+   );
+ }
+diff -ruN -x node_modules a/app/school/[id]/page.tsx b/app/school/[id]/page.tsx
+--- a/app/school/[id]/page.tsx	2026-10-08 03:17:35.363770650 +0000
++++ b/app/school/[id]/page.tsx	2026-10-08 03:17:35.384308891 +0000
+@@ -1,8 +1,10 @@
+ import { notFound } from "next/navigation";
+ import { getSchoolOverview } from "@/lib/schools";
+ import { Badge } from "@/components/common/Badge";
+-import { StarRating } from "@/components/common/StarRating";
++import { RatingSummary } from "@/components/reviews/RatingSummary";
++import { Fact, FactGrid, ProfileSection } from "@/components/school-profile/ProfileSection";
+ import { CURRICULUM_LABELS, LANGUAGE_NAMES } from "@/lib/labels";
++import { ratingCategories } from "@/lib/ratings";
+ 
+ export default async function SchoolOverviewPage({
+   params,
+@@ -14,61 +16,36 @@
+ 
+   if (!school) notFound();
+ 
++  const languages = school.teachingLanguages.map((l) => LANGUAGE_NAMES[l] ?? l.toUpperCase());
++
+   return (
+     <div className="space-y-10">
+-      <section>
+-        <h2 className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
+-          Curriculum & instruction
+-        </h2>
+-        <div className="mt-3 flex flex-wrap gap-2">
+-          {school.curriculum.map((c) => (
+-            <Badge key={c} tone="accent">
+-              {CURRICULUM_LABELS[c]}
+-            </Badge>
+-          ))}
+-        </div>
+-
+-        <dl className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
+-          <div>
+-            <dt className="text-sm text-zinc-500">Teaching languages</dt>
+-            <dd className="mt-1 text-zinc-900 dark:text-zinc-100">
+-              {school.teachingLanguages.map((l) => LANGUAGE_NAMES[l] ?? l.toUpperCase()).join(", ")}
+-            </dd>
+-          </div>
+-          <div>
+-            <dt className="text-sm text-zinc-500">Student-teacher ratio</dt>
+-            <dd className="mt-1 text-zinc-900 dark:text-zinc-100">
+-              {school.studentTeacherRatio ?? "Not reported"}
+-            </dd>
++      <ProfileSection title="Curriculum & instruction">
++        {school.curriculum.length > 0 && (
++          <div className="mb-6 flex flex-wrap gap-2">
++            {school.curriculum.map((c) => (
++              <Badge key={c} tone="accent">
++                {CURRICULUM_LABELS[c]}
++              </Badge>
++            ))}
+           </div>
+-          <div className="sm:col-span-2">
+-            <dt className="text-sm text-zinc-500">Accreditation</dt>
+-            <dd className="mt-1 text-zinc-900 dark:text-zinc-100">
+-              {school.accreditation ?? "Not reported"}
+-            </dd>
+-          </div>
+-        </dl>
+-      </section>
+-
+-      <section>
+-        <h2 className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
+-          Community ratings
+-        </h2>
+-        <div className="mt-3 space-y-2">
+-          <RatingRow label="Academics" value={school.avgAcademics} />
+-          <RatingRow label="Teachers" value={school.avgTeachers} />
+-          <RatingRow label="Campus environment" value={school.avgEnvironment} />
+-        </div>
+-      </section>
+-    </div>
+-  );
+-}
+-
+-function RatingRow({ label, value }: { label: string; value: number | null }) {
+-  return (
+-    <div className="flex items-center justify-between border-b border-zinc-100 py-2 dark:border-zinc-800">
+-      <span className="text-zinc-600 dark:text-zinc-400">{label}</span>
+-      <StarRating value={value} size="sm" />
++        )}
++        <FactGrid columns={3}>
++          <Fact label="Teaching languages">
++            {languages.length > 0 ? languages.join(", ") : "Not reported"}
++          </Fact>
++          <Fact label="Student–teacher ratio">{school.studentTeacherRatio ?? "Not reported"}</Fact>
++          <Fact label="Accreditation">{school.accreditation ?? "Not reported"}</Fact>
++        </FactGrid>
++      </ProfileSection>
++
++      <ProfileSection title="Community ratings">
++        <RatingSummary
++          overall={school.avgOverall}
++          count={school.reviewCount}
++          categories={ratingCategories(school, Boolean(school.dormitory))}
++        />
++      </ProfileSection>
+     </div>
+   );
+ }
+diff -ruN -x node_modules a/app/school/[id]/reviews/page.tsx b/app/school/[id]/reviews/page.tsx
+--- a/app/school/[id]/reviews/page.tsx	2026-10-08 03:17:35.363798618 +0000
++++ b/app/school/[id]/reviews/page.tsx	2026-10-08 03:17:35.384806732 +0000
+@@ -1,7 +1,10 @@
+ import { notFound } from "next/navigation";
+-import { getSchoolHeader, getSchoolReviews, getSchoolHasDorm } from "@/lib/schools";
++import { getSchoolRatings, getSchoolReviews } from "@/lib/schools";
++import { ratingCategories } from "@/lib/ratings";
++import { RatingSummary } from "@/components/reviews/RatingSummary";
+ import { ReviewForm } from "@/components/reviews/ReviewForm";
+ import { ReviewCard } from "@/components/reviews/ReviewCard";
++import { EmptyNote, ProfileSection } from "@/components/school-profile/ProfileSection";
+ 
+ export default async function SchoolReviewsPage({
+   params,
+@@ -9,34 +12,32 @@
+   params: Promise<{ id: string }>;
+ }) {
+   const { id } = await params;
+-  const school = await getSchoolHeader(id);
++  const [school, reviews] = await Promise.all([getSchoolRatings(id), getSchoolReviews(id)]);
+ 
+   if (!school) notFound();
+ 
+-  const [reviews, dorm] = await Promise.all([getSchoolReviews(id), getSchoolHasDorm(id)]);
++  const hasDorm = Boolean(school.dormitory);
+ 
+   return (
+     <div className="space-y-10">
+-      <section>
+-        <h2 className="text-lg font-medium text-zinc-900 dark:text-zinc-100">Write a review</h2>
+-        <div className="mt-3">
+-          <ReviewForm schoolId={id} hasDorm={!!dorm} />
+-        </div>
+-      </section>
++      <RatingSummary
++        overall={school.avgOverall}
++        count={school.reviewCount}
++        categories={ratingCategories(school, hasDorm)}
++      />
++
++      <ProfileSection title="Write a review">
++        <ReviewForm schoolId={id} hasDorm={hasDorm} />
++      </ProfileSection>
+ 
+-      <section>
+-        <h2 className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
+-          {reviews.length} {reviews.length === 1 ? "review" : "reviews"}
+-        </h2>
+-        <div className="mt-3 space-y-4">
+-          {reviews.length === 0 && (
+-            <p className="text-zinc-500">Be the first to review this school.</p>
+-          )}
++      <ProfileSection title={`${reviews.length} ${reviews.length === 1 ? "review" : "reviews"}`}>
++        <div className="space-y-4">
++          {reviews.length === 0 && <EmptyNote>Be the first to review this school.</EmptyNote>}
+           {reviews.map((review) => (
+             <ReviewCard key={review.id} review={review} />
+           ))}
+         </div>
+-      </section>
++      </ProfileSection>
+     </div>
+   );
+ }
+diff -ruN -x node_modules a/app/search/page.tsx b/app/search/page.tsx
+--- a/app/search/page.tsx	2026-10-08 03:17:35.363890612 +0000
++++ b/app/search/page.tsx	2026-10-08 03:17:35.383469393 +0000
+@@ -1,112 +1,93 @@
+ import Link from "next/link";
+-import type { Curriculum, Prisma, SchoolLevel, SchoolType } from "@prisma/client";
+ import { prisma } from "@/lib/prisma";
++import { schoolCardSelect } from "@/lib/schools";
++import {
++  PAGE_SIZE,
++  buildSchoolOrderBy,
++  buildSchoolWhere,
++  parseSchoolSearch,
++} from "@/lib/school-search";
++import { SchoolCard } from "@/components/search/SchoolCard";
+ import { FilterBar } from "@/components/search/FilterBar";
+-import { StarRating } from "@/components/common/StarRating";
+-import { CURRICULUM_LABELS, LEVEL_LABELS, TYPE_LABELS } from "@/lib/labels";
++import { ActiveFilters } from "@/components/search/ActiveFilters";
++import { Pagination } from "@/components/search/Pagination";
++import { SearchInput, SortSelect } from "@/components/search/SearchControls";
++import { PendingArea, SearchNavigationProvider } from "@/components/search/SearchNavigation";
+ 
+ type SearchPageProps = {
+-  searchParams: Promise<{
+-    q?: string;
+-    level?: string;
+-    type?: string;
+-    curriculum?: string;
+-    dorm?: string;
+-  }>;
++  searchParams: Promise<Record<string, string | string[] | undefined>>;
+ };
+ 
+-// Only accept values that really exist, so a bad URL can never crash the query.
+-function pick<T extends string>(value: string | undefined, allowed: Record<string, string>) {
+-  return value && value in allowed ? (value as T) : undefined;
+-}
+-
+ export default async function SearchPage({ searchParams }: SearchPageProps) {
+-  const params = await searchParams;
+-
+-  const q = params.q?.trim();
+-  const level = pick<SchoolLevel>(params.level, LEVEL_LABELS);
+-  const type = pick<SchoolType>(params.type, TYPE_LABELS);
+-  const curriculum = pick<Curriculum>(params.curriculum, CURRICULUM_LABELS);
+-  const dorm = params.dorm === "true";
+-
+-  const where: Prisma.SchoolWhereInput = {
+-    AND: [
+-      q
+-        ? {
+-            OR: [
+-              { nameEn: { contains: q, mode: "insensitive" } },
+-              { nameMn: { contains: q, mode: "insensitive" } },
+-              { schoolNumber: { contains: q, mode: "insensitive" } },
+-              { district: { contains: q, mode: "insensitive" } },
+-            ],
+-          }
+-        : {},
+-      level ? { level } : {},
+-      type ? { type } : {},
+-      curriculum ? { curriculum: { has: curriculum } } : {},
+-      dorm ? { dormitory: { isNot: null } } : {},
+-    ],
+-  };
++  const rawParams = await searchParams;
++  const search = parseSchoolSearch(rawParams);
++  const where = buildSchoolWhere(search);
++
++  const total = await prisma.school.count({ where });
++  const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE));
++  // A stale or hand-edited ?page=99 just lands on the last page.
++  const page = Math.min(search.page, pageCount);
+ 
+   const schools = await prisma.school.findMany({
+     where,
+-    take: 30,
+-    orderBy: [{ avgOverall: "desc" }, { nameEn: "asc" }],
++    orderBy: buildSchoolOrderBy(search.sort),
++    skip: (page - 1) * PAGE_SIZE,
++    take: PAGE_SIZE,
++    select: schoolCardSelect,
+   });
+ 
+-  const hasActiveFilters = Boolean(q || level || type || curriculum || dorm);
++  const hasActiveFilters = Boolean(
++    search.q || search.level || search.type || search.curriculum || search.dorm,
++  );
+ 
+   return (
+-    <div className="mx-auto w-full max-w-5xl px-6 py-10">
++    <div className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6">
+       <h1 className="font-display text-3xl font-semibold text-zinc-900 dark:text-zinc-50">
+-        {q ? `Results for “${q}”` : "All schools"}
++        {search.q ? `Results for “${search.q}”` : "All schools"}
+       </h1>
+ 
+-      <div className="mt-6">
+-        <FilterBar />
+-      </div>
+-
+-      <p className="mt-6 text-sm text-zinc-500">
+-        {schools.length} {schools.length === 1 ? "school" : "schools"} found
+-      </p>
+-
+-      <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+-        {schools.map((school) => (
+-          <Link
+-            key={school.id}
+-            href={`/school/${school.id}`}
+-            className="rounded-[var(--radius-card)] border border-zinc-200 p-4 transition-colors hover:border-accent/40 dark:border-zinc-800"
+-          >
+-            <div className="text-sm text-zinc-500">{school.district ?? school.aimagCity}</div>
+-            <div className="mt-1 font-medium text-zinc-900 dark:text-zinc-100">{school.nameEn}</div>
+-            <div className="text-sm text-zinc-500">{school.nameMn}</div>
+-            <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-xs text-zinc-500">
+-              <span>{TYPE_LABELS[school.type]}</span>
+-              <span>{LEVEL_LABELS[school.level]}</span>
+-              {school.schoolNumber && <span>{school.schoolNumber}</span>}
+-            </div>
+-            <div className="mt-3">
+-              <StarRating value={school.avgOverall || null} count={school.reviewCount} size="sm" />
+-            </div>
+-          </Link>
+-        ))}
+-      </div>
+-
+-      {schools.length === 0 && (
+-        <div className="mt-4 rounded-[var(--radius-card)] border border-dashed border-zinc-300 p-8 text-center dark:border-zinc-700">
+-          <p className="text-zinc-600 dark:text-zinc-400">
+-            No schools match{hasActiveFilters ? " these filters" : " yet"}.
++      <SearchNavigationProvider>
++        <div className="mt-6 space-y-4">
++          <SearchInput />
++          <FilterBar />
++          <ActiveFilters />
++        </div>
++
++        <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
++          <p className="text-sm text-zinc-500">
++            {total} {total === 1 ? "school" : "schools"} found
+           </p>
+-          {hasActiveFilters && (
+-            <Link
+-              href="/search"
+-              className="mt-2 inline-block text-sm text-accent underline underline-offset-4"
+-            >
+-              Clear everything and start over
+-            </Link>
+-          )}
++          <SortSelect value={search.sort} />
+         </div>
+-      )}
++
++        <PendingArea>
++          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
++            {schools.map((school) => (
++              <SchoolCard key={school.id} school={school} />
++            ))}
++          </div>
++
++          {schools.length === 0 && (
++            <div className="mt-4 rounded-[var(--radius-card)] border border-dashed border-zinc-300 p-8 text-center dark:border-zinc-700">
++              <p className="text-zinc-600 dark:text-zinc-400">
++                No schools match{hasActiveFilters ? " these filters" : " yet"}.
++              </p>
++              {hasActiveFilters && (
++                <Link
++                  href="/search"
++                  className="mt-2 inline-block text-sm text-accent underline underline-offset-4"
++                >
++                  Clear everything and start over
++                </Link>
++              )}
++            </div>
++          )}
++
++          <div className="mt-8">
++            <Pagination page={page} pageCount={pageCount} params={rawParams} />
++          </div>
++        </PendingArea>
++      </SearchNavigationProvider>
+     </div>
+   );
+ }
+diff -ruN -x node_modules a/components/layout/Header.tsx b/components/layout/Header.tsx
+--- a/components/layout/Header.tsx	2026-10-08 03:17:35.364092399 +0000
++++ b/components/layout/Header.tsx	2026-10-08 03:17:35.383006664 +0000
+@@ -1,6 +1,7 @@
+ import Link from "next/link";
+ import { headers } from "next/headers";
+ import { signOut } from "@/app/(auth)/actions";
++import { Logo } from "@/components/layout/Logo";
+ import { MobileMenu } from "@/components/layout/MobileMenu";
+ 
+ export async function Header() {
+@@ -11,12 +12,7 @@
+   return (
+     <header className="relative border-b border-zinc-200 dark:border-zinc-800">
+       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+-        <Link
+-          href="/"
+-          className="font-display text-lg font-semibold text-zinc-900 dark:text-zinc-100"
+-        >
+-          Find My School
+-        </Link>
++        <Logo />
+ 
+         <nav className="hidden items-center gap-4 text-sm md:flex">
+           <Link
+diff -ruN -x node_modules a/components/school-profile/SchoolHeader.tsx b/components/school-profile/SchoolHeader.tsx
+--- a/components/school-profile/SchoolHeader.tsx	2026-10-08 03:17:35.364218822 +0000
++++ b/components/school-profile/SchoolHeader.tsx	2026-10-08 03:17:35.384182911 +0000
+@@ -1,5 +1,6 @@
+ import type { getSchoolHeader } from "@/lib/schools";
+-import { Badge } from "@/components/common/Badge";
++import { Badge, TYPE_TONE } from "@/components/common/Badge";
++import { SchoolMonogram } from "@/components/common/SchoolMonogram";
+ import { BackButton } from "@/components/common/BackButton";
+ import { SaveButton } from "@/components/school-profile/SaveButton";
+ import { CompareButton } from "@/components/compare/CompareButton";
+@@ -33,15 +34,25 @@
+         </div>
+ 
+         <div className="mt-4 flex flex-wrap items-start gap-2">
+-          <Badge tone="accent">{TYPE_LABELS[school.type]}</Badge>
++          <Badge tone={TYPE_TONE[school.type]}>{TYPE_LABELS[school.type]}</Badge>
+           <Badge>{LEVEL_LABELS[school.level]}</Badge>
+           {school.schoolNumber && <Badge>{school.schoolNumber}</Badge>}
+         </div>
+ 
+-        <h1 className="mt-4 font-display text-4xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-5xl">
+-          {school.nameEn}
+-        </h1>
+-        <p className="mt-1.5 text-lg text-zinc-600 dark:text-zinc-400">{school.nameMn}</p>
++        <div className="mt-4 flex items-start gap-4 sm:gap-5">
++          <SchoolMonogram
++            name={school.nameEn}
++            type={school.type}
++            logoUrl={school.logoUrl}
++            size="lg"
++          />
++          <div className="min-w-0">
++            <h1 className="font-display text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-5xl">
++              {school.nameEn}
++            </h1>
++            <p className="mt-1.5 text-lg text-zinc-600 dark:text-zinc-400">{school.nameMn}</p>
++          </div>
++        </div>
+ 
+         <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-zinc-600 dark:text-zinc-400">
+           <span>{location}</span>
+diff -ruN -x node_modules a/components/search/FilterBar.tsx b/components/search/FilterBar.tsx
+--- a/components/search/FilterBar.tsx	2026-10-08 03:17:35.364258084 +0000
++++ b/components/search/FilterBar.tsx	2026-10-08 03:17:35.383316927 +0000
+@@ -1,10 +1,9 @@
+ "use client";
+ 
+-import Link from "next/link";
+-import { usePathname, useRouter, useSearchParams } from "next/navigation";
++import { useSearchNavigation } from "@/components/search/SearchNavigation";
+ import { CURRICULUM_LABELS, LEVEL_LABELS, TYPE_LABELS } from "@/lib/labels";
+ 
+-export const FILTER_KEYS = ["level", "type", "curriculum", "dorm"];
++export const FILTER_KEYS = ["level", "type", "curriculum", "dorm"] as const;
+ 
+ function Chip({
+   active,
+@@ -41,22 +40,14 @@
+ }
+ 
+ export function FilterBar() {
+-  const router = useRouter();
+-  const pathname = usePathname();
+-  const searchParams = useSearchParams();
++  const { searchParams, update } = useSearchNavigation();
+ 
+   function toggle(key: string, value: string) {
+-    const params = new URLSearchParams(searchParams.toString());
+-    if (params.get(key) === value) params.delete(key);
+-    else params.set(key, value);
+-    router.push(`${pathname}?${params.toString()}`, { scroll: false });
++    update({ [key]: searchParams.get(key) === value ? null : value });
+   }
+ 
+-  function clearHref() {
+-    const params = new URLSearchParams(searchParams.toString());
+-    FILTER_KEYS.forEach((k) => params.delete(k));
+-    const qs = params.toString();
+-    return qs ? `${pathname}?${qs}` : pathname;
++  function clearFilters() {
++    update(Object.fromEntries(FILTER_KEYS.map((k) => [k, null])));
+   }
+ 
+   const hasFilters = FILTER_KEYS.some((k) => searchParams.has(k));
+@@ -98,12 +89,13 @@
+       </Group>
+ 
+       {hasFilters && (
+-        <Link
+-          href={clearHref()}
++        <button
++          type="button"
++          onClick={clearFilters}
+           className="inline-block text-sm text-accent underline decoration-accent/30 underline-offset-4 hover:decoration-accent"
+         >
+           Clear filters
+-        </Link>
++        </button>
+       )}
+     </div>
+   );
+diff -ruN -x node_modules a/lib/schools.ts b/lib/schools.ts
+--- a/lib/schools.ts	2026-10-08 03:17:35.364441817 +0000
++++ b/lib/schools.ts	2026-10-08 03:17:35.382214141 +0000
+@@ -1,7 +1,7 @@
+ import { prisma } from "@/lib/prisma";
+ import type { Curriculum, Prisma, SchoolLevel, SchoolType } from "@prisma/client";
+ 
+-const schoolCardSelect = {
++export const schoolCardSelect = {
+   id: true,
+   schoolNumber: true,
+   nameEn: true,
+@@ -56,9 +56,32 @@
+       teachingLanguages: true,
+       studentTeacherRatio: true,
+       accreditation: true,
++      avgOverall: true,
++      avgAcademics: true,
++      avgTeachers: true,
++      avgFacilities: true,
++      avgEnvironment: true,
++      avgLibrary: true,
++      avgDorms: true,
++      reviewCount: true,
++      dormitory: { select: { id: true } },
++    },
++  });
++}
++
++export function getSchoolRatings(id: string) {
++  return prisma.school.findUnique({
++    where: { id },
++    select: {
++      avgOverall: true,
+       avgAcademics: true,
+       avgTeachers: true,
++      avgFacilities: true,
+       avgEnvironment: true,
++      avgLibrary: true,
++      avgDorms: true,
++      reviewCount: true,
++      dormitory: { select: { id: true } },
+     },
+   });
+ }

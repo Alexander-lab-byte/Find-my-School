@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --accent: #2f5a66;
+  --accent-foreground: #f0f7f8;
+  --radius-card: 0.85rem;
+
+  --surface: #ffffff;
+  --surface-muted: #f4f4f5;
+  --line: #e4e4e7;
+  --line-strong: #d4d4d8;
+  --muted: #52525b;
+  --subtle: #a1a1aa;
+  --accent-hover: #264a54;
+  --tone-private: #a4552f;
+  --tone-international: #5b4fa8;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-fraunces);
+  --radius-card: var(--radius-card);
+
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+  --color-accent-hover: var(--accent-hover);
+  --color-tone-private: var(--tone-private);
+  --color-tone-private-soft: color-mix(in srgb, var(--tone-private) 12%, transparent);
+  --color-tone-international: var(--tone-international);
+  --color-tone-international-soft: color-mix(in srgb, var(--tone-international) 12%, transparent);
+  /* SchoolMonogram uses the short "intl" spelling */
+  --color-tone-intl: var(--tone-international);
+  --color-tone-intl-soft: color-mix(in srgb, var(--tone-international) 12%, transparent);
+  --color-accent-soft: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+    --accent: #8fc2cd;
+    --accent-foreground: #0b1e21;
+
+    --surface: #111111;
+    --surface-muted: #1a1a1a;
+    --line: #27272a;
+    --line-strong: #3f3f46;
+    --muted: #a1a1aa;
+    --subtle: #71717a;
+    --accent-hover: #a6d0d9;
+    --tone-private: #e0a07f;
+    --tone-international: #b3a9ee;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Text inputs / selects used by the search controls. */
+@layer components {
+  .field {
+    width: 100%;
+    border-radius: 0.5rem;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    padding: 0.625rem 0.75rem;
+    font-size: 0.875rem;
+    outline: none;
+  }
+  .field:focus {
+    border-color: var(--accent);
+  }
+}
