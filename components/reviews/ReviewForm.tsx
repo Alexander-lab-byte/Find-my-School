@@ -5,22 +5,24 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import type { ReviewTag } from "@prisma/client";
 import { CategoryStarInput } from "./CategoryStarInput";
-import { submitReview } from "@/app/school/[id]/reviews/actions";
+import { submitReview, type SubmitReviewError } from "@/app/school/[id]/reviews/actions";
+import { MAX_REVIEW_LENGTH, MIN_REVIEW_LENGTH } from "@/lib/review-limits";
 
 const TAG_OPTIONS: ReviewTag[] = ["DORMITORY", "LIBRARY", "FOOD_CANTEEN", "EXTRACURRICULARS"];
 
-type FormError = "RATINGS" | "LENGTH" | "LOGIN_REQUIRED" | "ALREADY_REVIEWED" | "GENERIC";
+type FormError = "RATINGS" | "GENERIC" | SubmitReviewError;
 
 // Message key in the "ReviewForm" namespace for each error.
 const ERROR_KEYS: Record<FormError, string> = {
   RATINGS: "errorRatings",
-  LENGTH: "errorLength",
+  TOO_SHORT: "errorLength",
+  TOO_LONG: "errorTooLong",
+  INVALID_RATINGS: "errorRatings",
   LOGIN_REQUIRED: "loginRequired",
+  NOT_ALLOWED: "notAllowed",
   ALREADY_REVIEWED: "alreadyReviewed",
   GENERIC: "generic",
 };
-
-const MIN_BODY_LENGTH = 20;
 
 type Ratings = {
   academics: number;
@@ -67,8 +69,8 @@ export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: b
       setError("RATINGS");
       return;
     }
-    if (bodyLength < MIN_BODY_LENGTH) {
-      setError("LENGTH");
+    if (bodyLength < MIN_REVIEW_LENGTH) {
+      setError("TOO_SHORT");
       return;
     }
 
@@ -181,17 +183,21 @@ export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: b
           id="review-body"
           value={body}
           onChange={(e) => setBody(e.target.value)}
-          rows={6}
+          rows={5}
+          maxLength={MAX_REVIEW_LENGTH}
           placeholder={t("placeholder")}
           className="field mt-2 resize-y leading-6"
         />
-        <p
-          className={`mt-1.5 text-xs ${bodyLength >= MIN_BODY_LENGTH ? "text-subtle" : "text-muted"}`}
-        >
-          {bodyLength >= MIN_BODY_LENGTH
-            ? t("charCount", { count: bodyLength })
-            : t("moreChars", { count: MIN_BODY_LENGTH - bodyLength })}
-        </p>
+        <div className="mt-1.5 flex justify-between gap-3 text-xs text-subtle">
+          <span>
+            {bodyLength < MIN_REVIEW_LENGTH
+              ? t("moreChars", { count: MIN_REVIEW_LENGTH - bodyLength })
+              : ""}
+          </span>
+          <span className="tabular-nums" aria-live="polite">
+            {t("counter", { count: body.length, max: MAX_REVIEW_LENGTH })}
+          </span>
+        </div>
       </div>
 
       {error && (

@@ -29,7 +29,8 @@
     "language": "Language",
     "noReviewsYet": "No reviews yet",
     "reviewCount": "{count, plural, one {# review} other {# reviews}}",
-    "schoolCount": "{count, plural, one {# school} other {# schools}}"
+    "schoolCount": "{count, plural, one {# school} other {# schools}}",
+    "map": "Map"
   },
   "Footer": {
     "about": "An independent guide to schools in Mongolia — curriculum, fees, dormitories, and reviews from parents, students, alumni, and educators.",
@@ -44,7 +45,8 @@
     "createAccount": "Create an account",
     "copyright": "© {year} Find My School Mongolia",
     "disclaimer": "Reviews reflect the views of individual community members.",
-    "logIn": "Log in"
+    "logIn": "Log in",
+    "schoolMap": "School map"
   },
   "Home": {
     "eyebrow": "Schools across Mongolia",
@@ -289,7 +291,9 @@
     "shareBody": "Log in or create a free account to rate this school. Reviews show whether you're a parent, student, alumnus, or educator.",
     "loginToWrite": "Log in to write a review",
     "createAccount": "Create an account",
-    "verified": "Verified"
+    "verified": "Verified",
+    "showMore": "Show more",
+    "showLess": "Show less"
   },
   "ReviewForm": {
     "ratings": "Ratings",
@@ -315,25 +319,37 @@
     "fair": "Fair",
     "good": "Good",
     "veryGood": "Very good",
-    "excellent": "Excellent"
+    "excellent": "Excellent",
+    "errorTooLong": "Reviews can be at most 200 characters.",
+    "notAllowed": "Only verified members of this school can review it.",
+    "counter": "{count} / {max}"
   },
   "Auth": {
     "welcomeBack": "Welcome back",
-    "loginIntro": "Log in to Find My School Mongolia to rate and review schools.",
+    "loginIntro": "Sign in with your email — we'll send you a one-time code. No password needed.",
     "noAccount": "Don't have an account?",
     "haveAccount": "Already have an account?",
     "callbackFailed": "That sign-in link didn't work or has expired. Please log in again.",
     "createTitle": "Create an account",
-    "registerIntro": "Join Find My School Mongolia to rate and review schools. It's free.",
+    "registerIntro": "Create an account with your email. Use your school email if you want to review your school.",
     "name": "Name",
     "email": "Email",
-    "password": "Password",
-    "passwordHint": "At least 8 characters.",
-    "loggingIn": "Logging in…",
-    "creating": "Creating account…",
-    "createButton": "Create account",
     "checkEmail": "Check your email",
-    "sentLink": "We sent a confirmation link to {email}."
+    "emailPlaceholder": "you@school.edu.mn",
+    "schoolEmailHint": "To write a review, use your school email (e.g. @isumongolia.edu.mn). Any email works for saving and comparing schools.",
+    "sendCode": "Email me a code",
+    "sending": "Sending…",
+    "codeSent": "We sent a sign-in code to <b>{email}</b>.",
+    "codeLabel": "Sign-in code",
+    "linkHint": "You can also open the link in that email.",
+    "verify": "Verify and sign in",
+    "verifying": "Verifying…",
+    "resend": "Send a new code",
+    "resendIn": "New code in {seconds}s",
+    "changeEmail": "Use a different email",
+    "invalidCode": "That code is incorrect or has expired. Try again or request a new one.",
+    "rateLimited": "Too many attempts. Please wait a minute and try again.",
+    "sendFailed": "We couldn't send the code. Check the email address and try again."
   },
   "Saved": {
     "eyebrow": "Your list",
@@ -353,5 +369,63 @@
   "Error": {
     "title": "Something went wrong",
     "body": "We couldn't load this page. This is usually temporary — please try again."
+  },
+  "Map": {
+    "eyebrow": "Map",
+    "title": "Schools on the map",
+    "intro": "Every school we have a confirmed location for. Tap a pin for details.",
+    "homeTitle": "Explore schools on the map",
+    "homeDescription": "See where schools are across Ulaanbaatar before you shortlist.",
+    "openFull": "Open the full map",
+    "onMap": "{count, plural, one {# school} other {# schools}} on the map",
+    "approximate": "Approximate location",
+    "approximateNote": "Pin shows the approximate location.",
+    "viewProfile": "View school",
+    "notPinnedTitle": "Not on the map yet",
+    "notPinnedBody": "We haven't confirmed exact locations for these schools yet."
+  },
+  "Compare": {
+    "eyebrow": "Compare",
+    "title": "Compare schools",
+    "emptyTitle": "No schools selected yet",
+    "emptyBody": "Tap Compare on up to {max} school pages to see them side by side.",
+    "addOneMore": "Add at least one more school to see them side by side.",
+    "bestHighlighted": "The best score in each rating row is highlighted.",
+    "addAnother": "Add another school (up to {max})",
+    "remove": "Remove",
+    "add": "Compare",
+    "added": "Comparing",
+    "full": "You can compare up to {max} schools",
+    "bubble": "Compare",
+    "bubbleLabel": "Compare {count, plural, one {# selected school} other {# selected schools}}",
+    "basics": "Basics",
+    "admissions": "Admissions & cost",
+    "ratings": "Ratings",
+    "type": "Type",
+    "level": "Level",
+    "location": "Location",
+    "curriculum": "Curriculum",
+    "languages": "Languages",
+    "founded": "Founded",
+    "ratio": "Student–teacher ratio",
+    "accreditation": "Accreditation",
+    "tuition": "Tuition",
+    "deadline": "Application deadline",
+    "dormitory": "Dormitory",
+    "available": "Available",
+    "none": "None listed",
+    "overall": "Overall",
+    "reviews": "Reviews"
+  },
+  "ReviewAccess": {
+    "signedOutTitle": "Reviews come from verified school members",
+    "signedOutBody": "To review this school, sign in with your school email ({domains}). We'll send you a one-time code to confirm it.",
+    "wrongDomainTitle": "You can't review this school",
+    "wrongDomainBody": "Only people with a verified {domains} email can review this school. You're signed in as <b>{email}</b>.",
+    "reviewOwnSchool": "Review {school} instead",
+    "closedTitle": "Reviews aren't open yet",
+    "closedBody": "This school's email domain hasn't been verified yet, so it can't receive reviews for now.",
+    "wrongDomainShort": "Only verified members of this school can review it.",
+    "closedShort": "Reviews open once the school's email domain is verified."
   }
 }

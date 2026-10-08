@@ -5,6 +5,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { getSchoolHeader, getIsSchoolSaved } from "@/lib/schools";
 import { getCurrentUser } from "@/lib/current-user";
 import { placeName, schoolNames } from "@/lib/labels";
+import { getReviewAccess } from "@/lib/review-access";
 import { SchoolHeader } from "@/components/school-profile/SchoolHeader";
 import { SchoolTabs } from "@/components/school-profile/SchoolTabs";
 
@@ -40,11 +41,14 @@ export default async function SchoolLayout({ children, params }: SchoolLayoutPro
   // traffic) skip it entirely and we already know isSaved is false.
   const isSignedIn = (await headers()).get("x-user-signed-in") === "1";
   const user = isSignedIn ? await getCurrentUser() : null;
-  const isSaved = await getIsSchoolSaved(id, user?.id ?? null);
+  const [isSaved, reviewAccess] = await Promise.all([
+    getIsSchoolSaved(id, user?.id ?? null),
+    getReviewAccess(school, { isSignedIn }),
+  ]);
 
   return (
     <div className="flex flex-1 flex-col">
-      <SchoolHeader school={school} isSaved={isSaved} />
+      <SchoolHeader school={school} isSaved={isSaved} reviewStatus={reviewAccess.status} />
       <div className="sticky top-0 z-10 border-b border-line bg-background/90 backdrop-blur">
         <div className="mx-auto max-w-5xl px-4 sm:px-6">
           <SchoolTabs schoolId={school.id} reviewCount={school.reviewCount} />

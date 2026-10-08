@@ -84,6 +84,7 @@ model School {
   address             String?
   latitude            Float?
   longitude           Float?
+  locationApproximate Boolean      @default(false)
 
   phone               String?
   website             String?
@@ -100,6 +101,8 @@ model School {
   foundedYear          Int?
   graduateDestinations String[]     @default([])
   notableAchievements  String[]     @default([])
+  // Email domains (e.g. "asu.edu.mn") whose verified users may review this school.
+  emailDomains         String[]     @default([])
 
   avgOverall          Float?       @default(0)
   avgAcademics        Float?       @default(0)

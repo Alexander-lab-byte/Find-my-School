@@ -3,12 +3,13 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { getSchoolOverview } from "@/lib/schools";
 import { ratingCategories } from "@/lib/ratings";
-import { tuitionSummary } from "@/lib/labels";
+import { formatLocation, tuitionSummary } from "@/lib/labels";
 import { Badge } from "@/components/common/Badge";
 import { Icon, type IconName } from "@/components/common/Icon";
 import { RatingSummary } from "@/components/reviews/RatingSummary";
 import { Fact, FactGrid, ProfileSection } from "@/components/school-profile/ProfileSection";
 import { SchoolHighlights } from "@/components/school-profile/SchoolHighlights";
+import { SchoolMap } from "@/components/map/SchoolMap";
 
 type Contact = {
   icon: IconName;
@@ -36,9 +37,15 @@ export default async function SchoolOverviewPage({
   const tCurriculum = await getTranslations("Curriculum");
   const tLanguage = await getTranslations("Language");
   const tTuition = await getTranslations("Tuition");
+  const tMap = await getTranslations("Map");
+  const tPlace = await getTranslations("Place");
 
   const contacts: Contact[] = [];
-  if (school.address) contacts.push({ icon: "map-pin", label: "address", value: school.address });
+  contacts.push({
+    icon: "map-pin",
+    label: "address",
+    value: [school.address, formatLocation(tPlace, school)].filter(Boolean).join(", "),
+  });
   if (school.phone) {
     contacts.push({ icon: "phone", label: "phone", value: school.phone, href: `tel:${school.phone}` });
   }
@@ -113,7 +120,25 @@ export default async function SchoolOverviewPage({
         </ProfileSection>
       </div>
 
-      <aside>
+      <aside className="space-y-4">
+        {school.latitude != null && school.longitude != null && (
+          <div>
+            <SchoolMap
+              height={200}
+              schools={[
+                {
+                  ...school,
+                  id,
+                  latitude: school.latitude,
+                  longitude: school.longitude,
+                },
+              ]}
+            />
+            {school.locationApproximate && (
+              <p className="mt-1.5 text-xs text-muted">{tMap("approximateNote")}</p>
+            )}
+          </div>
+        )}
         <div className="rounded-xl border border-line bg-surface p-5">
           <h2 className="text-sm font-semibold text-foreground">{t("contact")}</h2>
           {contacts.length > 0 ? (

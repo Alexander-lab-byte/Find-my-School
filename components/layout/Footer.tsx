@@ -8,6 +8,7 @@ const COLUMNS: { title: string; links: [key: string, href: string][] }[] = [
     title: "explore",
     links: [
       ["allSchools", "/search"],
+      ["schoolMap", "/map"],
       ["publicSchools", "/search?type=PUBLIC"],
       ["privateSchools", "/search?type=PRIVATE"],
       ["internationalSchools", "/search?type=INTERNATIONAL"],

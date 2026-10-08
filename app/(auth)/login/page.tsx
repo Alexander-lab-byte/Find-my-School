@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { AuthCard } from "@/components/auth/AuthCard";
-import { LoginForm } from "@/components/auth/LoginForm";
+import { EmailOtpForm } from "@/components/auth/EmailOtpForm";
 import { safeNextPath } from "@/lib/navigation";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -39,7 +39,7 @@ export default async function LoginPage({
           {t("callbackFailed")}
         </p>
       )}
-      <LoginForm next={next} />
+      <EmailOtpForm mode="login" next={next} />
     </AuthCard>
   );
 }

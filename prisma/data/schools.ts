@@ -7,6 +7,14 @@ import { Curriculum, SchoolLevel, SchoolType, type Prisma } from "@prisma/client
  * added only where a public source confirms them (school sites, Wikipedia):
  * leave a field out rather than guess.
  *
+ * Addresses and Mongolian names for the 13 private/international schools
+ * come from the project owner (2026-10-08). Map coordinates are
+ * OpenStreetMap matches checked against those addresses; a school without
+ * coordinates simply has no pin yet. `locationApproximate` marks a pin
+ * placed from a landmark rather than the school's own building.
+ * `emailDomains` lists who may review: verified users whose email is on
+ * one of these domains (or a subdomain). Empty = reviews closed.
+ *
  * nameMn is left out where no official Mongolian name is known. The live
  * database fills those with nameEn (older deployments required a value);
  * the UI hides a Mongolian name that just repeats the English one.
@@ -22,16 +30,19 @@ const { IB, CAMBRIDGE, DUAL_LANGUAGE, MONGOLIAN_NATIONAL, AP } = Curriculum;
 export const SCHOOLS: SchoolSeed[] = [
   {
     nameEn: "International School of Ulaanbaatar",
-    nameMn: "Улаанбаатар олон улсын сургууль",
+    nameMn: "Олон улсын Улаанбаатар сургууль",
+    district: "Khan-Uul",
+    khoroo: "18",
+    address: "Four Seasons Garden хотхон",
+    latitude: 47.89862,
+    longitude: 106.93049,
+    emailDomains: ["isumongolia.edu.mn"],
     type: INTERNATIONAL,
     level: K12,
     curriculum: [IB],
     teachingLanguages: ["en"],
     foundedYear: 1992,
     studentTeacherRatio: "~7:1",
-    district: "Khan-Uul",
-    khoroo: "18",
-    address: "Four Seasons Garden, 18th Khoroo, Khan-Uul District",
     phone: "+976 7016 0010",
     website: "https://www.isumongolia.edu.mn",
     accreditation: "IB World School — Mongolia's first",
@@ -47,14 +58,19 @@ export const SCHOOLS: SchoolSeed[] = [
   },
   {
     nameEn: "American School of Ulaanbaatar",
+    nameMn: "Америк сургууль",
+    district: "Khan-Uul",
+    khoroo: "11",
+    address: "Зайсангийн тойруу 42",
+    latitude: 47.88106,
+    longitude: 106.9196,
+    emailDomains: ["asu.edu.mn"],
     type: INTERNATIONAL,
     level: K12,
     curriculum: [DUAL_LANGUAGE],
     teachingLanguages: ["en", "mn"],
     foundedYear: 2006,
     studentTeacherRatio: "~10:1",
-    district: "Khan-Uul",
-    address: "Zaisan Hill 11",
     website: "https://www.asu.edu.mn",
     accreditation: "WASC (Western Association of Schools and Colleges)",
     graduateDestinations: ["UC Berkeley", "UCLA", "NYU", "University of Toronto", "UBC"],
@@ -66,15 +82,19 @@ export const SCHOOLS: SchoolSeed[] = [
   },
   {
     nameEn: "British School of Ulaanbaatar",
+    nameMn: "Улаанбаатар дахь Британийн сургууль",
+    district: "Khan-Uul",
+    khoroo: "23",
+    address: "Наадамчдын зам 50",
+    latitude: 47.87439,
+    longitude: 106.84843,
+    emailDomains: ["britishschool.edu.mn"],
     type: INTERNATIONAL,
     level: K12,
     curriculum: [CAMBRIDGE],
     teachingLanguages: ["en"],
     foundedYear: 2010,
     studentTeacherRatio: "~12:1",
-    district: "Khan-Uul",
-    khoroo: "4",
-    address: "Naadamchdyn Road 50, 4th Khoroo, Khan-Uul District",
     phone: "+976 7004 7788",
     email: "admission@britishschool.edu.mn",
     website: "https://www.britishschool.edu.mn",
@@ -86,15 +106,19 @@ export const SCHOOLS: SchoolSeed[] = [
   },
   {
     nameEn: "The English School of Mongolia",
+    nameMn: "Монголын Англи сургууль",
+    district: "Bayanzurkh",
+    khoroo: "1",
+    address: "Токио гудамж 89",
+    latitude: 47.92791,
+    longitude: 106.93418,
+    emailDomains: ["esm.edu.mn"],
     type: INTERNATIONAL,
     level: K12,
     curriculum: [CAMBRIDGE, IB],
     teachingLanguages: ["en"],
     foundedYear: 2011,
     studentTeacherRatio: "~13:1",
-    district: "Bayanzurkh",
-    khoroo: "1",
-    address: "Tokyo Street 89, 1st Khoroo, Bayanzurkh District",
     website: "https://esm.edu.mn",
     graduateDestinations: ["Cambridge", "Imperial College London", "University of Melbourne", "UK/US тэтгэлэгтүүд"],
     notableAchievements: [
@@ -104,15 +128,17 @@ export const SCHOOLS: SchoolSeed[] = [
   },
   {
     nameEn: "Orchlon International School",
-    nameMn: "Орчлон сургууль",
+    nameMn: "Орчлон олон улсын сургууль",
+    district: "Khan-Uul",
+    khoroo: "15",
+    latitude: 47.90154,
+    longitude: 106.92624,
     type: INTERNATIONAL,
     level: K12,
     curriculum: [CAMBRIDGE],
     teachingLanguages: ["en", "mn"],
     foundedYear: 2001,
     studentTeacherRatio: "~10:1",
-    district: "Khan-Uul",
-    khoroo: "15",
     graduateDestinations: ["MIT", "Harvard", "Stanford", "Oxford", "Cambridge", "Ivy League"],
     notableAchievements: [
       "Олон улсын Математик (IMO), Физик (IPhO), Биологийн олимпиадын медалиуд",
@@ -121,6 +147,11 @@ export const SCHOOLS: SchoolSeed[] = [
   {
     nameEn: "Shine Mongol School",
     nameMn: "Шинэ Монгол сургууль",
+    district: "Bayanzurkh",
+    khoroo: "25",
+    address: "Туслах зам 47",
+    latitude: 47.91119,
+    longitude: 106.93886,
     type: PRIVATE,
     level: K12,
     curriculum: [DUAL_LANGUAGE, MONGOLIAN_NATIONAL],
@@ -135,6 +166,12 @@ export const SCHOOLS: SchoolSeed[] = [
   },
   {
     nameEn: "Shine Mongol Harumafuji School",
+    nameMn: "Шинэ Монгол Харүмафүжи сургууль",
+    district: "Khan-Uul",
+    khoroo: "24",
+    address: "Наадамчдын зам 480",
+    latitude: 47.87572,
+    longitude: 106.85005,
     type: PRIVATE,
     level: K12,
     curriculum: [DUAL_LANGUAGE, MONGOLIAN_NATIONAL],
@@ -150,6 +187,11 @@ export const SCHOOLS: SchoolSeed[] = [
   {
     nameEn: "Sant School",
     nameMn: "Сант сургууль",
+    district: "Sukhbaatar",
+    khoroo: "2",
+    address: "Усны гудамж 23",
+    latitude: 47.90907,
+    longitude: 106.90768,
     type: PRIVATE,
     level: K12,
     curriculum: [MONGOLIAN_NATIONAL, AP],
@@ -163,6 +205,9 @@ export const SCHOOLS: SchoolSeed[] = [
   },
   {
     nameEn: "English School of Ulaanbaatar",
+    district: "Khan-Uul",
+    khoroo: "23",
+    address: "Арцатын гудамж",
     type: PRIVATE,
     level: K12,
     curriculum: [CAMBRIDGE],
@@ -177,6 +222,12 @@ export const SCHOOLS: SchoolSeed[] = [
   },
   {
     nameEn: "Australian Smart School of Ulaanbaatar",
+    district: "Sukhbaatar",
+    khoroo: "4",
+    address: "Энхтайваны өргөн чөлөө",
+    latitude: 47.91524,
+    longitude: 106.90151,
+    locationApproximate: true,
     type: INTERNATIONAL,
     level: K12,
     curriculum: [DUAL_LANGUAGE],
@@ -191,6 +242,11 @@ export const SCHOOLS: SchoolSeed[] = [
   },
   {
     nameEn: "Human International School",
+    district: "Khan-Uul",
+    khoroo: "11",
+    address: "Ар Зайсангийн гудамж 122/4",
+    latitude: 47.87103,
+    longitude: 106.91068,
     type: INTERNATIONAL,
     level: K12,
     curriculum: [DUAL_LANGUAGE],
@@ -205,6 +261,10 @@ export const SCHOOLS: SchoolSeed[] = [
   },
   {
     nameEn: "Huleg International School",
+    nameMn: "Хүлэг олон улсын сургууль",
+    district: "Khan-Uul",
+    khoroo: "23",
+    address: "Арцатын ам",
     type: INTERNATIONAL,
     level: K12,
     curriculum: [DUAL_LANGUAGE],
@@ -219,6 +279,9 @@ export const SCHOOLS: SchoolSeed[] = [
   },
   {
     nameEn: "New Century Leadership International School",
+    district: "Sukhbaatar",
+    khoroo: "11",
+    address: "Ногоон нуур 51",
     type: INTERNATIONAL,
     level: K12,
     curriculum: [DUAL_LANGUAGE],
@@ -246,6 +309,7 @@ export const SCHOOLS: SchoolSeed[] = [
   },
   {
     nameEn: "Mongol Aspiration International School",
+    emailDomains: ["mongolaspiration.edu.mn"],
     type: INTERNATIONAL,
     // Grades 9–12 per the school's public profile.
     level: HIGH,

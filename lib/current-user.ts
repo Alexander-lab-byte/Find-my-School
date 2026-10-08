@@ -1,5 +1,19 @@
+import { cache } from "react";
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
+
+/**
+ * The Supabase auth user for this request, verified with Supabase's Auth
+ * server (never trust the cookie alone for authorization). Cached so the
+ * school layout, its pages, and server actions share one network call.
+ */
+export const getAuthUser = cache(async () => {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  return user;
+});
 
 /**
  * Returns the logged-in Prisma User, creating one on first sight of a new
@@ -8,10 +22,7 @@ import { createClient } from "@/lib/supabase/server";
  * what to do with that (show a login prompt, throw, etc).
  */
 export async function getCurrentUser() {
-  const supabase = await createClient();
-  const {
-    data: { user: authUser },
-  } = await supabase.auth.getUser();
+  const authUser = await getAuthUser();
 
   if (!authUser) return null;
 

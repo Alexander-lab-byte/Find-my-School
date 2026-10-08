@@ -26,6 +26,10 @@ export async function Header() {
             <Icon name="search" className="size-4" />
             {t("browseSchools")}
           </Link>
+          <Link href="/map" className={`${NAV_LINK} flex items-center gap-2`}>
+            <Icon name="map" className="size-4" />
+            {t("map")}
+          </Link>
           {isSignedIn && (
             <Link href="/saved" className={NAV_LINK}>
               {t("saved")}

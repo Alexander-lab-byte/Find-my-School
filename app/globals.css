@@ -123,3 +123,102 @@
     box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 18%, transparent);
   }
 }
+
+/* --- Map --------------------------------------------------------------- */
+
+/* Teardrop pin, coloured by school type (see components/map/LeafletMap). */
+.school-pin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  background: var(--accent);
+  border: 2px solid var(--surface);
+  box-shadow: 0 6px 14px -4px rgb(0 0 0 / 0.45);
+  transition: transform 150ms;
+}
+
+.school-pin > span {
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  background: var(--surface);
+}
+
+.school-pin--private {
+  background: var(--tone-private);
+}
+
+.school-pin--international {
+  background: var(--tone-intl);
+}
+
+/* Placed from a landmark, not the school's own building: faded, no centre dot. */
+.school-pin--approximate {
+  opacity: 0.6;
+}
+
+.school-pin--approximate > span {
+  visibility: hidden;
+}
+
+.leaflet-marker-icon:hover .school-pin,
+.leaflet-marker-icon:focus-visible .school-pin {
+  transform: rotate(-45deg) scale(1.12);
+}
+
+.school-map {
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  background: var(--surface-muted);
+}
+
+/* Quieter basemap: mostly greyscale, so the coloured pins carry the meaning. */
+.school-map .leaflet-tile-pane {
+  filter: grayscale(0.85) contrast(0.92) brightness(1.04);
+}
+
+@media (prefers-color-scheme: dark) {
+  .school-map .leaflet-tile-pane {
+    filter: grayscale(0.9) invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9);
+  }
+}
+
+.school-map .leaflet-popup-content-wrapper,
+.school-map .leaflet-popup-tip {
+  background: var(--surface);
+  color: var(--foreground);
+  box-shadow: 0 16px 40px -18px rgb(0 0 0 / 0.45);
+}
+
+.school-map .leaflet-popup-content-wrapper {
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+}
+
+.school-map .leaflet-popup-content {
+  margin: 14px 16px;
+  line-height: 1.4;
+}
+
+.school-map .leaflet-container a.leaflet-popup-close-button,
+.school-map a.leaflet-popup-close-button {
+  color: var(--subtle);
+}
+
+.school-map .leaflet-control-zoom a {
+  background: var(--surface);
+  color: var(--foreground);
+  border-color: var(--line);
+}
+
+.school-map .leaflet-control-attribution {
+  background: color-mix(in oklab, var(--surface) 85%, transparent);
+  color: var(--subtle);
+}
+
+.school-map .leaflet-control-attribution a {
+  color: var(--muted);
+}

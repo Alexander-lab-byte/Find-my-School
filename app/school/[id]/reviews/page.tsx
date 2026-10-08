@@ -1,14 +1,36 @@
 import Link from "next/link";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { getSchoolRatings, getSchoolReviews } from "@/lib/schools";
 import { ratingCategories } from "@/lib/ratings";
+import { getReviewAccess } from "@/lib/review-access";
+import { schoolNames } from "@/lib/labels";
 import { Icon } from "@/components/common/Icon";
 import { RatingSummary } from "@/components/reviews/RatingSummary";
 import { ReviewCard } from "@/components/reviews/ReviewCard";
 import { ReviewForm } from "@/components/reviews/ReviewForm";
 import { EmptyNote } from "@/components/school-profile/ProfileSection";
+
+function AccessCard({
+  icon,
+  title,
+  children,
+}: {
+  icon: "mail" | "lock";
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="rounded-xl border border-line bg-surface p-6">
+      <span className="flex size-10 items-center justify-center rounded-lg bg-accent-soft text-accent">
+        <Icon name={icon} className="size-5" />
+      </span>
+      <p className="mt-4 font-medium text-foreground">{title}</p>
+      <div className="mt-1.5 text-sm leading-6 text-muted">{children}</div>
+    </div>
+  );
+}
 
 export default async function SchoolReviewsPage({
   params,
@@ -23,11 +45,16 @@ export default async function SchoolReviewsPage({
   const t = await getTranslations("Reviews");
   const tCommon = await getTranslations("Common");
 
-  // Display-only hint from the proxy (see lib/supabase/middleware.ts); the
-  // submit action itself still verifies the user server-side.
+  // The proxy's signed-in hint only decides whether to ask Supabase who
+  // this is; getReviewAccess verifies the email itself, and submitReview
+  // checks again on submit.
   const isSignedIn = (await headers()).get("x-user-signed-in") === "1";
+  const access = await getReviewAccess({ id, emailDomains: school.emailDomains }, { isSignedIn });
+  const tAccess = await getTranslations("ReviewAccess");
+  const locale = await getLocale();
   const hasDorm = Boolean(school.dormitory);
   const loginHref = `/login?next=${encodeURIComponent(`/school/${id}/reviews`)}`;
+  const domainList = (domains: string[]) => domains.map((d) => `@${d}`).join(", ");
 
   return (
     <div className="space-y-10">
@@ -59,32 +86,41 @@ export default async function SchoolReviewsPage({
             {t("write")}
           </h2>
           <div className="mt-4">
-            {isSignedIn ? (
+            {access.status === "allowed" ? (
               <ReviewForm schoolId={id} hasDorm={hasDorm} />
-            ) : (
-              <div className="rounded-xl border border-line bg-surface p-6">
-                <span className="flex size-10 items-center justify-center rounded-lg bg-accent-soft text-accent">
-                  <Icon name="pencil" className="size-5" />
-                </span>
-                <p className="mt-4 font-medium text-foreground">{t("shareTitle")}</p>
-                <p className="mt-1.5 text-sm leading-6 text-muted">
-                  {t("shareBody")}
+            ) : access.status === "signed-out" ? (
+              <AccessCard icon="mail" title={tAccess("signedOutTitle")}>
+                <p>{tAccess("signedOutBody", { domains: domainList(access.schoolDomains) })}</p>
+                <Link
+                  href={loginHref}
+                  className="mt-5 block rounded-lg bg-accent px-4 py-2.5 text-center text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
+                >
+                  {t("loginToWrite")}
+                </Link>
+              </AccessCard>
+            ) : access.status === "wrong-domain" ? (
+              <AccessCard icon="lock" title={tAccess("wrongDomainTitle")}>
+                <p>
+                  {tAccess.rich("wrongDomainBody", {
+                    domains: domainList(access.schoolDomains),
+                    email: access.email,
+                    b: (chunks) => <span className="font-medium text-foreground">{chunks}</span>,
+                  })}
                 </p>
-                <div className="mt-5 flex flex-col gap-2">
+                {access.ownSchool && (
                   <Link
-                    href={loginHref}
-                    className="rounded-lg bg-accent px-4 py-2.5 text-center text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
+                    href={`/school/${access.ownSchool.id}/reviews#write-review`}
+                    className="mt-5 flex items-center justify-center gap-2 rounded-lg border border-line px-4 py-2.5 text-center text-sm font-medium text-foreground transition-colors hover:bg-surface-muted"
                   >
-                    {t("loginToWrite")}
+                    {tAccess("reviewOwnSchool", { school: schoolNames(access.ownSchool, locale).primary })}
+                    <Icon name="arrow-right" className="size-4" />
                   </Link>
-                  <Link
-                    href={`/register?next=${encodeURIComponent(`/school/${id}/reviews`)}`}
-                    className="rounded-lg border border-line px-4 py-2.5 text-center text-sm font-medium text-foreground transition-colors hover:bg-surface-muted"
-                  >
-                    {t("createAccount")}
-                  </Link>
-                </div>
-              </div>
+                )}
+              </AccessCard>
+            ) : (
+              <AccessCard icon="lock" title={tAccess("closedTitle")}>
+                <p>{tAccess("closedBody")}</p>
+              </AccessCard>
             )}
           </div>
         </section>

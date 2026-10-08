@@ -3,6 +3,7 @@ import type { getSchoolReviews } from "@/lib/schools";
 import { Badge } from "@/components/common/Badge";
 import { Icon } from "@/components/common/Icon";
 import { Stars } from "@/components/common/StarRating";
+import { ReviewBody } from "@/components/reviews/ReviewBody";
 import { reviewAverage, type RatingCategory } from "@/lib/ratings";
 
 type Review = Awaited<ReturnType<typeof getSchoolReviews>>[number];
@@ -67,7 +68,7 @@ export function ReviewCard({ review }: { review: Review }) {
         </div>
       )}
 
-      <p className="mt-4 whitespace-pre-line text-sm leading-7 text-foreground">{review.bodyText}</p>
+      <ReviewBody text={review.bodyText} />
 
       {scores.length > 0 && (
         <dl className="mt-4 flex flex-wrap gap-x-4 gap-y-1 border-t border-line pt-3 text-xs text-muted">

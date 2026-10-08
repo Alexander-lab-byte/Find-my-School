@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 import type { SchoolType } from "@prisma/client";
-import { getHomepageData } from "@/lib/schools";
+import { getHomepageData, getMapSchools } from "@/lib/schools";
 import { reviewAverage } from "@/lib/ratings";
 import { SCHOOL_TYPES, schoolNames } from "@/lib/labels";
 import { HeroSearchBar } from "@/components/search/HeroSearchBar";
 import { SchoolCard } from "@/components/search/SchoolCard";
 import { Icon, type IconName } from "@/components/common/Icon";
 import { Stars } from "@/components/common/StarRating";
+import { SchoolMap } from "@/components/map/SchoolMap";
 
 // [message key in "Home", href]
 const QUICK_LINKS: [key: string, href: string][] = [
@@ -50,8 +51,12 @@ function SectionHeading({
 }
 
 export default async function Home() {
-  const { schools, totalSchools, typeCounts, districts, recentReviews } = await getHomepageData();
+  const [{ schools, totalSchools, typeCounts, districts, recentReviews }, { pinned }] = await Promise.all([
+    getHomepageData(),
+    getMapSchools(),
+  ]);
   const t = await getTranslations("Home");
+  const tMap = await getTranslations("Map");
   const tCommon = await getTranslations("Common");
   const tType = await getTranslations("SchoolTypePlural");
   const tTypeDescription = await getTranslations("SchoolTypeDescription");
@@ -186,6 +191,29 @@ export default async function Home() {
           )}
         </div>
       </section>
+
+      {/* Map preview */}
+      {pinned.length > 0 && (
+        <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-16">
+          <SectionHeading
+            eyebrow={tMap("eyebrow")}
+            title={tMap("homeTitle")}
+            description={tMap("homeDescription")}
+            action={
+              <Link
+                href="/map"
+                className="inline-flex shrink-0 items-center gap-1.5 text-sm font-medium text-accent hover:underline hover:underline-offset-4"
+              >
+                {tMap("openFull")}
+                <Icon name="arrow-right" className="size-4" />
+              </Link>
+            }
+          />
+          <div className="mt-8">
+            <SchoolMap schools={pinned} height={420} />
+          </div>
+        </section>
+      )}
 
       {/* Recent reviews — only once there are some */}
       {recentReviews.length > 0 && (

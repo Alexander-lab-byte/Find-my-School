@@ -38,6 +38,9 @@ export function MobileMenu({ isSignedIn }: { isSignedIn: boolean }) {
             <Link href="/search" onClick={close} className={ITEM}>
               {t("browseSchools")}
             </Link>
+            <Link href="/map" onClick={close} className={ITEM}>
+              {t("map")}
+            </Link>
             {isSignedIn && (
               <Link href="/saved" onClick={close} className={ITEM}>
                 {t("savedSchools")}

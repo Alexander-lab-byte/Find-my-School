@@ -239,6 +239,7 @@ export const getSchoolHeader = cache((id: string) =>
       email: true,
       avgOverall: true,
       reviewCount: true,
+      emailDomains: true,
     },
   })
 );
@@ -259,6 +260,8 @@ export function getSchoolOverview(id: string) {
   return prisma.school.findUnique({
     where: { id },
     select: {
+      nameEn: true,
+      nameMn: true,
       ...ratingAveragesSelect,
       type: true,
       level: true,
@@ -271,6 +274,12 @@ export function getSchoolOverview(id: string) {
       foundedYear: true,
       graduateDestinations: true,
       notableAchievements: true,
+      khoroo: true,
+      district: true,
+      aimagCity: true,
+      latitude: true,
+      longitude: true,
+      locationApproximate: true,
       address: true,
       phone: true,
       website: true,
@@ -280,7 +289,52 @@ export function getSchoolOverview(id: string) {
 }
 
 export function getSchoolRatings(id: string) {
-  return prisma.school.findUnique({ where: { id }, select: ratingAveragesSelect });
+  return prisma.school.findUnique({
+    where: { id },
+    select: { ...ratingAveragesSelect, emailDomains: true },
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Map
+// ---------------------------------------------------------------------------
+
+const mapSchoolSelect = {
+  id: true,
+  nameEn: true,
+  nameMn: true,
+  type: true,
+  level: true,
+  district: true,
+  khoroo: true,
+  aimagCity: true,
+  address: true,
+  latitude: true,
+  longitude: true,
+  locationApproximate: true,
+  avgOverall: true,
+  reviewCount: true,
+} satisfies Prisma.SchoolSelect;
+
+type MapSchoolRow = Prisma.SchoolGetPayload<{ select: typeof mapSchoolSelect }>;
+export type MapSchool = MapSchoolRow & { latitude: number; longitude: number };
+
+/** Schools split into those with a pin and those still waiting for coordinates. */
+export async function getMapSchools() {
+  const rows = await prisma.school.findMany({
+    select: mapSchoolSelect,
+    orderBy: { nameEn: "asc" },
+  });
+  const pinned: MapSchool[] = [];
+  const unpinned: MapSchoolRow[] = [];
+  for (const row of rows) {
+    if (row.latitude != null && row.longitude != null) {
+      pinned.push({ ...row, latitude: row.latitude, longitude: row.longitude });
+    } else {
+      unpinned.push(row);
+    }
+  }
+  return { pinned, unpinned };
 }
 
 export function getSchoolFacilities(id: string) {

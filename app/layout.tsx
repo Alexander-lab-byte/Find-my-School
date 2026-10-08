@@ -4,6 +4,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Geist, Geist_Mono, Source_Serif_4 } from "next/font/google";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { CompareBubble } from "@/components/compare/CompareBubble";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -44,6 +45,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <Header />
           <div className="flex flex-1 flex-col">{children}</div>
           <Footer />
+          <CompareBubble />
         </NextIntlClientProvider>
       </body>
     </html>

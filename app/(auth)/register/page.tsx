@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { AuthCard } from "@/components/auth/AuthCard";
-import { RegisterForm } from "@/components/auth/RegisterForm";
+import { EmailOtpForm } from "@/components/auth/EmailOtpForm";
 import { safeNextPath } from "@/lib/navigation";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -33,7 +33,7 @@ export default async function RegisterPage({
         </>
       }
     >
-      <RegisterForm next={next} />
+      <EmailOtpForm mode="register" next={next} />
     </AuthCard>
   );
 }
