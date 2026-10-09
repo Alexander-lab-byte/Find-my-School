@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import type { UserRole } from "@prisma/client";
 import { createClient } from "@/lib/supabase/client";
+import { SIGNUP_ROLES } from "@/lib/labels";
 
 type ErrorKey = "invalidCode" | "rateLimited" | "sendFailed";
 
@@ -17,9 +19,11 @@ const RESEND_COOLDOWN_SECONDS = 60;
  */
 export function EmailOtpForm({ mode, next }: { mode: "login" | "register"; next: string }) {
   const t = useTranslations("Auth");
+  const tRole = useTranslations("Role");
   const router = useRouter();
   const [step, setStep] = useState<"email" | "code">("email");
   const [name, setName] = useState("");
+  const [role, setRole] = useState<UserRole>("PARENT");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [error, setError] = useState<ErrorKey | null>(null);
@@ -40,7 +44,7 @@ export function EmailOtpForm({ mode, next }: { mode: "login" | "register"; next:
       options: {
         shouldCreateUser: true,
         emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
-        ...(mode === "register" && name.trim() ? { data: { name: name.trim() } } : {}),
+        ...(mode === "register" ? { data: { name: name.trim(), role } } : {}),
       },
     });
     setIsBusy(false);
@@ -168,6 +172,25 @@ export function EmailOtpForm({ mode, next }: { mode: "login" | "register"; next:
             onChange={(e) => setName(e.target.value)}
             className="field mt-1.5"
           />
+        </div>
+      )}
+      {mode === "register" && (
+        <div>
+          <label htmlFor="role" className="text-sm font-medium text-foreground">
+            {t("role")}
+          </label>
+          <select
+            id="role"
+            value={role}
+            onChange={(e) => setRole(e.target.value as UserRole)}
+            className="field mt-1.5"
+          >
+            {SIGNUP_ROLES.map((r) => (
+              <option key={r} value={r}>
+                {tRole(r)}
+              </option>
+            ))}
+          </select>
         </div>
       )}
       <div>

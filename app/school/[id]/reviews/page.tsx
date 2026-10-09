@@ -5,6 +5,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { getSchoolRatings, getSchoolReviews } from "@/lib/schools";
 import { ratingCategories } from "@/lib/ratings";
 import { getReviewAccess } from "@/lib/review-access";
+import { getCurrentUser } from "@/lib/current-user";
 import { schoolNames } from "@/lib/labels";
 import { Icon } from "@/components/common/Icon";
 import { RatingSummary } from "@/components/reviews/RatingSummary";
@@ -49,7 +50,10 @@ export default async function SchoolReviewsPage({
   // this is; getReviewAccess verifies the email itself, and submitReview
   // checks again on submit.
   const isSignedIn = (await headers()).get("x-user-signed-in") === "1";
-  const access = await getReviewAccess({ id, emailDomains: school.emailDomains }, { isSignedIn });
+  const [access, viewer] = await Promise.all([
+    getReviewAccess({ id, emailDomains: school.emailDomains }, { isSignedIn }),
+    isSignedIn ? getCurrentUser() : null,
+  ]);
   const tAccess = await getTranslations("ReviewAccess");
   const locale = await getLocale();
   const hasDorm = Boolean(school.dormitory);
@@ -76,7 +80,7 @@ export default async function SchoolReviewsPage({
               </EmptyNote>
             )}
             {reviews.map((review) => (
-              <ReviewCard key={review.id} review={review} />
+              <ReviewCard key={review.id} review={review} showReport={review.userId !== viewer?.id} />
             ))}
           </div>
         </section>

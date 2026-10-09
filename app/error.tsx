@@ -7,10 +7,16 @@ import { useTranslations } from "next-intl";
 export default function ErrorPage({
   error,
   retry,
+  unstable_retry,
+  reset,
 }: {
   error: Error & { digest?: string };
-  retry: () => void;
+  // Next versions have passed this callback as retry, unstable_retry, or reset.
+  retry?: () => void;
+  unstable_retry?: () => void;
+  reset?: () => void;
 }) {
+  const tryAgain = retry ?? unstable_retry ?? reset;
   const t = useTranslations("Error");
   const tCommon = useTranslations("Common");
 
@@ -29,7 +35,7 @@ export default function ErrorPage({
       <div className="mt-8 flex justify-center gap-3">
         <button
           type="button"
-          onClick={() => retry()}
+          onClick={() => tryAgain?.()}
           className="rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
         >
           {tCommon("tryAgain")}

@@ -4,7 +4,13 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/current-user";
 import { ReviewTag } from "@prisma/client";
-import { MAX_REVIEW_LENGTH, MIN_REVIEW_LENGTH } from "@/lib/review-limits";
+import {
+  MAX_REVIEW_LENGTH,
+  MIN_REVIEW_LENGTH,
+  REPORT_REASONS,
+  type ReportReason,
+} from "@/lib/review-limits";
+import { recalculateSchoolRatings } from "@/lib/school-ratings";
 import { domainMatches, emailDomain, getVerifiedEmail } from "@/lib/review-access";
 
 type SubmitReviewInput = {
@@ -97,46 +103,42 @@ export async function submitReview(input: SubmitReviewInput): Promise<SubmitRevi
       },
     });
 
-    const agg = await tx.rating.aggregate({
-      where: { schoolId: input.schoolId },
-      _avg: {
-        academics: true,
-        facilities: true,
-        teachers: true,
-        environment: true,
-        dorms: true,
-        library: true,
-      },
-      _count: true,
-    });
-
-    const overallInputs = [
-      agg._avg.academics,
-      agg._avg.facilities,
-      agg._avg.teachers,
-      agg._avg.environment,
-    ].filter((n): n is number => n != null);
-    const avgOverall =
-      overallInputs.length > 0
-        ? overallInputs.reduce((sum, n) => sum + n, 0) / overallInputs.length
-        : 0;
-
-    await tx.school.update({
-      where: { id: input.schoolId },
-      data: {
-        avgAcademics: agg._avg.academics ?? 0,
-        avgFacilities: agg._avg.facilities ?? 0,
-        avgTeachers: agg._avg.teachers ?? 0,
-        avgEnvironment: agg._avg.environment ?? 0,
-        avgDorms: agg._avg.dorms ?? 0,
-        avgLibrary: agg._avg.library ?? 0,
-        avgOverall,
-        reviewCount: agg._count,
-      },
-    });
+    await recalculateSchoolRatings(tx, input.schoolId);
   });
 
   revalidatePath(`/school/${input.schoolId}/reviews`);
   revalidatePath(`/school/${input.schoolId}`);
+  return { ok: true };
+}
+
+export type ReportReviewError =
+  | "LOGIN_REQUIRED"
+  | "INVALID_REASON"
+  | "NOT_FOUND"
+  | "OWN_REVIEW"
+  | "ALREADY_REPORTED";
+
+type ReportReviewResult = { ok: true } | { ok: false; error: ReportReviewError };
+
+/** Flags a review for the moderators (Temuulen's report flow). Any signed-in user may report. */
+export async function reportReview(reviewId: string, reason: string): Promise<ReportReviewResult> {
+  const user = await getCurrentUser();
+  if (!user) return { ok: false, error: "LOGIN_REQUIRED" };
+  if (!REPORT_REASONS.includes(reason as ReportReason)) return { ok: false, error: "INVALID_REASON" };
+
+  const review = await prisma.review.findUnique({
+    where: { id: reviewId },
+    select: { userId: true },
+  });
+  if (!review) return { ok: false, error: "NOT_FOUND" };
+  if (review.userId === user.id) return { ok: false, error: "OWN_REVIEW" };
+
+  const already = await prisma.report.findFirst({
+    where: { reviewId, reporterId: user.id },
+    select: { id: true },
+  });
+  if (already) return { ok: false, error: "ALREADY_REPORTED" };
+
+  await prisma.report.create({ data: { reviewId, reporterId: user.id, reason } });
   return { ok: true };
 }

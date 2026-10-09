@@ -9,7 +9,7 @@ import { Icon } from "@/components/common/Icon";
 const ITEM =
   "rounded-lg px-3 py-2.5 font-medium text-foreground transition-colors hover:bg-surface-muted";
 
-export function MobileMenu({ isSignedIn }: { isSignedIn: boolean }) {
+export function MobileMenu({ isSignedIn, isAdmin }: { isSignedIn: boolean; isAdmin: boolean }) {
   const t = useTranslations("Common");
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
@@ -41,10 +41,27 @@ export function MobileMenu({ isSignedIn }: { isSignedIn: boolean }) {
             <Link href="/map" onClick={close} className={ITEM}>
               {t("map")}
             </Link>
+            <Link href="/about" onClick={close} className={ITEM}>
+              {t("about")}
+            </Link>
             {isSignedIn && (
-              <Link href="/saved" onClick={close} className={ITEM}>
-                {t("savedSchools")}
-              </Link>
+              <>
+                <div className="my-2 border-t border-line" />
+                <Link href="/saved" onClick={close} className={ITEM}>
+                  {t("savedSchools")}
+                </Link>
+                <Link href="/my-reviews" onClick={close} className={ITEM}>
+                  {t("myReviews")}
+                </Link>
+                <Link href="/profile" onClick={close} className={ITEM}>
+                  {t("profile")}
+                </Link>
+                {isAdmin && (
+                  <Link href="/admin/reports" onClick={close} className={ITEM}>
+                    {t("moderation")}
+                  </Link>
+                )}
+              </>
             )}
             {isSignedIn ? (
               <form action={signOut}>

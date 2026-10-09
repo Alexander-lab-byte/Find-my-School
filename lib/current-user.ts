@@ -1,11 +1,14 @@
 import { cache } from "react";
+import { Prisma, type UserRole } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { SIGNUP_ROLES } from "@/lib/labels";
 import { createClient } from "@/lib/supabase/server";
 
 /**
  * The Supabase auth user for this request, verified with Supabase's Auth
  * server (never trust the cookie alone for authorization). Cached so the
- * school layout, its pages, and server actions share one network call.
+ * header, the school layout, its pages, and server actions share one
+ * network call per request.
  */
 export const getAuthUser = cache(async () => {
   const supabase = await createClient();
@@ -21,18 +24,54 @@ export const getAuthUser = cache(async () => {
  * profile" step). Returns null if nobody is logged in — callers decide
  * what to do with that (show a login prompt, throw, etc).
  */
-export async function getCurrentUser() {
+export const getCurrentUser = cache(async () => {
   const authUser = await getAuthUser();
-
   if (!authUser) return null;
 
-  return prisma.user.upsert({
-    where: { authId: authUser.id },
-    update: {},
-    create: {
-      authId: authUser.id,
-      email: authUser.email ?? `${authUser.id}@unknown.local`,
-      name: authUser.user_metadata?.name ?? authUser.email?.split("@")[0] ?? "New user",
-    },
-  });
+  // Common case: returning user. A plain read, no write on every request.
+  const existing = await prisma.user.findUnique({ where: { authId: authUser.id } });
+  if (existing) return existing;
+
+  const placeholderEmail = `${authUser.id}@unknown.local`;
+  const name = authUser.user_metadata?.name ?? authUser.email?.split("@")[0] ?? "New user";
+  // user_metadata is set by the browser, so only ever trust the self-service
+  // roles from it — never ADMIN.
+  const role: UserRole =
+    SIGNUP_ROLES.find((r) => r === authUser.user_metadata?.role) ?? "PARENT";
+
+  // A User row can already exist for this email (seeded, or the person
+  // deleted and re-created their Supabase account). `email` is unique, so
+  // creating a second row would crash. Re-link the old row only when
+  // Supabase has verified the email — otherwise anyone could sign up with
+  // someone else's address and inherit their reviews.
+  if (authUser.email) {
+    const byEmail = await prisma.user.findUnique({ where: { email: authUser.email } });
+    if (byEmail) {
+      if (authUser.email_confirmed_at) {
+        return prisma.user.update({
+          where: { id: byEmail.id },
+          data: { authId: authUser.id },
+        });
+      }
+      // Unverified email that's already taken: make a separate account
+      // with a placeholder email instead of crashing or taking over.
+      return createUser(authUser.id, placeholderEmail, name, role);
+    }
+  }
+
+  return createUser(authUser.id, authUser.email ?? placeholderEmail, name, role);
+});
+
+async function createUser(authId: string, email: string, name: string, role: UserRole) {
+  try {
+    return await prisma.user.create({ data: { authId, email, name, role } });
+  } catch (err) {
+    // Two requests can race on a brand-new user; if the other one won,
+    // just return the row it created.
+    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002") {
+      const row = await prisma.user.findUnique({ where: { authId } });
+      if (row) return row;
+    }
+    throw err;
+  }
 }

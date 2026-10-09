@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { getSchoolOverview } from "@/lib/schools";
 import { ratingCategories } from "@/lib/ratings";
-import { formatLocation, tuitionSummary } from "@/lib/labels";
+import { displayUrl, externalUrl, formatLocation, tuitionSummary } from "@/lib/labels";
 import { Badge } from "@/components/common/Badge";
 import { Icon, type IconName } from "@/components/common/Icon";
 import { RatingSummary } from "@/components/reviews/RatingSummary";
@@ -52,12 +52,13 @@ export default async function SchoolOverviewPage({
   if (school.email) {
     contacts.push({ icon: "mail", label: "email", value: school.email, href: `mailto:${school.email}` });
   }
-  if (school.website) {
+  const website = externalUrl(school.website);
+  if (website) {
     contacts.push({
       icon: "globe",
       label: "website",
-      value: school.website.replace(/^https?:\/\//, "").replace(/\/$/, ""),
-      href: school.website,
+      value: displayUrl(website),
+      href: website,
       external: true,
     });
   }

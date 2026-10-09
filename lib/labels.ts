@@ -1,4 +1,4 @@
-import type { SchoolType, SchoolLevel, Curriculum, ReviewTag } from "@prisma/client";
+import type { SchoolType, SchoolLevel, Curriculum, ReviewTag, UserRole } from "@prisma/client";
 
 // Display text for all of these lives in messages/{en,mn}.json under the
 // matching namespace (SchoolType, Level, Curriculum, ReviewTag, Sort…).
@@ -28,8 +28,25 @@ export const REVIEW_TAGS: ReviewTag[] = [
   "ENVIRONMENT",
 ];
 
+/** Roles a person can pick for themselves (never ADMIN). From Temuulen's sign-up work. */
+export const SIGNUP_ROLES: UserRole[] = ["PARENT", "STUDENT", "ALUMNI", "EDUCATOR"];
+
 export const SORT_KEYS = ["rating", "reviews", "name", "founded"] as const;
 export type SortKey = (typeof SORT_KEYS)[number];
+
+/**
+ * A clickable URL for a website stored with or without its protocol
+ * ("www.school.mn" would otherwise become a broken relative link).
+ */
+export function externalUrl(website: string | null | undefined) {
+  if (!website) return null;
+  return /^https?:\/\//i.test(website) ? website : `https://${website}`;
+}
+
+/** "https://www.school.mn/" → "www.school.mn" for display. */
+export function displayUrl(url: string) {
+  return url.replace(/^https?:\/\//i, "").replace(/\/$/, "");
+}
 
 /** A next-intl translator scoped to one namespace (from useTranslations or getTranslations). */
 type Translate = {

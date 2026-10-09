@@ -37,7 +37,7 @@ function pick<T extends string>(value: string | undefined, allowed: readonly T[]
 
 export function parseSchoolFilters(params: RawParams): SchoolFilters {
   return {
-    q: first(params.q)?.trim() || undefined,
+    q: first(params.q)?.trim().slice(0, 100) || undefined,
     level: pick(first(params.level), LEVELS),
     type: pick(first(params.type), SCHOOL_TYPES),
     curriculum: pick(first(params.curriculum), CURRICULA),

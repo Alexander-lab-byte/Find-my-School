@@ -18,7 +18,7 @@ export function SaveButton({ schoolId, initialSaved }: { schoolId: string; initi
       try {
         const result = await toggleSavedSchool(schoolId);
         if (result.ok) setSaved(result.saved);
-        else setError(result.error);
+        else setError(result.error === "LOGIN_REQUIRED" ? "LOGIN_REQUIRED" : "GENERIC");
       } catch {
         setError("GENERIC");
       }

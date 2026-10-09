@@ -15,7 +15,7 @@ const LeafletMap = dynamic(() => import("@/components/map/LeafletMap"), {
 export function SchoolMap(props: LeafletMapProps) {
   return (
     <div
-      className="relative overflow-hidden rounded-xl border border-line bg-surface-muted"
+      className="relative isolate overflow-hidden rounded-xl border border-line bg-surface-muted"
       style={{ height: props.height }}
     >
       <LeafletMap {...props} />

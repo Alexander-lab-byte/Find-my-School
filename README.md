@@ -57,3 +57,17 @@ Pins come from `latitude`/`longitude` in `prisma/data/schools.ts`. Schools witho
 ### Database changes
 
 This database also holds tables that aren't in `prisma/schema.prisma` (e.g. `comment`). **Don't run `prisma db push` or `prisma migrate dev` against it** — they try to drop unknown tables. Apply schema changes as plain additive SQL (`prisma db execute`) instead, and deploy the code that uses new columns only after the columns exist.
+
+### Moderators
+
+Signed-in users can report a review; admins see the queue at `/admin/reports` (hidden from everyone else) and can hide a review or dismiss the report. Hidden reviews stop counting toward the school's rating. To make someone an admin, run in the Supabase SQL editor:
+
+```sql
+UPDATE "User" SET role = 'ADMIN' WHERE email = 'person@example.com';
+```
+
+They must have signed in once first, so their `User` row exists.
+
+### Demo data
+
+`npm run db:seed` adds placeholder schools marked "(Demo)" for local development. Don't run it against the production database. Real school data lives in `prisma/data/schools.ts` (`npm run db:import`).

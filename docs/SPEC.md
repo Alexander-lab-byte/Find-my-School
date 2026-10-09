@@ -134,8 +134,8 @@ model School {
   district          String?      // duureg
   khoroo            String?
   address           String?
-  latitude          Float
-  longitude         Float
+  latitude          Float?
+  longitude         Float?
 
   phone             String?
   website           String?

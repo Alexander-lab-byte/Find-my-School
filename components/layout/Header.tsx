@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
-import { signOut } from "@/app/(auth)/actions";
 import { Icon } from "@/components/common/Icon";
+import { AccountMenu } from "@/components/layout/AccountMenu";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
+import { getCurrentUser } from "@/lib/current-user";
 import { Logo } from "@/components/layout/Logo";
 import { MobileMenu } from "@/components/layout/MobileMenu";
 
@@ -15,6 +16,8 @@ export async function Header() {
   // trip to Supabase's Auth server just to decide which nav links show.
   const isSignedIn = (await headers()).get("x-user-signed-in") === "1";
   const t = await getTranslations("Common");
+  // Only signed-in visitors pay for the user lookup (name + admin flag for the menu).
+  const user = isSignedIn ? await getCurrentUser() : null;
 
   return (
     <header className="relative border-b border-line bg-surface">
@@ -30,17 +33,8 @@ export async function Header() {
             <Icon name="map" className="size-4" />
             {t("map")}
           </Link>
-          {isSignedIn && (
-            <Link href="/saved" className={NAV_LINK}>
-              {t("saved")}
-            </Link>
-          )}
-          {isSignedIn ? (
-            <form action={signOut}>
-              <button type="submit" className={NAV_LINK}>
-                {t("logOut")}
-              </button>
-            </form>
+          {user ? (
+            <AccountMenu name={user.name} isAdmin={user.role === "ADMIN"} />
           ) : (
             <>
               <Link href="/login" className={NAV_LINK}>
@@ -59,7 +53,7 @@ export async function Header() {
 
         <div className="flex items-center gap-2 md:hidden">
           <LanguageSwitcher />
-          <MobileMenu isSignedIn={isSignedIn} />
+          <MobileMenu isSignedIn={Boolean(user)} isAdmin={user?.role === "ADMIN"} />
         </div>
       </div>
     </header>

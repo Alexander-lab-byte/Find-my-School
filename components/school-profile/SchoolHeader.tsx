@@ -9,7 +9,7 @@ import { Stars } from "@/components/common/StarRating";
 import { SaveButton } from "@/components/school-profile/SaveButton";
 import { CompareButton } from "@/components/compare/CompareButton";
 import type { ReviewAccess } from "@/lib/review-access";
-import { formatLocation, schoolNames } from "@/lib/labels";
+import { displayUrl, externalUrl, formatLocation, schoolNames } from "@/lib/labels";
 
 type School = NonNullable<Awaited<ReturnType<typeof getSchoolHeader>>>;
 
@@ -29,6 +29,7 @@ export function SchoolHeader({
   const tLevel = useTranslations("Level");
   const location = formatLocation(useTranslations("Place"), school);
   const { primary, secondary } = schoolNames(school, useLocale());
+  const website = externalUrl(school.website);
   const hasRating = school.reviewCount > 0 && Boolean(school.avgOverall);
 
   return (
@@ -72,15 +73,15 @@ export function SchoolHeader({
                     {school.phone}
                   </a>
                 )}
-                {school.website && (
+                {website && (
                   <a
-                    href={school.website}
+                    href={website}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 text-accent hover:underline hover:underline-offset-4"
                   >
                     <Icon name="globe" className="size-4" />
-                    {school.website.replace(/^https?:\/\//, "").replace(/\/$/, "")}
+                    {displayUrl(website)}
                   </a>
                 )}
               </div>

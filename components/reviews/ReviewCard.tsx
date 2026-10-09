@@ -4,11 +4,19 @@ import { Badge } from "@/components/common/Badge";
 import { Icon } from "@/components/common/Icon";
 import { Stars } from "@/components/common/StarRating";
 import { ReviewBody } from "@/components/reviews/ReviewBody";
+import { ReportButton } from "@/components/reviews/ReportButton";
 import { reviewAverage, type RatingCategory } from "@/lib/ratings";
 
 type Review = Awaited<ReturnType<typeof getSchoolReviews>>[number];
 
-export function ReviewCard({ review }: { review: Review }) {
+export function ReviewCard({
+  review,
+  showReport = true,
+}: {
+  review: Review;
+  /** Off for the viewer's own review: you can't report yourself. */
+  showReport?: boolean;
+}) {
   const t = useTranslations("Reviews");
   const tRatings = useTranslations("Ratings");
   const tRole = useTranslations("Role");
@@ -70,16 +78,21 @@ export function ReviewCard({ review }: { review: Review }) {
 
       <ReviewBody text={review.bodyText} />
 
-      {scores.length > 0 && (
-        <dl className="mt-4 flex flex-wrap gap-x-4 gap-y-1 border-t border-line pt-3 text-xs text-muted">
-          {scores.map(([key, score]) => (
-            <div key={key} className="flex gap-1">
-              <dt>{tRatings(key)}</dt>
-              <dd className="font-medium tabular-nums text-foreground">{score}/5</dd>
-            </div>
-          ))}
-        </dl>
-      )}
+      <div className="mt-4 flex flex-wrap items-start justify-between gap-x-4 gap-y-2 border-t border-line pt-3">
+        {scores.length > 0 ? (
+          <dl className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
+            {scores.map(([key, score]) => (
+              <div key={key} className="flex gap-1">
+                <dt>{tRatings(key)}</dt>
+                <dd className="font-medium tabular-nums text-foreground">{score}/5</dd>
+              </div>
+            ))}
+          </dl>
+        ) : (
+          <span />
+        )}
+        {showReport && <ReportButton reviewId={review.id} schoolId={review.schoolId} />}
+      </div>
     </article>
   );
 }

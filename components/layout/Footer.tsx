@@ -21,6 +21,7 @@ const COLUMNS: { title: string; links: [key: string, href: string][] }[] = [
       ["reviewYourSchool", "/search"],
       ["createAccount", "/register"],
       ["logIn", "/login"],
+      ["about", "/about"],
     ],
   },
 ];

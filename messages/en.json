@@ -30,10 +30,14 @@
     "noReviewsYet": "No reviews yet",
     "reviewCount": "{count, plural, one {# review} other {# reviews}}",
     "schoolCount": "{count, plural, one {# school} other {# schools}}",
-    "map": "Map"
+    "map": "Map",
+    "myReviews": "My reviews",
+    "profile": "Profile",
+    "moderation": "Reported reviews",
+    "about": "About"
   },
   "Footer": {
-    "about": "An independent guide to schools in Mongolia — curriculum, fees, dormitories, and reviews from parents, students, alumni, and educators.",
+    "about": "About this site",
     "explore": "Explore",
     "contribute": "Contribute",
     "allSchools": "All schools",
@@ -159,7 +163,9 @@
     "mn": "Mongolian",
     "en": "English",
     "ru": "Russian",
-    "ja": "Japanese"
+    "ja": "Japanese",
+    "zh": "Chinese",
+    "ko": "Korean"
   },
   "ReviewTag": {
     "DORMITORY": "Dormitory",
@@ -208,14 +214,14 @@
     "facilities": "Facilities",
     "dorm": "Dormitory",
     "admissions": "Admissions",
-    "reviews": "Reviews",
     "outOf5": "out of 5",
     "basedOn": "Based on {count, plural, one {# review} other {# reviews}}",
     "beFirst": "Be the first to share your experience.",
-    "save": "Save",
-    "saved": "Saved",
     "saveLoginRequired": "Please log in to save a school.",
-    "genericError": "Something went wrong. Please try again."
+    "genericError": "Something went wrong. Please try again.",
+    "reviews": "Reviews",
+    "save": "Save",
+    "saved": "Saved"
   },
   "Highlights": {
     "founded": "Founded",
@@ -349,7 +355,8 @@
     "changeEmail": "Use a different email",
     "invalidCode": "That code is incorrect or has expired. Try again or request a new one.",
     "rateLimited": "Too many attempts. Please wait a minute and try again.",
-    "sendFailed": "We couldn't send the code. Check the email address and try again."
+    "sendFailed": "We couldn't send the code. Check the email address and try again.",
+    "role": "I am a…"
   },
   "Saved": {
     "eyebrow": "Your list",
@@ -427,5 +434,80 @@
     "closedBody": "This school's email domain hasn't been verified yet, so it can't receive reviews for now.",
     "wrongDomainShort": "Only verified members of this school can review it.",
     "closedShort": "Reviews open once the school's email domain is verified."
+  },
+  "Report": {
+    "report": "Report",
+    "reasonLabel": "Reason for reporting",
+    "send": "Send report",
+    "sending": "Sending…",
+    "cancel": "Cancel",
+    "thanks": "Thanks — a moderator will take a look.",
+    "loginRequired": "Please log in to report a review.",
+    "chooseReason": "Please choose a reason.",
+    "notFound": "This review no longer exists.",
+    "ownReview": "You can't report your own review.",
+    "alreadyReported": "You've already reported this review.",
+    "generic": "Something went wrong. Please try again.",
+    "logIn": "Log in"
+  },
+  "ReportReason": {
+    "SPAM": "Spam or advertising",
+    "ABUSIVE": "Offensive or abusive",
+    "OFF_TOPIC": "Not about this school",
+    "PERSONAL_INFO": "Contains personal information",
+    "OTHER": "Other"
+  },
+  "MyReviews": {
+    "eyebrow": "Your account",
+    "title": "My reviews",
+    "loginMessage": "Log in to see the reviews you've written.",
+    "emptyTitle": "You haven't reviewed any schools yet",
+    "emptyBody": "Reviews from verified school members help other families the most.",
+    "findSchool": "Find your school",
+    "hidden": "Hidden by moderators",
+    "delete": "Delete",
+    "confirmDelete": "Delete this review? This can't be undone."
+  },
+  "Admin": {
+    "eyebrow": "Moderation",
+    "title": "Reported reviews",
+    "waiting": "{count, plural, =0 {Nothing waiting} one {# report waiting} other {# reports waiting}}",
+    "empty": "Nothing to review right now.",
+    "byline": "Review by {author} · reported by {reporter}",
+    "reason": "Reason",
+    "hide": "Hide review",
+    "dismiss": "Dismiss"
+  },
+  "About": {
+    "eyebrow": "About",
+    "title": "About Find My School Mongolia",
+    "intro": "Choosing or changing schools is a big decision, and the information is scattered. This site puts the basics in one place — curriculum, languages, fees, dormitories — next to reviews from the people who actually attend the schools.",
+    "useTitle": "How to use it",
+    "useBody": "<search>Search</search> by name, school number, or district, and narrow by level, type, curriculum, or dormitory. Save schools to come back to them, <compare>compare</compare> up to three side by side, or see them on the <map>map</map>.",
+    "verifiedTitle": "Only verified school members review",
+    "verifiedBody": "To write a review you sign in with your school email and confirm it with a one-time code. You can only review the school that email belongs to, so every review comes from someone who's actually there.",
+    "ratingsTitle": "How ratings work",
+    "ratingsBody": "Reviewers score academics, facilities, teachers, and campus environment from 1 to 5; library and dormitory scores are optional. A school's overall rating is the average of the four main categories. Each person reviews a school once and can delete their review from <myReviews>My reviews</myReviews>.",
+    "moderationTitle": "Reviews and moderation",
+    "moderationBody": "Reviews reflect the views of individual community members, not this site. If a review is spam, abusive, or about a different school, use the Report link on it and a moderator will take a look."
+  },
+  "Account": {
+    "eyebrow": "Your account",
+    "title": "Your profile",
+    "loginMessage": "Log in to see and edit your profile.",
+    "email": "Email",
+    "reviews": "Reviews",
+    "savedSchools": "Saved schools",
+    "reviewAccessTitle": "Writing reviews",
+    "canReview": "Your verified email lets you review {school}.",
+    "writeReview": "Write a review",
+    "cannotReview": "Reviews can only be written from a verified school email. Your email ({domain}) isn't linked to a school on this site — sign in with your school email to review it.",
+    "editTitle": "Edit profile",
+    "saved": "Profile saved.",
+    "nameRequired": "Please enter a name.",
+    "name": "Name",
+    "role": "I am a…",
+    "roleHint": "Shown next to your reviews.",
+    "save": "Save changes"
   }
 }
