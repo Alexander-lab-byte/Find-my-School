@@ -33,7 +33,7 @@
     "map": "Map",
     "myReviews": "My reviews",
     "profile": "Profile",
-    "moderation": "Reported reviews",
+    "moderation": "Moderation",
     "about": "About"
   },
   "Footer": {
@@ -299,7 +299,14 @@
     "createAccount": "Create an account",
     "verified": "Verified",
     "showMore": "Show more",
-    "showLess": "Show less"
+    "showLess": "Show less",
+    "yours": "Your review",
+    "yourPendingTitle": "Your review is awaiting approval",
+    "yourPendingBody": "An admin checks every review before it's published. It will appear on this page once it's approved.",
+    "yourReviewedTitle": "You've reviewed this school",
+    "yourPublishedBody": "Thanks for sharing. You can find it in <link>My reviews</link>.",
+    "yourHiddenBody": "Moderators removed your review after it was reported.",
+    "yourRejectedNote": "Your previous review wasn't approved. You're welcome to write a new one."
   },
   "ReviewForm": {
     "ratings": "Ratings",
@@ -317,8 +324,7 @@
     "generic": "Something went wrong. Please try again.",
     "submit": "Submit review",
     "submitting": "Submitting…",
-    "thanks": "Thank you for your review",
-    "live": "It's now live on this school's page.",
+    "thanks": "Thank you — your review was sent",
     "logIn": "Log in",
     "starLabel": "{count, plural, one {# star} other {# stars}}, {word}",
     "poor": "Poor",
@@ -328,7 +334,9 @@
     "excellent": "Excellent",
     "errorTooLong": "Reviews can be at most 200 characters.",
     "notAllowed": "Only verified members of this school can review it.",
-    "counter": "{count} / {max}"
+    "counter": "{count} / {max}",
+    "awaitingApproval": "An admin will check it before it's published on this page.",
+    "moderationNote": "Reviews are published after an admin approves them."
   },
   "Auth": {
     "welcomeBack": "Welcome back",
@@ -464,19 +472,52 @@
     "emptyTitle": "You haven't reviewed any schools yet",
     "emptyBody": "Reviews from verified school members help other families the most.",
     "findSchool": "Find your school",
-    "hidden": "Hidden by moderators",
     "delete": "Delete",
-    "confirmDelete": "Delete this review? This can't be undone."
+    "confirmDelete": "Delete this review? This can't be undone.",
+    "intro": "New reviews appear on the school's page after an admin approves them.",
+    "status": {
+      "PENDING": "Awaiting approval",
+      "PUBLISHED": "Published",
+      "REJECTED": "Not approved",
+      "HIDDEN": "Hidden by moderators"
+    },
+    "rejectedHint": "This review wasn't approved.",
+    "writeAgain": "Write a new one"
   },
   "Admin": {
-    "eyebrow": "Moderation",
-    "title": "Reported reviews",
-    "waiting": "{count, plural, =0 {Nothing waiting} one {# report waiting} other {# reports waiting}}",
-    "empty": "Nothing to review right now.",
+    "eyebrow": "Admin",
+    "title": "Moderation",
+    "intro": "New reviews stay hidden until an admin approves them. Only published reviews count toward a school's rating.",
+    "sections": "Moderation sections",
+    "tab": {
+      "pending": "Pending",
+      "published": "Published",
+      "rejected": "Rejected",
+      "reports": "Reports"
+    },
+    "status": {
+      "PENDING": "Awaiting approval",
+      "PUBLISHED": "Published",
+      "REJECTED": "Rejected",
+      "HIDDEN": "Removed after reports"
+    },
+    "emptyPending": "You're all caught up — no reviews are waiting for approval.",
+    "emptyPublished": "No published reviews yet.",
+    "emptyRejected": "Nothing rejected or removed.",
+    "emptyReports": "No open reports.",
+    "showingLatest": "Showing the {count} most recent.",
+    "submitted": "Submitted {date}",
+    "decided": "decided {date}",
+    "schoolEmail": "School email",
+    "notSchoolEmail": "Not this school's email",
+    "approve": "Approve",
+    "reject": "Reject",
+    "unpublish": "Unpublish",
+    "publish": "Publish",
     "byline": "Review by {author} · reported by {reporter}",
     "reason": "Reason",
     "hide": "Hide review",
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss report"
   },
   "About": {
     "eyebrow": "About",
@@ -489,7 +530,7 @@
     "ratingsTitle": "How ratings work",
     "ratingsBody": "Reviewers score academics, facilities, teachers, and campus environment from 1 to 5; library and dormitory scores are optional. A school's overall rating is the average of the four main categories. Each person reviews a school once and can delete their review from <myReviews>My reviews</myReviews>.",
     "moderationTitle": "Reviews and moderation",
-    "moderationBody": "Reviews reflect the views of individual community members, not this site. If a review is spam, abusive, or about a different school, use the Report link on it and a moderator will take a look."
+    "moderationBody": "An admin reads every new review before it's published, and only approved reviews count toward a school's rating. Reviews reflect the views of individual community members, not this site. If a published review is spam, abusive, or about a different school, use the Report link on it and a moderator will take a look."
   },
   "Account": {
     "eyebrow": "Your account",

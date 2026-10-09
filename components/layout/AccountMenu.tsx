@@ -11,7 +11,16 @@ const ITEM =
   "flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-left text-sm text-foreground transition-colors hover:bg-surface-muted";
 
 /** Signed-in user's menu: saved schools, own reviews, profile, admin queue, log out. */
-export function AccountMenu({ name, isAdmin }: { name: string; isAdmin: boolean }) {
+export function AccountMenu({
+  name,
+  isAdmin,
+  waiting,
+}: {
+  name: string;
+  isAdmin: boolean;
+  /** Reviews awaiting approval plus open reports (admins only). */
+  waiting: number;
+}) {
   const t = useTranslations("Common");
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -51,9 +60,12 @@ export function AccountMenu({ name, isAdmin }: { name: string; isAdmin: boolean 
       >
         <span
           aria-hidden
-          className="flex size-7 items-center justify-center rounded-full bg-accent-soft text-xs font-semibold text-accent"
+          className="relative flex size-7 items-center justify-center rounded-full bg-accent-soft text-xs font-semibold text-accent"
         >
           {name.charAt(0).toUpperCase()}
+          {waiting > 0 && (
+            <span className="absolute -right-0.5 -top-0.5 size-2.5 rounded-full border-2 border-surface bg-danger" />
+          )}
         </span>
         <span className="max-w-32 truncate">{name}</span>
         <Icon name="chevron-down" className={`size-4 text-subtle transition-transform ${open ? "rotate-180" : ""}`} />
@@ -77,9 +89,14 @@ export function AccountMenu({ name, isAdmin }: { name: string; isAdmin: boolean 
             {t("profile")}
           </Link>
           {isAdmin && (
-            <Link role="menuitem" href="/admin/reports" className={ITEM}>
+            <Link role="menuitem" href="/admin/reviews" className={ITEM}>
               <Icon name="shield" className="size-4 text-subtle" />
               {t("moderation")}
+              {waiting > 0 && (
+                <span className="ml-auto rounded-full bg-accent px-1.5 py-0.5 text-xs font-semibold tabular-nums text-accent-foreground">
+                  {waiting}
+                </span>
+              )}
             </Link>
           )}
           <div className="my-1.5 border-t border-line" />

@@ -9,7 +9,15 @@ import { Icon } from "@/components/common/Icon";
 const ITEM =
   "rounded-lg px-3 py-2.5 font-medium text-foreground transition-colors hover:bg-surface-muted";
 
-export function MobileMenu({ isSignedIn, isAdmin }: { isSignedIn: boolean; isAdmin: boolean }) {
+export function MobileMenu({
+  isSignedIn,
+  isAdmin,
+  waiting,
+}: {
+  isSignedIn: boolean;
+  isAdmin: boolean;
+  waiting: number;
+}) {
   const t = useTranslations("Common");
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
@@ -21,8 +29,11 @@ export function MobileMenu({ isSignedIn, isAdmin }: { isSignedIn: boolean; isAdm
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-label={open ? t("closeMenu") : t("openMenu")}
-        className="flex size-9 items-center justify-center rounded-lg border border-line text-muted transition-colors hover:bg-surface-muted"
+        className="relative flex size-9 items-center justify-center rounded-lg border border-line text-muted transition-colors hover:bg-surface-muted"
       >
+        {waiting > 0 && !open && (
+          <span aria-hidden className="absolute -right-1 -top-1 size-2.5 rounded-full border-2 border-surface bg-danger" />
+        )}
         {open ? (
           <Icon name="x" className="size-4.5" />
         ) : (
@@ -57,8 +68,13 @@ export function MobileMenu({ isSignedIn, isAdmin }: { isSignedIn: boolean; isAdm
                   {t("profile")}
                 </Link>
                 {isAdmin && (
-                  <Link href="/admin/reports" onClick={close} className={ITEM}>
+                  <Link href="/admin/reviews" onClick={close} className={`${ITEM} flex items-center justify-between`}>
                     {t("moderation")}
+                    {waiting > 0 && (
+                      <span className="rounded-full bg-accent px-1.5 py-0.5 text-xs font-semibold tabular-nums text-accent-foreground">
+                        {waiting}
+                      </span>
+                    )}
                   </Link>
                 )}
               </>

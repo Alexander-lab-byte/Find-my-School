@@ -385,6 +385,15 @@ export function getSchoolReviews(id: string) {
   });
 }
 
+/** The viewer's own review of a school in any state, so the page can say where it stands. */
+export function getOwnReview(schoolId: string, userId: string) {
+  return prisma.review.findFirst({
+    where: { schoolId, userId },
+    orderBy: { createdAt: "desc" },
+    select: { status: true },
+  });
+}
+
 export async function getIsSchoolSaved(schoolId: string, userId: string | null) {
   if (!userId) return false;
   const row = await prisma.savedSchool.findUnique({

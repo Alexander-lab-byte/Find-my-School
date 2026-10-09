@@ -156,6 +156,12 @@ const PATHS = {
       <rect width="7" height="16" x="14" y="4" rx="1.5" />
     </>
   ),
+  clock: (
+    <>
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 6v6l4 2" />
+    </>
+  ),
   lock: (
     <>
       <rect width="18" height="11" x="3" y="11" rx="2" />

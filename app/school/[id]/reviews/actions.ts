@@ -10,7 +10,6 @@ import {
   REPORT_REASONS,
   type ReportReason,
 } from "@/lib/review-limits";
-import { recalculateSchoolRatings } from "@/lib/school-ratings";
 import { domainMatches, emailDomain, getVerifiedEmail } from "@/lib/review-access";
 
 type SubmitReviewInput = {
@@ -72,12 +71,23 @@ export async function submitReview(input: SubmitReviewInput): Promise<SubmitRevi
   const validTags = new Set<string>(Object.values(ReviewTag));
   const tags = [...new Set(input.tags ?? [])].filter((t) => validTags.has(t));
 
+  // One review per person per school. A review an admin rejected doesn't
+  // count: the person may write a new one, which replaces it.
   const existing = await prisma.rating.findUnique({
     where: { schoolId_userId: { schoolId: input.schoolId, userId: user.id } },
+    select: { reviewId: true, review: { select: { status: true } } },
   });
-  if (existing) return { ok: false, error: "ALREADY_REVIEWED" };
+  const replacesRejected = existing?.reviewId != null && existing.review?.status === "REJECTED";
+  if (existing && !replacesRejected) return { ok: false, error: "ALREADY_REVIEWED" };
 
   await prisma.$transaction(async (tx) => {
+    if (replacesRejected) {
+      const reviewId = existing!.reviewId!;
+      await tx.report.deleteMany({ where: { reviewId } });
+      await tx.rating.deleteMany({ where: { reviewId } });
+      await tx.review.delete({ where: { id: reviewId } });
+    }
+
     const review = await tx.review.create({
       data: {
         schoolId: input.schoolId,
@@ -86,6 +96,8 @@ export async function submitReview(input: SubmitReviewInput): Promise<SubmitRevi
         tags,
         // Every review now comes from a verified school email.
         isVerified: true,
+        // Not public, and not counted in the ratings, until an admin approves it.
+        status: "PENDING",
       },
     });
 
@@ -102,12 +114,11 @@ export async function submitReview(input: SubmitReviewInput): Promise<SubmitRevi
         library: input.library,
       },
     });
-
-    await recalculateSchoolRatings(tx, input.schoolId);
+    // No recalculation: pending and rejected reviews don't count yet.
   });
 
   revalidatePath(`/school/${input.schoolId}/reviews`);
-  revalidatePath(`/school/${input.schoolId}`);
+  revalidatePath("/admin", "layout");
   return { ok: true };
 }
 
@@ -128,9 +139,9 @@ export async function reportReview(reviewId: string, reason: string): Promise<Re
 
   const review = await prisma.review.findUnique({
     where: { id: reviewId },
-    select: { userId: true },
+    select: { userId: true, status: true },
   });
-  if (!review) return { ok: false, error: "NOT_FOUND" };
+  if (!review || review.status !== "PUBLISHED") return { ok: false, error: "NOT_FOUND" };
   if (review.userId === user.id) return { ok: false, error: "OWN_REVIEW" };
 
   const already = await prisma.report.findFirst({

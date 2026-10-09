@@ -190,7 +190,11 @@ model Review {
   bodyText   String      @db.Text
   tags       ReviewTag[]
   isVerified Boolean     @default(false)
-  status     String      @default("PUBLISHED")
+  // PENDING until an admin approves it → PUBLISHED, or REJECTED. HIDDEN is
+  // a published review taken down after reports. Only PUBLISHED is public
+  // and counts toward the school's ratings.
+  status      String     @default("PENDING")
+  moderatedAt DateTime?
 
   createdAt  DateTime    @default(now())
 
@@ -198,6 +202,7 @@ model Review {
   reports    Report[]
 
   @@index([schoolId, status])
+  @@index([status, createdAt])
 }
 
 model Rating {

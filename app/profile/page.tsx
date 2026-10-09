@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/current-user";
+import { getAdminUser } from "@/lib/admin";
 import { emailDomain, findSchoolForDomain, getVerifiedEmail } from "@/lib/review-access";
 import { SIGNUP_ROLES, schoolNames } from "@/lib/labels";
 import { LoginPrompt } from "@/components/auth/LoginPrompt";
@@ -27,11 +28,12 @@ export default async function ProfilePage({
     return <LoginPrompt title={t("title")} message={t("loginMessage")} next="/profile" />;
   }
 
-  const [{ saved, error }, reviewCount, savedCount, verifiedEmail, tRole, locale] = await Promise.all([
+  const [{ saved, error }, reviewCount, savedCount, verifiedEmail, isAdmin, tRole, locale] = await Promise.all([
     searchParams,
     prisma.review.count({ where: { userId: user.id } }),
     prisma.savedSchool.count({ where: { userId: user.id } }),
     getVerifiedEmail(),
+    getAdminUser().then(Boolean),
     getTranslations("Role"),
     getLocale(),
   ]);
@@ -47,7 +49,9 @@ export default async function ProfilePage({
         <h1 className="font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
           {user.name}
         </h1>
-        <Badge tone={user.isVerified ? "verified" : "neutral"}>{tRole(user.role)}</Badge>
+        <Badge tone={user.isVerified || isAdmin ? "verified" : "neutral"}>
+          {tRole(isAdmin ? "ADMIN" : user.role)}
+        </Badge>
       </div>
 
       <div className="mt-8">
