@@ -37,6 +37,7 @@
     "about": "About"
   },
   "Footer": {
+    "description": "An independent guide to schools in Mongolia — curriculum, fees, dormitories, and reviews from parents, students, alumni, and educators.",
     "about": "About this site",
     "explore": "Explore",
     "contribute": "Contribute",
@@ -50,7 +51,15 @@
     "copyright": "© {year} Find My School Mongolia",
     "disclaimer": "Reviews reflect the views of individual community members.",
     "logIn": "Log in",
-    "schoolMap": "School map"
+    "schoolMap": "School map",
+    "team": "The team",
+    "members": {
+      "gunjid": "Gunjid",
+      "munkhjin": "Munkhjin",
+      "anar": "Anar",
+      "temuulen": "Temuulen",
+      "enkhbold": "Enkhbold"
+    }
   },
   "Home": {
     "eyebrow": "Schools across Mongolia",
