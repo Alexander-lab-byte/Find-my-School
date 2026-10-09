@@ -1,18 +1,23 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
+/** Delete with a confirm step; `action` is a server action bound to one review. */
 export function DeleteReviewButton({ action }: { action: () => Promise<void> }) {
+  const t = useTranslations("MyReviews");
+
   return (
     <form
       action={action}
       onSubmit={(e) => {
-        if (!window.confirm("Delete this review? This can't be undone.")) e.preventDefault();
+        if (!window.confirm(t("confirmDelete"))) e.preventDefault();
       }}
     >
       <button
         type="submit"
-        className="text-xs text-zinc-500 underline-offset-4 transition-colors hover:text-red-600 hover:underline"
+        className="text-xs font-medium text-muted underline-offset-4 transition-colors hover:text-danger hover:underline"
       >
-        Delete
+        {t("delete")}
       </button>
     </form>
   );

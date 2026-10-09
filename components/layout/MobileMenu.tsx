@@ -2,10 +2,17 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { signOut } from "@/app/(auth)/actions";
+import { Icon } from "@/components/common/Icon";
 
-export function MobileMenu({ isSignedIn }: { isSignedIn: boolean }) {
+const ITEM =
+  "rounded-lg px-3 py-2.5 font-medium text-foreground transition-colors hover:bg-surface-muted";
+
+export function MobileMenu({ isSignedIn, isAdmin }: { isSignedIn: boolean; isAdmin: boolean }) {
+  const t = useTranslations("Common");
   const [open, setOpen] = useState(false);
+  const close = () => setOpen(false);
 
   return (
     <div className="md:hidden">
@@ -13,59 +20,72 @@ export function MobileMenu({ isSignedIn }: { isSignedIn: boolean }) {
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        aria-label={open ? "Close menu" : "Open menu"}
-        className="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 text-zinc-600 dark:border-zinc-700 dark:text-zinc-400"
+        aria-label={open ? t("closeMenu") : t("openMenu")}
+        className="flex size-9 items-center justify-center rounded-lg border border-line text-muted transition-colors hover:bg-surface-muted"
       >
         {open ? (
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
-          </svg>
+          <Icon name="x" className="size-4.5" />
         ) : (
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} className="size-4.5" aria-hidden>
             <path d="M4 7h16M4 12h16M4 17h16" strokeLinecap="round" />
           </svg>
         )}
       </button>
 
       {open && (
-        <div className="absolute inset-x-0 top-full z-20 border-b border-zinc-200 bg-white px-6 py-4 shadow-sm dark:border-zinc-800 dark:bg-black">
-          <nav className="flex flex-col gap-3 text-sm">
-            <Link href="/search" onClick={() => setOpen(false)} className="text-zinc-600 dark:text-zinc-400">
-              Search
+        <div className="absolute inset-x-0 top-full z-30 border-b border-line bg-surface px-4 py-3 shadow-[0_16px_32px_-20px_rgb(0_0_0/0.3)]">
+          <nav className="flex flex-col text-sm">
+            <Link href="/search" onClick={close} className={ITEM}>
+              {t("browseSchools")}
             </Link>
-            <Link href="/map" onClick={() => setOpen(false)} className="text-zinc-600 dark:text-zinc-400">
-              Map
+            <Link href="/map" onClick={close} className={ITEM}>
+              {t("map")}
             </Link>
-            {isSignedIn && (
-              <Link href="/saved" onClick={() => setOpen(false)} className="text-zinc-600 dark:text-zinc-400">
-                Saved schools
-              </Link>
-            )}
+            <Link href="/about" onClick={close} className={ITEM}>
+              {t("about")}
+            </Link>
             {isSignedIn && (
               <>
-                <Link href="/my-reviews" onClick={() => setOpen(false)} className="text-zinc-600 dark:text-zinc-400">
-                  My reviews
+                <div className="my-2 border-t border-line" />
+                <Link href="/saved" onClick={close} className={ITEM}>
+                  {t("savedSchools")}
                 </Link>
-                <Link href="/profile" onClick={() => setOpen(false)} className="text-zinc-600 dark:text-zinc-400">
-                  Profile
+                <Link href="/my-reviews" onClick={close} className={ITEM}>
+                  {t("myReviews")}
                 </Link>
+                <Link href="/profile" onClick={close} className={ITEM}>
+                  {t("profile")}
+                </Link>
+                {isAdmin && (
+                  <Link href="/admin/reports" onClick={close} className={ITEM}>
+                    {t("moderation")}
+                  </Link>
+                )}
               </>
             )}
             {isSignedIn ? (
               <form action={signOut}>
-                <button type="submit" className="text-left text-zinc-600 dark:text-zinc-400">
-                  Log out
+                <button type="submit" className={`${ITEM} w-full text-left`}>
+                  {t("logOut")}
                 </button>
               </form>
             ) : (
-              <>
-                <Link href="/login" onClick={() => setOpen(false)} className="text-zinc-600 dark:text-zinc-400">
-                  Log in
+              <div className="mt-2 grid grid-cols-2 gap-2 border-t border-line pt-3">
+                <Link
+                  href="/login"
+                  onClick={close}
+                  className="rounded-lg border border-line px-3 py-2.5 text-center font-medium text-foreground"
+                >
+                  {t("logIn")}
                 </Link>
-                <Link href="/register" onClick={() => setOpen(false)} className="text-accent">
-                  Sign up
+                <Link
+                  href="/register"
+                  onClick={close}
+                  className="rounded-lg bg-accent px-3 py-2.5 text-center font-medium text-accent-foreground"
+                >
+                  {t("signUp")}
                 </Link>
-              </>
+              </div>
             )}
           </nav>
         </div>

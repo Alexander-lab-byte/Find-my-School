@@ -1,22 +1,39 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { AuthCard } from "@/components/auth/AuthCard";
-import { RegisterForm } from "@/components/auth/RegisterForm";
+import { EmailOtpForm } from "@/components/auth/EmailOtpForm";
+import { safeNextPath } from "@/lib/navigation";
 
-export default function RegisterPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("Metadata");
+  return { title: t("register") };
+}
+
+export default async function RegisterPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ next?: string }>;
+}) {
+  const next = safeNextPath((await searchParams).next);
+  const t = await getTranslations("Auth");
+  const tCommon = await getTranslations("Common");
+  const loginHref = next === "/" ? "/login" : `/login?next=${encodeURIComponent(next)}`;
+
   return (
     <AuthCard
-      title="Create an account"
-      description="Join Find My School Mongolia to rate and review schools."
+      title={t("createTitle")}
+      description={t("registerIntro")}
       footer={
         <>
-          Already have an account?{" "}
-          <Link href="/login" className="text-accent underline underline-offset-4">
-            Log in
+          {t("haveAccount")}{" "}
+          <Link href={loginHref} className="font-medium text-accent underline-offset-4 hover:underline">
+            {tCommon("logIn")}
           </Link>
         </>
       }
     >
-      <RegisterForm />
+      <EmailOtpForm mode="register" next={next} />
     </AuthCard>
   );
 }

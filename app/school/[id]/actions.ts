@@ -4,16 +4,16 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/current-user";
 
-export async function toggleSavedSchool(schoolId: string) {
+type ToggleSavedResult =
+  | { ok: true; saved: boolean }
+  | { ok: false; error: "LOGIN_REQUIRED" | "NOT_FOUND" };
+
+export async function toggleSavedSchool(schoolId: string): Promise<ToggleSavedResult> {
   const user = await getCurrentUser();
-  if (!user) {
-    throw new Error("Please log in to save a school.");
-  }
+  if (!user) return { ok: false, error: "LOGIN_REQUIRED" };
 
   const school = await prisma.school.findUnique({ where: { id: schoolId }, select: { id: true } });
-  if (!school) {
-    throw new Error("School not found.");
-  }
+  if (!school) return { ok: false, error: "NOT_FOUND" };
 
   const existing = await prisma.savedSchool.findUnique({
     where: { userId_schoolId: { userId: user.id, schoolId } },
@@ -32,5 +32,5 @@ export async function toggleSavedSchool(schoolId: string) {
   revalidatePath(`/school/${schoolId}`);
   revalidatePath("/saved");
 
-  return { saved: !existing };
+  return { ok: true, saved: !existing };
 }

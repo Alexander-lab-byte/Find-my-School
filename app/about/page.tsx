@@ -1,48 +1,62 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
+import { Icon, type IconName } from "@/components/common/Icon";
 
-export const metadata = { title: "About" };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("About");
+  return { title: t("title") };
+}
 
-export default function AboutPage() {
+// [icon, title key, body key] — body text may contain <link> tags (see messages).
+const SECTIONS: [IconName, string, string][] = [
+  ["search", "useTitle", "useBody"],
+  ["shield", "verifiedTitle", "verifiedBody"],
+  ["trophy", "ratingsTitle", "ratingsBody"],
+  ["message", "moderationTitle", "moderationBody"],
+];
+
+function inlineLink(href: string) {
+  return function InlineLink(chunks: React.ReactNode) {
+    return (
+      <Link href={href} className="font-medium text-accent hover:underline">
+        {chunks}
+      </Link>
+    );
+  };
+}
+
+export default async function AboutPage() {
+  const t = await getTranslations("About");
+
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-12 sm:px-6">
-      <h1 className="font-display text-4xl font-semibold tracking-tight text-foreground">
-        About Find My School
+      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">{t("eyebrow")}</p>
+      <h1 className="mt-2 text-balance font-display text-4xl font-semibold tracking-tight text-foreground">
+        {t("title")}
       </h1>
-      <p className="mt-4 text-lg leading-8 text-muted">
-        UX/UI people, come up for things here
-      </p>
+      <p className="mt-4 text-pretty text-lg leading-8 text-muted">{t("intro")}</p>
 
-      <section className="mt-10">
-        <h2 className="font-display text-2xl font-semibold text-foreground">How to use it</h2>
-        <ul className="mt-3 list-disc space-y-2 pl-5 leading-7 text-muted">
-          <li>
-            <Link href="/search" className="text-accent underline underline-offset-4">
-              Search
-            </Link>{" "}
-            UX/UI people, come up for things here
-          </li>
-          <li>UX/UI people, come up for things here</li>
-          <li>UX/UI people, come up for things here</li>
-        </ul>
-      </section>
-
-      <section className="mt-10">
-        <h2 className="font-display text-2xl font-semibold text-foreground">How ratings work</h2>
-        <p className="mt-3 leading-7 text-muted">
-          UX/UI people, come up for things here
-          <Link href="/my-reviews" className="text-accent underline underline-offset-4">
-            UX/UI people, come up for things here
-          </Link>
-          .
-        </p>
-      </section>
-
-      <section className="mt-10">
-        <h2 className="font-display text-2xl font-semibold text-foreground">Reviews and moderation</h2>
-        <p className="mt-3 leading-7 text-muted">
-          UX/UI people, come up for things here
-        </p>
-      </section>
+      <div className="mt-10 grid gap-4">
+        {SECTIONS.map(([icon, title, body]) => (
+          <section key={title} className="flex gap-4 rounded-xl border border-line bg-surface p-6">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-accent-soft text-accent">
+              <Icon name={icon} className="size-5" />
+            </span>
+            <div>
+              <h2 className="font-display text-xl font-semibold text-foreground">{t(title)}</h2>
+              <p className="mt-2 leading-7 text-muted">
+                {t.rich(body, {
+                  search: inlineLink("/search"),
+                  map: inlineLink("/map"),
+                  compare: inlineLink("/compare"),
+                  myReviews: inlineLink("/my-reviews"),
+                })}
+              </p>
+            </div>
+          </section>
+        ))}
+      </div>
     </main>
   );
 }

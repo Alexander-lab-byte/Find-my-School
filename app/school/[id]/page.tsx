@@ -1,10 +1,24 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { getSchoolOverview } from "@/lib/schools";
+import { ratingCategories } from "@/lib/ratings";
+import { displayUrl, externalUrl, formatLocation, tuitionSummary } from "@/lib/labels";
 import { Badge } from "@/components/common/Badge";
+import { Icon, type IconName } from "@/components/common/Icon";
 import { RatingSummary } from "@/components/reviews/RatingSummary";
 import { Fact, FactGrid, ProfileSection } from "@/components/school-profile/ProfileSection";
-import { CURRICULUM_LABELS, LANGUAGE_NAMES } from "@/lib/labels";
-import { ratingCategories } from "@/lib/ratings";
+import { SchoolHighlights } from "@/components/school-profile/SchoolHighlights";
+import { SchoolMap } from "@/components/map/SchoolMap";
+
+type Contact = {
+  icon: IconName;
+  /** Key in the "Overview" namespace. */
+  label: "address" | "phone" | "email" | "website";
+  value: string;
+  href?: string;
+  external?: boolean;
+};
 
 export default async function SchoolOverviewPage({
   params,
@@ -16,36 +30,146 @@ export default async function SchoolOverviewPage({
 
   if (!school) notFound();
 
-  const languages = school.teachingLanguages.map((l) => LANGUAGE_NAMES[l] ?? l.toUpperCase());
+  const t = await getTranslations("Overview");
+  const tCommon = await getTranslations("Common");
+  const tType = await getTranslations("SchoolType");
+  const tLevel = await getTranslations("Level");
+  const tCurriculum = await getTranslations("Curriculum");
+  const tLanguage = await getTranslations("Language");
+  const tTuition = await getTranslations("Tuition");
+  const tMap = await getTranslations("Map");
+  const tPlace = await getTranslations("Place");
+
+  const contacts: Contact[] = [];
+  contacts.push({
+    icon: "map-pin",
+    label: "address",
+    value: [school.address, formatLocation(tPlace, school)].filter(Boolean).join(", "),
+  });
+  if (school.phone) {
+    contacts.push({ icon: "phone", label: "phone", value: school.phone, href: `tel:${school.phone}` });
+  }
+  if (school.email) {
+    contacts.push({ icon: "mail", label: "email", value: school.email, href: `mailto:${school.email}` });
+  }
+  const website = externalUrl(school.website);
+  if (website) {
+    contacts.push({
+      icon: "globe",
+      label: "website",
+      value: displayUrl(website),
+      href: website,
+      external: true,
+    });
+  }
 
   return (
-    <div className="space-y-10">
-      <ProfileSection title="Curriculum & instruction">
-        {school.curriculum.length > 0 && (
-          <div className="mb-6 flex flex-wrap gap-2">
+    <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_280px]">
+      <div className="space-y-10">
+        <SchoolHighlights
+          foundedYear={school.foundedYear}
+          studentTeacherRatio={school.studentTeacherRatio}
+          curriculum={school.curriculum}
+          graduateDestinations={school.graduateDestinations}
+          notableAchievements={school.notableAchievements}
+        />
+
+        <ProfileSection title={t("atAGlance")}>
+          <FactGrid>
+            <Fact label={t("schoolType")}>{tType(school.type)}</Fact>
+            <Fact label={t("gradeLevels")}>{tLevel(school.level)}</Fact>
+            <Fact label={t("tuition")}>
+              {tuitionSummary(tTuition, school.type, school.tuitionMinAnnual, school.tuitionMaxAnnual)}
+            </Fact>
+            <Fact label={t("languages")}>
+              {school.teachingLanguages.length > 0
+                ? school.teachingLanguages.map((l) => (tLanguage.has(l) ? tLanguage(l) : l)).join(", ")
+                : tCommon("notReported")}
+            </Fact>
+            <Fact label={t("accreditation")}>{school.accreditation ?? tCommon("notReported")}</Fact>
+            <Fact label={t("dormitory")}>{school.dormitory ? t("available") : t("notOffered")}</Fact>
+          </FactGrid>
+        </ProfileSection>
+
+        <ProfileSection title={t("curriculum")}>
+          <div className="flex flex-wrap gap-2">
             {school.curriculum.map((c) => (
               <Badge key={c} tone="accent">
-                {CURRICULUM_LABELS[c]}
+                {tCurriculum(c)}
               </Badge>
             ))}
           </div>
-        )}
-        <FactGrid columns={3}>
-          <Fact label="Teaching languages">
-            {languages.length > 0 ? languages.join(", ") : "Not reported"}
-          </Fact>
-          <Fact label="Student–teacher ratio">{school.studentTeacherRatio ?? "Not reported"}</Fact>
-          <Fact label="Accreditation">{school.accreditation ?? "Not reported"}</Fact>
-        </FactGrid>
-      </ProfileSection>
+        </ProfileSection>
 
-      <ProfileSection title="Community ratings">
-        <RatingSummary
-          overall={school.avgOverall}
-          count={school.reviewCount}
-          categories={ratingCategories(school, Boolean(school.dormitory))}
-        />
-      </ProfileSection>
+        <ProfileSection
+          title={t("ratings")}
+          action={
+            <Link
+              href={`/school/${id}/reviews`}
+              className="inline-flex items-center gap-1 text-sm font-medium text-accent hover:underline hover:underline-offset-4"
+            >
+              {school.reviewCount > 0 ? t("readAll") : t("writeFirst")}
+              <Icon name="arrow-right" className="size-4" />
+            </Link>
+          }
+        >
+          <RatingSummary
+            overall={school.avgOverall}
+            count={school.reviewCount}
+            categories={ratingCategories(school, Boolean(school.dormitory))}
+          />
+        </ProfileSection>
+      </div>
+
+      <aside className="space-y-4">
+        {school.latitude != null && school.longitude != null && (
+          <div>
+            <SchoolMap
+              height={200}
+              schools={[
+                {
+                  ...school,
+                  id,
+                  latitude: school.latitude,
+                  longitude: school.longitude,
+                },
+              ]}
+            />
+            {school.locationApproximate && (
+              <p className="mt-1.5 text-xs text-muted">{tMap("approximateNote")}</p>
+            )}
+          </div>
+        )}
+        <div className="rounded-xl border border-line bg-surface p-5">
+          <h2 className="text-sm font-semibold text-foreground">{t("contact")}</h2>
+          {contacts.length > 0 ? (
+            <ul className="mt-4 space-y-4 text-sm">
+              {contacts.map((contact) => (
+                <li key={contact.label} className="flex gap-3">
+                  <Icon name={contact.icon} className="mt-0.5 size-4 shrink-0 text-subtle" />
+                  <div className="min-w-0">
+                    <p className="text-xs text-subtle">{t(contact.label)}</p>
+                    {contact.href ? (
+                      <a
+                        href={contact.href}
+                        target={contact.external ? "_blank" : undefined}
+                        rel={contact.external ? "noopener noreferrer" : undefined}
+                        className="wrap-break-word text-accent hover:underline hover:underline-offset-4"
+                      >
+                        {contact.value}
+                      </a>
+                    ) : (
+                      <p className="wrap-break-word text-foreground">{contact.value}</p>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="mt-3 text-sm text-muted">{t("noContact")}</p>
+          )}
+        </div>
+      </aside>
     </div>
   );
 }

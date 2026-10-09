@@ -1,12 +1,8 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { getSchoolFacilities } from "@/lib/schools";
 import { StarRating } from "@/components/common/StarRating";
-import {
-  EmptyNote,
-  Fact,
-  FactGrid,
-  ProfileSection,
-} from "@/components/school-profile/ProfileSection";
+import { EmptyNote, ProfileSection } from "@/components/school-profile/ProfileSection";
 
 export default async function SchoolFacilitiesPage({
   params,
@@ -18,30 +14,41 @@ export default async function SchoolFacilitiesPage({
 
   if (!school) notFound();
 
+  const t = await getTranslations("Facilities");
+
   return (
     <div className="space-y-10">
-      <ProfileSection title="Ratings">
-        <FactGrid columns={2}>
-          <Fact label="Facilities overall">
-            <StarRating value={school.avgFacilities} size="sm" />
-          </Fact>
-          <Fact label="Library">
-            <StarRating value={school.avgLibrary} size="sm" />
-          </Fact>
-        </FactGrid>
-      </ProfileSection>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="rounded-xl border border-line bg-surface p-5">
+          <p className="text-xs font-medium uppercase tracking-[0.08em] text-subtle">
+            {t("overall")}
+          </p>
+          <div className="mt-2">
+            <StarRating value={school.avgFacilities} />
+          </div>
+        </div>
+        <div className="rounded-xl border border-line bg-surface p-5">
+          <p className="text-xs font-medium uppercase tracking-[0.08em] text-subtle">{t("library")}</p>
+          <div className="mt-2">
+            <StarRating value={school.avgLibrary} />
+          </div>
+        </div>
+      </div>
 
-      <ProfileSection title="On campus">
+      <ProfileSection title={t("onCampus")}>
         {school.facilities.length === 0 ? (
-          <EmptyNote>No facility details have been added for this school yet.</EmptyNote>
+          <EmptyNote>{t("none")}</EmptyNote>
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {school.facilities.map((facility) => (
-              <div key={facility.id} className="rounded-xl border border-line bg-surface p-4">
-                <div className="text-xs text-subtle">{facility.category}</div>
-                <div className="mt-1 font-medium text-foreground">{facility.nameEn}</div>
+              <div key={facility.id} className="rounded-xl border border-line bg-surface p-5">
+                <p className="text-xs font-medium uppercase tracking-[0.08em] text-accent">
+                  {facility.category}
+                </p>
+                <h3 className="mt-1.5 font-medium text-foreground">{facility.nameEn}</h3>
+                <p className="text-sm text-subtle">{facility.nameMn}</p>
                 {facility.description && (
-                  <p className="mt-2 text-sm text-muted">{facility.description}</p>
+                  <p className="mt-3 text-sm leading-6 text-muted">{facility.description}</p>
                 )}
               </div>
             ))}

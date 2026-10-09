@@ -1,102 +1,178 @@
 "use client";
 
+import { useState } from "react";
+import { useTranslations } from "next-intl";
+import { Icon } from "@/components/common/Icon";
 import { useSearchNavigation } from "@/components/search/SearchNavigation";
-import { CURRICULUM_LABELS, LEVEL_LABELS, TYPE_LABELS } from "@/lib/labels";
+import { CURRICULA, LEVELS, SCHOOL_TYPES } from "@/lib/labels";
 
-export const FILTER_KEYS = ["level", "type", "curriculum", "dorm"] as const;
+export const FILTER_KEYS = ["type", "level", "curriculum", "district", "dorm"] as const;
 
-function Chip({
+function Option({
   active,
   onClick,
   children,
+  count,
 }: {
   active: boolean;
   onClick: () => void;
   children: React.ReactNode;
+  count?: number;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`rounded-full border px-3 py-1 text-sm transition-colors ${
+      className={`flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left text-sm transition-colors ${
         active
-          ? "border-accent bg-accent/10 text-accent"
-          : "border-zinc-200 text-zinc-600 hover:border-accent/40 dark:border-zinc-700 dark:text-zinc-400"
+          ? "bg-accent-soft font-medium text-accent"
+          : "text-muted hover:bg-surface-muted hover:text-foreground"
       }`}
     >
-      {children}
+      <span
+        className={`flex size-4 shrink-0 items-center justify-center rounded-full border transition-colors ${
+          active ? "border-accent bg-accent text-accent-foreground" : "border-line-strong"
+        }`}
+      >
+        {active && <Icon name="check" className="size-2.5" strokeWidth={3.5} />}
+      </span>
+      <span className="flex-1">{children}</span>
+      {count !== undefined && <span className="text-xs tabular-nums text-subtle">{count}</span>}
     </button>
   );
 }
 
-function Group({ label, children }: { label: string; children: React.ReactNode }) {
+function Group({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      <span className="w-24 shrink-0 text-sm text-zinc-500">{label}</span>
-      {children}
-    </div>
+    <fieldset className="border-t border-line pt-4">
+      <legend className="sr-only">{title}</legend>
+      <p aria-hidden className="mb-2 px-2 text-xs font-semibold uppercase tracking-[0.12em] text-subtle">
+        {title}
+      </p>
+      <div className="space-y-0.5">{children}</div>
+    </fieldset>
   );
 }
 
-export function FilterBar() {
+export function FilterBar({ districts }: { districts: { name: string; count: number }[] }) {
+  const t = useTranslations("Filters");
+  const tType = useTranslations("SchoolType");
+  const tLevel = useTranslations("Level");
+  const tCurriculum = useTranslations("Curriculum");
+  const tPlace = useTranslations("Place");
   const { searchParams, update } = useSearchNavigation();
+  const [isOpen, setIsOpen] = useState(false);
 
-  function toggle(key: string, value: string) {
+  const activeCount = FILTER_KEYS.filter((key) => searchParams.has(key)).length;
+
+  function toggle(key: (typeof FILTER_KEYS)[number], value: string) {
     update({ [key]: searchParams.get(key) === value ? null : value });
   }
 
-  function clearFilters() {
-    update(Object.fromEntries(FILTER_KEYS.map((k) => [k, null])));
+  function clearAll() {
+    update(Object.fromEntries(FILTER_KEYS.map((key) => [key, null])));
   }
 
-  const hasFilters = FILTER_KEYS.some((k) => searchParams.has(k));
-
   return (
-    <div className="space-y-3 rounded-[var(--radius-card)] border border-zinc-200 p-4 dark:border-zinc-800">
-      <Group label="Level">
-        {Object.entries(LEVEL_LABELS).map(([value, label]) => (
-          <Chip key={value} active={searchParams.get("level") === value} onClick={() => toggle("level", value)}>
-            {label}
-          </Chip>
-        ))}
-      </Group>
+    <div>
+      {/* On small screens the filters fold away behind a toggle. */}
+      <button
+        type="button"
+        onClick={() => setIsOpen((open) => !open)}
+        aria-expanded={isOpen}
+        aria-controls="search-filters"
+        className="flex w-full items-center justify-between rounded-xl border border-line bg-surface px-4 py-3 text-sm font-medium text-foreground lg:hidden"
+      >
+        <span className="flex items-center gap-2">
+          <Icon name="sliders" className="size-4" />
+          {t("filters")}
+          {activeCount > 0 && (
+            <span className="rounded-full bg-accent px-2 py-0.5 text-xs text-accent-foreground">
+              {activeCount}
+            </span>
+          )}
+        </span>
+        <Icon
+          name="chevron-down"
+          className={`size-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
+        />
+      </button>
 
-      <Group label="Type">
-        {Object.entries(TYPE_LABELS).map(([value, label]) => (
-          <Chip key={value} active={searchParams.get("type") === value} onClick={() => toggle("type", value)}>
-            {label}
-          </Chip>
-        ))}
-      </Group>
+      <div
+        id="search-filters"
+        className={`${isOpen ? "mt-3 block" : "hidden"} space-y-4 rounded-xl border border-line bg-surface p-4 lg:mt-0 lg:block`}
+      >
+        <div className="flex items-center justify-between px-2">
+          <h2 className="text-sm font-semibold text-foreground">{t("filters")}</h2>
+          {activeCount > 0 && (
+            <button
+              type="button"
+              onClick={clearAll}
+              className="text-xs font-medium text-accent underline-offset-4 hover:underline"
+            >
+              {t("clearAll")}
+            </button>
+          )}
+        </div>
 
-      <Group label="Curriculum">
-        {Object.entries(CURRICULUM_LABELS).map(([value, label]) => (
-          <Chip
-            key={value}
-            active={searchParams.get("curriculum") === value}
-            onClick={() => toggle("curriculum", value)}
-          >
-            {label}
-          </Chip>
-        ))}
-      </Group>
+        <Group title={t("type")}>
+          {SCHOOL_TYPES.map((value) => (
+            <Option
+              key={value}
+              active={searchParams.get("type") === value}
+              onClick={() => toggle("type", value)}
+            >
+              {tType(value)}
+            </Option>
+          ))}
+        </Group>
 
-      <Group label="Features">
-        <Chip active={searchParams.get("dorm") === "true"} onClick={() => toggle("dorm", "true")}>
-          Has dormitory
-        </Chip>
-      </Group>
+        <Group title={t("level")}>
+          {LEVELS.map((value) => (
+            <Option
+              key={value}
+              active={searchParams.get("level") === value}
+              onClick={() => toggle("level", value)}
+            >
+              {tLevel(value)}
+            </Option>
+          ))}
+        </Group>
 
-      {hasFilters && (
-        <button
-          type="button"
-          onClick={clearFilters}
-          className="inline-block text-sm text-accent underline decoration-accent/30 underline-offset-4 hover:decoration-accent"
-        >
-          Clear filters
-        </button>
-      )}
+        <Group title={t("curriculum")}>
+          {CURRICULA.map((value) => (
+            <Option
+              key={value}
+              active={searchParams.get("curriculum") === value}
+              onClick={() => toggle("curriculum", value)}
+            >
+              {tCurriculum(value)}
+            </Option>
+          ))}
+        </Group>
+
+        {districts.length > 0 && (
+          <Group title={t("district")}>
+            {districts.map(({ name, count }) => (
+              <Option
+                key={name}
+                active={searchParams.get("district") === name}
+                onClick={() => toggle("district", name)}
+                count={count}
+              >
+                {tPlace.has(name) ? tPlace(name) : name}
+              </Option>
+            ))}
+          </Group>
+        )}
+
+        <Group title={t("features")}>
+          <Option active={searchParams.get("dorm") === "true"} onClick={() => toggle("dorm", "true")}>
+            {t("hasDorm")}
+          </Option>
+        </Group>
+      </div>
     </div>
   );
 }

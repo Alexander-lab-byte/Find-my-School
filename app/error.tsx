@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 export default function ErrorPage({
   error,
@@ -10,13 +11,14 @@ export default function ErrorPage({
   reset,
 }: {
   error: Error & { digest?: string };
-  // Different Next versions pass the "try again" callback under different
-  // names; accept any of them so the button works whichever one this is.
+  // Next versions have passed this callback as retry, unstable_retry, or reset.
   retry?: () => void;
   unstable_retry?: () => void;
   reset?: () => void;
 }) {
   const tryAgain = retry ?? unstable_retry ?? reset;
+  const t = useTranslations("Error");
+  const tCommon = useTranslations("Common");
 
   useEffect(() => {
     console.error(error);
@@ -25,10 +27,10 @@ export default function ErrorPage({
   return (
     <main className="mx-auto max-w-xl px-4 py-24 text-center sm:px-6">
       <h1 className="font-display text-3xl font-semibold text-foreground">
-        Something went wrong
+        {t("title")}
       </h1>
       <p className="mt-2 text-muted">
-        We couldn&apos;t load this page. This is usually temporary — please try again.
+        {t("body")}
       </p>
       <div className="mt-8 flex justify-center gap-3">
         <button
@@ -36,13 +38,13 @@ export default function ErrorPage({
           onClick={() => tryAgain?.()}
           className="rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
         >
-          Try again
+          {tCommon("tryAgain")}
         </button>
         <Link
           href="/"
           className="rounded-lg border border-line px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-surface-muted"
         >
-          Go home
+          {tCommon("goHome")}
         </Link>
       </div>
     </main>

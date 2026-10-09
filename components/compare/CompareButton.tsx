@@ -1,8 +1,11 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+import { Icon } from "@/components/common/Icon";
 import { MAX_COMPARE, useCompare } from "@/lib/useCompare";
 
 export function CompareButton({ schoolId }: { schoolId: string }) {
+  const t = useTranslations("Compare");
   const { has, isFull, toggle } = useCompare();
   const selected = has(schoolId);
   const blocked = isFull && !selected;
@@ -13,26 +16,15 @@ export function CompareButton({ schoolId }: { schoolId: string }) {
       onClick={() => toggle(schoolId)}
       disabled={blocked}
       aria-pressed={selected}
-      title={blocked ? `You can compare up to ${MAX_COMPARE} schools` : undefined}
-      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
+      title={blocked ? t("full", { max: MAX_COMPARE }) : undefined}
+      className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
         selected
-          ? "border-accent bg-accent/10 text-accent"
-          : "border-zinc-200 text-zinc-600 hover:border-accent/40 dark:border-zinc-700 dark:text-zinc-400"
+          ? "border-accent/40 bg-accent-soft text-accent"
+          : "border-line bg-surface text-muted hover:border-line-strong hover:text-foreground"
       }`}
     >
-      <svg
-        viewBox="0 0 24 24"
-        width="14"
-        height="14"
-        fill={selected ? "currentColor" : "none"}
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinejoin="round"
-        aria-hidden
-      >
-        <path d="M4 5h6v14H4zM14 5h6v14h-6z" />
-      </svg>
-      {selected ? "Added to compare" : "Compare"}
+      <Icon name="columns" className="size-3.5" strokeWidth={2} />
+      {selected ? t("added") : t("add")}
     </button>
   );
 }

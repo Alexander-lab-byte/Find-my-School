@@ -1,9 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useCompare } from "@/lib/useCompare";
 
 export function RemoveFromCompare({ id, remainingIds }: { id: string; remainingIds: string[] }) {
+  const t = useTranslations("Compare");
   const router = useRouter();
   const { remove } = useCompare();
 
@@ -14,9 +16,9 @@ export function RemoveFromCompare({ id, remainingIds }: { id: string; remainingI
         remove(id);
         router.replace(remainingIds.length ? `/compare?ids=${remainingIds.join(",")}` : "/compare");
       }}
-      className="mt-3 text-xs text-zinc-500 underline underline-offset-4 hover:text-accent"
+      className="mt-2 text-xs font-medium text-muted underline-offset-4 hover:text-accent hover:underline"
     >
-      Remove
+      {t("remove")}
     </button>
   );
 }

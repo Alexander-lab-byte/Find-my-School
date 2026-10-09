@@ -1,87 +1,224 @@
 @import "tailwindcss";
 
+/*
+ * Palette: warm paper background, white surfaces, deep teal accent.
+ * Kept deliberately low-contrast between surfaces (but not text) so long
+ * reading sessions — comparing schools over days — stay easy on the eyes.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --accent: #2f5a66;
-  --accent-foreground: #f0f7f8;
-  --radius-card: 0.85rem;
-
+  color-scheme: light;
+  --background: #f7f6f2;
   --surface: #ffffff;
-  --surface-muted: #f4f4f5;
-  --line: #e4e4e7;
-  --line-strong: #d4d4d8;
-  --muted: #52525b;
-  --subtle: #a1a1aa;
-  --accent-hover: #264a54;
-  --tone-private: #a4552f;
-  --tone-international: #5b4fa8;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-display: var(--font-fraunces);
-  --radius-card: var(--radius-card);
-
-  --color-surface: var(--surface);
-  --color-surface-muted: var(--surface-muted);
-  --color-line: var(--line);
-  --color-line-strong: var(--line-strong);
-  --color-muted: var(--muted);
-  --color-subtle: var(--subtle);
-  --color-accent-hover: var(--accent-hover);
-  --color-tone-private: var(--tone-private);
-  --color-tone-private-soft: color-mix(in srgb, var(--tone-private) 12%, transparent);
-  --color-tone-international: var(--tone-international);
-  --color-tone-international-soft: color-mix(in srgb, var(--tone-international) 12%, transparent);
-  /* SchoolMonogram uses the short "intl" spelling */
-  --color-tone-intl: var(--tone-international);
-  --color-tone-intl-soft: color-mix(in srgb, var(--tone-international) 12%, transparent);
-  --color-accent-soft: color-mix(in srgb, var(--accent) 10%, transparent);
+  --surface-muted: #f1efe9;
+  --foreground: #1c2a30;
+  --muted: #56646b;
+  --subtle: #6f7b81;
+  --line: #e5e2d9;
+  --line-strong: #d4d0c4;
+  --accent: #2f5a66;
+  --accent-hover: #244a55;
+  --accent-foreground: #f0f7f8;
+  --accent-soft: #e6eef0;
+  --star: #c08a1e;
+  --star-empty: #e2ddd0;
+  --tone-private: #4a4472;
+  --tone-private-soft: #ecebf4;
+  --tone-intl: #7a5a1f;
+  --tone-intl-soft: #f5eddc;
+  --danger: #b42318;
+  --danger-soft: #fdf0ee;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    color-scheme: dark;
+    --background: #0e1416;
+    --surface: #151d20;
+    --surface-muted: #1c2629;
+    --foreground: #e3e8e8;
+    --muted: #a3afb3;
+    --subtle: #8a9699;
+    --line: #253236;
+    --line-strong: #34444a;
     --accent: #8fc2cd;
+    --accent-hover: #a9d3dc;
     --accent-foreground: #0b1e21;
-
-    --surface: #111111;
-    --surface-muted: #1a1a1a;
-    --line: #27272a;
-    --line-strong: #3f3f46;
-    --muted: #a1a1aa;
-    --subtle: #71717a;
-    --accent-hover: #a6d0d9;
-    --tone-private: #e0a07f;
-    --tone-international: #b3a9ee;
+    --accent-soft: #1a2f36;
+    --star: #e2b04e;
+    --star-empty: #34413f;
+    --tone-private: #c6c0e6;
+    --tone-private-soft: #24213a;
+    --tone-intl: #e3c58c;
+    --tone-intl-soft: #2c2517;
+    --danger: #f97066;
+    --danger-soft: #2d1614;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-soft: var(--accent-soft);
+  --color-star: var(--star);
+  --color-star-empty: var(--star-empty);
+  --color-tone-private: var(--tone-private);
+  --color-tone-private-soft: var(--tone-private-soft);
+  --color-tone-intl: var(--tone-intl);
+  --color-tone-intl-soft: var(--tone-intl-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-source-serif);
 }
 
-/* Text inputs / selects used by the search controls. */
+@layer base {
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--accent) 22%, transparent);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
 @layer components {
+  /* Shared text input / select / textarea style. */
   .field {
     width: 100%;
     border-radius: 0.5rem;
-    border: 1px solid var(--line);
+    border: 1px solid var(--line-strong);
     background: var(--surface);
     padding: 0.625rem 0.75rem;
     font-size: 0.875rem;
-    outline: none;
+    color: var(--foreground);
+    transition:
+      border-color 150ms,
+      box-shadow 150ms;
   }
+
+  .field::placeholder {
+    color: var(--subtle);
+  }
+
   .field:focus {
+    outline: none;
     border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 18%, transparent);
   }
+}
+
+/* --- Map --------------------------------------------------------------- */
+
+/* Teardrop pin, coloured by school type (see components/map/LeafletMap). */
+.school-pin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  background: var(--accent);
+  border: 2px solid var(--surface);
+  box-shadow: 0 6px 14px -4px rgb(0 0 0 / 0.45);
+  transition: transform 150ms;
+}
+
+.school-pin > span {
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  background: var(--surface);
+}
+
+.school-pin--private {
+  background: var(--tone-private);
+}
+
+.school-pin--international {
+  background: var(--tone-intl);
+}
+
+/* Placed from a landmark, not the school's own building: faded, no centre dot. */
+.school-pin--approximate {
+  opacity: 0.6;
+}
+
+.school-pin--approximate > span {
+  visibility: hidden;
+}
+
+.leaflet-marker-icon:hover .school-pin,
+.leaflet-marker-icon:focus-visible .school-pin {
+  transform: rotate(-45deg) scale(1.12);
+}
+
+.school-map {
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  background: var(--surface-muted);
+}
+
+/* Quieter basemap: mostly greyscale, so the coloured pins carry the meaning. */
+.school-map .leaflet-tile-pane {
+  filter: grayscale(0.85) contrast(0.92) brightness(1.04);
+}
+
+@media (prefers-color-scheme: dark) {
+  .school-map .leaflet-tile-pane {
+    filter: grayscale(0.9) invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9);
+  }
+}
+
+.school-map .leaflet-popup-content-wrapper,
+.school-map .leaflet-popup-tip {
+  background: var(--surface);
+  color: var(--foreground);
+  box-shadow: 0 16px 40px -18px rgb(0 0 0 / 0.45);
+}
+
+.school-map .leaflet-popup-content-wrapper {
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+}
+
+.school-map .leaflet-popup-content {
+  margin: 14px 16px;
+  line-height: 1.4;
+}
+
+.school-map .leaflet-container a.leaflet-popup-close-button,
+.school-map a.leaflet-popup-close-button {
+  color: var(--subtle);
+}
+
+.school-map .leaflet-control-zoom a {
+  background: var(--surface);
+  color: var(--foreground);
+  border-color: var(--line);
+}
+
+.school-map .leaflet-control-attribution {
+  background: color-mix(in oklab, var(--surface) 85%, transparent);
+  color: var(--subtle);
+}
+
+.school-map .leaflet-control-attribution a {
+  color: var(--muted);
 }

@@ -1,29 +1,33 @@
 "use client";
 
-import type { Curriculum, SchoolLevel, SchoolType } from "@prisma/client";
+import { useTranslations } from "next-intl";
 import { Icon } from "@/components/common/Icon";
 import { FILTER_KEYS } from "@/components/search/FilterBar";
 import { useSearchNavigation } from "@/components/search/SearchNavigation";
-import { CURRICULUM_LABELS, LEVEL_LABELS, TYPE_LABELS } from "@/lib/labels";
-
-function labelFor(key: (typeof FILTER_KEYS)[number], value: string) {
-  switch (key) {
-    case "type":
-      return TYPE_LABELS[value as SchoolType] ?? value;
-    case "level":
-      return LEVEL_LABELS[value as SchoolLevel] ?? value;
-    case "curriculum":
-      return CURRICULUM_LABELS[value as Curriculum] ?? value;
-    case "dorm":
-      return "Has dormitory";
-    default:
-      return value;
-  }
-}
 
 /** Removable pills summarising the filters currently applied. */
 export function ActiveFilters() {
+  const t = useTranslations("Filters");
+  const tType = useTranslations("SchoolType");
+  const tLevel = useTranslations("Level");
+  const tCurriculum = useTranslations("Curriculum");
+  const tPlace = useTranslations("Place");
   const { searchParams, update } = useSearchNavigation();
+
+  function labelFor(key: (typeof FILTER_KEYS)[number], value: string) {
+    switch (key) {
+      case "type":
+        return tType.has(value) ? tType(value) : value;
+      case "level":
+        return tLevel.has(value) ? tLevel(value) : value;
+      case "curriculum":
+        return tCurriculum.has(value) ? tCurriculum(value) : value;
+      case "dorm":
+        return t("hasDorm");
+      default:
+        return tPlace.has(value) ? tPlace(value) : value;
+    }
+  }
 
   const active = FILTER_KEYS.flatMap((key) => {
     const value = searchParams.get(key);
@@ -33,7 +37,7 @@ export function ActiveFilters() {
   if (active.length === 0) return null;
 
   return (
-    <ul className="flex flex-wrap gap-2" aria-label="Active filters">
+    <ul className="flex flex-wrap gap-2" aria-label={t("active")}>
       {active.map(({ key, value }) => (
         <li key={key}>
           <button
@@ -43,7 +47,7 @@ export function ActiveFilters() {
           >
             {labelFor(key, value)}
             <Icon name="x" className="size-3.5" />
-            <span className="sr-only">Remove filter</span>
+            <span className="sr-only">{t("remove")}</span>
           </button>
         </li>
       ))}

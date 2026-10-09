@@ -2,21 +2,24 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 
+// `label` is a key in the "Profile" message namespace.
 const TABS = [
-  { label: "Overview", segment: "" },
-  { label: "Facilities", segment: "facilities" },
-  { label: "Dormitory", segment: "dorm" },
-  { label: "Admissions", segment: "admissions" },
-  { label: "Reviews", segment: "reviews" },
+  { label: "overview", segment: "" },
+  { label: "facilities", segment: "facilities" },
+  { label: "dorm", segment: "dorm" },
+  { label: "admissions", segment: "admissions" },
+  { label: "reviews", segment: "reviews" },
 ];
 
-export function SchoolTabs({ schoolId }: { schoolId: string }) {
+export function SchoolTabs({ schoolId, reviewCount }: { schoolId: string; reviewCount: number }) {
+  const t = useTranslations("Profile");
   const pathname = usePathname();
   const base = `/school/${schoolId}`;
 
   return (
-    <nav className="flex gap-1 overflow-x-auto border-b border-zinc-200 dark:border-zinc-800">
+    <nav aria-label={t("sections")} className="-mb-px flex gap-1 overflow-x-auto">
       {TABS.map((tab) => {
         const href = tab.segment ? `${base}/${tab.segment}` : base;
         const isActive = pathname === href;
@@ -25,15 +28,22 @@ export function SchoolTabs({ schoolId }: { schoolId: string }) {
           <Link
             key={tab.label}
             href={href}
-            className={`relative whitespace-nowrap px-4 py-3 text-sm font-medium transition-colors ${
+            aria-current={isActive ? "page" : undefined}
+            className={`flex items-center gap-2 whitespace-nowrap border-b-2 px-3 py-3.5 text-sm font-medium transition-colors sm:px-4 ${
               isActive
-                ? "text-accent"
-                : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+                ? "border-accent text-accent"
+                : "border-transparent text-muted hover:border-line-strong hover:text-foreground"
             }`}
           >
-            {tab.label}
-            {isActive && (
-              <span className="absolute inset-x-3 -bottom-px h-0.5 rounded-full bg-accent" />
+            {t(tab.label)}
+            {tab.segment === "reviews" && reviewCount > 0 && (
+              <span
+                className={`rounded-full px-1.5 py-0.5 text-xs tabular-nums ${
+                  isActive ? "bg-accent-soft text-accent" : "bg-surface-muted text-muted"
+                }`}
+              >
+                {reviewCount}
+              </span>
             )}
           </Link>
         );

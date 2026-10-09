@@ -1,29 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { buildSchoolOrderBy, buildSchoolWhere, parseSchoolSearch } from "@/lib/school-search";
+import { listSchools, parseSchoolFilters, parseSort } from "@/lib/schools";
+
+const MAX_LIMIT = 30;
 
 export async function GET(req: NextRequest) {
-  const search = parseSchoolSearch(Object.fromEntries(req.nextUrl.searchParams));
+  const params = Object.fromEntries(req.nextUrl.searchParams);
+  const limit = Math.min(MAX_LIMIT, Math.max(1, Number.parseInt(params.limit ?? "", 10) || MAX_LIMIT));
 
-  const schools = await prisma.school.findMany({
-    where: buildSchoolWhere(search),
-    take: 30,
-    orderBy: buildSchoolOrderBy(search.sort),
-    select: {
-      id: true,
-      nameEn: true,
-      nameMn: true,
-      schoolNumber: true,
-      type: true,
-      level: true,
-      district: true,
-      aimagCity: true,
-      avgOverall: true,
-      reviewCount: true,
-      tuitionMinAnnual: true,
-      tuitionMaxAnnual: true,
-      coverImageUrl: true,
-    },
+  const schools = await listSchools({
+    filters: parseSchoolFilters(params),
+    sort: parseSort(params.sort),
+    take: limit,
   });
 
   return NextResponse.json({ schools });

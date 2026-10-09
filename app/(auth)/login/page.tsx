@@ -1,29 +1,45 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { AuthCard } from "@/components/auth/AuthCard";
-import { LoginForm } from "@/components/auth/LoginForm";
+import { EmailOtpForm } from "@/components/auth/EmailOtpForm";
 import { safeNextPath } from "@/lib/navigation";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("Metadata");
+  return { title: t("login") };
+}
 
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string | string[] }>;
+  searchParams: Promise<{ next?: string; error?: string }>;
 }) {
-  const next = safeNextPath((await searchParams).next);
+  const { next: rawNext, error } = await searchParams;
+  const next = safeNextPath(rawNext);
+  const t = await getTranslations("Auth");
+  const tCommon = await getTranslations("Common");
+  const registerHref = next === "/" ? "/register" : `/register?next=${encodeURIComponent(next)}`;
 
   return (
     <AuthCard
-      title="Log in"
-      description="Welcome back to Find My School Mongolia."
+      title={t("welcomeBack")}
+      description={t("loginIntro")}
       footer={
         <>
-          Don&apos;t have an account?{" "}
-          <Link href="/register" className="text-accent underline underline-offset-4">
-            Sign up
+          {t("noAccount")}{" "}
+          <Link href={registerHref} className="font-medium text-accent underline-offset-4 hover:underline">
+            {tCommon("signUp")}
           </Link>
         </>
       }
     >
-      <LoginForm next={next} />
+      {error === "auth-callback-failed" && (
+        <p role="alert" className="mb-6 rounded-lg bg-danger-soft px-3 py-2.5 text-sm text-danger">
+          {t("callbackFailed")}
+        </p>
+      )}
+      <EmailOtpForm mode="login" next={next} />
     </AuthCard>
   );
 }

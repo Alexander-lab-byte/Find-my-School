@@ -1,7 +1,22 @@
+import { cache } from "react";
 import { Prisma, type UserRole } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { SIGNUP_ROLES } from "@/lib/labels";
 import { createClient } from "@/lib/supabase/server";
+
+/**
+ * The Supabase auth user for this request, verified with Supabase's Auth
+ * server (never trust the cookie alone for authorization). Cached so the
+ * header, the school layout, its pages, and server actions share one
+ * network call per request.
+ */
+export const getAuthUser = cache(async () => {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  return user;
+});
 
 /**
  * Returns the logged-in Prisma User, creating one on first sight of a new
@@ -9,12 +24,8 @@ import { createClient } from "@/lib/supabase/server";
  * profile" step). Returns null if nobody is logged in — callers decide
  * what to do with that (show a login prompt, throw, etc).
  */
-export async function getCurrentUser() {
-  const supabase = await createClient();
-  const {
-    data: { user: authUser },
-  } = await supabase.auth.getUser();
-
+export const getCurrentUser = cache(async () => {
+  const authUser = await getAuthUser();
   if (!authUser) return null;
 
   // Common case: returning user. A plain read, no write on every request.
@@ -49,7 +60,7 @@ export async function getCurrentUser() {
   }
 
   return createUser(authUser.id, authUser.email ?? placeholderEmail, name, role);
-}
+});
 
 async function createUser(authId: string, email: string, name: string, role: UserRole) {
   try {

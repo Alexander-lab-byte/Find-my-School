@@ -1,82 +1,99 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/current-user";
+import { reviewAverage } from "@/lib/ratings";
+import { schoolNames } from "@/lib/labels";
 import { LoginPrompt } from "@/components/auth/LoginPrompt";
 import { Badge } from "@/components/common/Badge";
+import { Icon } from "@/components/common/Icon";
+import { Stars } from "@/components/common/StarRating";
 import { ReviewBody } from "@/components/reviews/ReviewBody";
 import { DeleteReviewButton } from "@/components/reviews/DeleteReviewButton";
-import { EmptyNote } from "@/components/school-profile/ProfileSection";
-import { REVIEW_TAG_LABELS } from "@/lib/labels";
-import { reviewAverage } from "@/lib/ratings";
 import { deleteMyReview } from "@/app/my-reviews/actions";
 
-export const metadata = { title: "My reviews" };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("MyReviews");
+  return { title: t("title") };
+}
 
 export default async function MyReviewsPage() {
+  const t = await getTranslations("MyReviews");
   const user = await getCurrentUser();
   if (!user) {
-    return (
-      <LoginPrompt
-        title="My reviews"
-        message="Log in to see the reviews you've written."
-        next="/my-reviews"
-      />
-    );
+    return <LoginPrompt title={t("title")} message={t("loginMessage")} next="/my-reviews" />;
   }
 
-  const reviews = await prisma.review.findMany({
-    where: { userId: user.id },
-    orderBy: { createdAt: "desc" },
-    include: {
-      rating: true,
-      school: { select: { id: true, nameEn: true, nameMn: true } },
-    },
-  });
+  const [reviews, tTag, format, locale] = await Promise.all([
+    prisma.review.findMany({
+      where: { userId: user.id },
+      orderBy: { createdAt: "desc" },
+      include: {
+        rating: true,
+        school: { select: { id: true, nameEn: true, nameMn: true } },
+      },
+    }),
+    getTranslations("ReviewTag"),
+    getFormatter(),
+    getLocale(),
+  ]);
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 py-10 sm:px-6">
-      <h1 className="font-display text-3xl font-semibold text-foreground">My reviews</h1>
+    <main className="mx-auto w-full max-w-3xl px-4 py-10 sm:px-6">
+      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">{t("eyebrow")}</p>
+      <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+        {t("title")}
+      </h1>
 
-      <div className="mt-6 space-y-4">
+      <div className="mt-8 space-y-4">
         {reviews.length === 0 && (
-          <EmptyNote>
-            You haven&apos;t reviewed any schools yet.{" "}
-            <Link href="/search" className="text-accent underline underline-offset-4">
-              Find a school to review
+          <div className="rounded-xl border border-dashed border-line-strong bg-surface px-6 py-14 text-center">
+            <span className="mx-auto flex size-12 items-center justify-center rounded-full bg-surface-muted text-subtle">
+              <Icon name="pencil" className="size-5" />
+            </span>
+            <h2 className="mt-4 font-display text-xl font-semibold text-foreground">{t("emptyTitle")}</h2>
+            <p className="mx-auto mt-2 max-w-md text-sm text-muted">{t("emptyBody")}</p>
+            <Link
+              href="/search"
+              className="mt-6 inline-flex items-center rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
+            >
+              {t("findSchool")}
             </Link>
-          </EmptyNote>
+          </div>
         )}
 
         {reviews.map((review) => {
           const avg = reviewAverage(review.rating);
+          const { primary, secondary } = schoolNames(review.school, locale);
           return (
             <article key={review.id} className="rounded-xl border border-line bg-surface p-5">
-              <div className="flex flex-wrap items-start justify-between gap-2">
-                <div>
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0">
                   <Link
                     href={`/school/${review.school.id}/reviews`}
-                    className="font-medium text-foreground hover:text-accent"
+                    className="font-display text-lg font-semibold text-foreground hover:text-accent"
                   >
-                    {review.school.nameEn}
+                    {primary}
                   </Link>
-                  <p className="text-sm text-muted">{review.school.nameMn}</p>
+                  {secondary && <p className="text-sm text-muted">{secondary}</p>}
                 </div>
-                <div className="flex items-center gap-2">
-                  {review.status !== "PUBLISHED" && <Badge>Hidden by moderators</Badge>}
+                <div className="flex items-center gap-3">
+                  {review.status !== "PUBLISHED" && <Badge>{t("hidden")}</Badge>}
                   {avg !== null && (
-                    <span className="text-sm text-amber-500" aria-label={`${avg.toFixed(1)} out of 5`}>
-                      {"★".repeat(Math.round(avg))}
-                      {"☆".repeat(5 - Math.round(avg))}
+                    <span className="flex items-center gap-2 text-sm">
+                      <Stars value={avg} />
+                      <span className="font-semibold text-foreground">{avg.toFixed(1)}</span>
                     </span>
                   )}
                 </div>
               </div>
 
               {review.tags.length > 0 && (
-                <div className="mt-2 flex flex-wrap gap-1.5">
+                <div className="mt-3 flex flex-wrap gap-1.5">
                   {review.tags.map((tag) => (
                     <Badge key={tag} tone="accent">
-                      {REVIEW_TAG_LABELS[tag]}
+                      {tTag(tag)}
                     </Badge>
                   ))}
                 </div>
@@ -84,13 +101,9 @@ export default async function MyReviewsPage() {
 
               <ReviewBody text={review.bodyText} />
 
-              <div className="mt-3 flex items-center justify-between gap-2">
-                <p className="text-xs text-zinc-400">
-                  {new Date(review.createdAt).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
+              <div className="mt-4 flex items-center justify-between gap-2 border-t border-line pt-3">
+                <p className="text-xs text-subtle">
+                  {format.dateTime(review.createdAt, { dateStyle: "long" })}
                 </p>
                 <DeleteReviewButton action={deleteMyReview.bind(null, review.id)} />
               </div>
@@ -98,6 +111,6 @@ export default async function MyReviewsPage() {
           );
         })}
       </div>
-    </div>
+    </main>
   );
 }

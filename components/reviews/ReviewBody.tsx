@@ -1,8 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 
+/** Review text clamped to three lines, with "Show more" when it overflows. */
 export function ReviewBody({ text }: { text: string }) {
+  const t = useTranslations("Reviews");
   const ref = useRef<HTMLParagraphElement>(null);
   const [expanded, setExpanded] = useState(false);
   const [overflowing, setOverflowing] = useState(false);
@@ -20,11 +23,11 @@ export function ReviewBody({ text }: { text: string }) {
   const canToggle = overflowing || expanded;
 
   return (
-    <div className="mt-3">
+    <div className="mt-4">
       <p
         ref={ref}
         onClick={canToggle && !expanded ? () => setExpanded(true) : undefined}
-        className={`whitespace-pre-line text-sm text-zinc-700 [overflow-wrap:anywhere] dark:text-zinc-300 ${
+        className={`whitespace-pre-line text-sm leading-7 text-foreground wrap-anywhere ${
           expanded ? "" : "line-clamp-3"
         } ${canToggle && !expanded ? "cursor-pointer" : ""}`}
       >
@@ -37,7 +40,7 @@ export function ReviewBody({ text }: { text: string }) {
           aria-expanded={expanded}
           className="mt-1 text-sm font-medium text-accent hover:underline"
         >
-          {expanded ? "Show less" : "Show more"}
+          {expanded ? t("showLess") : t("showMore")}
         </button>
       )}
     </div>

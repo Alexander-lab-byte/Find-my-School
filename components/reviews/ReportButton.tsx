@@ -2,13 +2,27 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import { reportReview } from "@/app/school/[id]/reviews/actions";
-import { REPORT_REASONS } from "@/lib/review-limits";
+import { useTranslations } from "next-intl";
+import { reportReview, type ReportReviewError } from "@/app/school/[id]/reviews/actions";
+import { REPORT_REASONS, type ReportReason } from "@/lib/review-limits";
 
+// Message key in the "Report" namespace for each error.
+const ERROR_KEYS: Record<ReportReviewError | "GENERIC", string> = {
+  LOGIN_REQUIRED: "loginRequired",
+  INVALID_REASON: "chooseReason",
+  NOT_FOUND: "notFound",
+  OWN_REVIEW: "ownReview",
+  ALREADY_REPORTED: "alreadyReported",
+  GENERIC: "generic",
+};
+
+/** "Report" link that expands into a reason picker (Temuulen's moderation flow). */
 export function ReportButton({ reviewId, schoolId }: { reviewId: string; schoolId: string }) {
+  const t = useTranslations("Report");
+  const tReason = useTranslations("ReportReason");
   const [open, setOpen] = useState(false);
-  const [reason, setReason] = useState<string>(REPORT_REASONS[0]);
-  const [error, setError] = useState<string | null>(null);
+  const [reason, setReason] = useState<ReportReason>(REPORT_REASONS[0]);
+  const [error, setError] = useState<keyof typeof ERROR_KEYS | null>(null);
   const [done, setDone] = useState(false);
   const [isPending, startTransition] = useTransition();
 
@@ -17,16 +31,17 @@ export function ReportButton({ reviewId, schoolId }: { reviewId: string; schoolI
     setError(null);
     startTransition(async () => {
       try {
-        await reportReview(reviewId, reason);
-        setDone(true);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Something went wrong.");
+        const result = await reportReview(reviewId, reason);
+        if (result.ok) setDone(true);
+        else setError(result.error);
+      } catch {
+        setError("GENERIC");
       }
     });
   }
 
   if (done) {
-    return <span className="text-xs text-zinc-500">Thanks — we&apos;ll take a look.</span>;
+    return <span className="text-xs text-muted">{t("thanks")}</span>;
   }
 
   if (!open) {
@@ -34,50 +49,57 @@ export function ReportButton({ reviewId, schoolId }: { reviewId: string; schoolI
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="text-xs text-zinc-400 underline-offset-4 transition-colors hover:text-accent hover:underline"
+        className="text-xs text-subtle underline-offset-4 transition-colors hover:text-accent hover:underline"
       >
-        Report
+        {t("report")}
       </button>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-wrap items-center gap-2 text-xs">
+    <form onSubmit={handleSubmit} className="flex flex-wrap items-center justify-end gap-2 text-xs">
       <label htmlFor={`report-${reviewId}`} className="sr-only">
-        Reason for reporting
+        {t("reasonLabel")}
       </label>
       <select
         id={`report-${reviewId}`}
         value={reason}
-        onChange={(e) => setReason(e.target.value)}
-        className="rounded-md border border-zinc-200 bg-transparent px-2 py-1 dark:border-zinc-700 dark:bg-zinc-900"
+        onChange={(e) => setReason(e.target.value as ReportReason)}
+        className="field w-auto py-1.5 text-xs"
       >
         {REPORT_REASONS.map((r) => (
           <option key={r} value={r}>
-            {r}
+            {tReason(r)}
           </option>
         ))}
       </select>
       <button
         type="submit"
         disabled={isPending}
-        className="rounded-md bg-accent px-2.5 py-1 font-medium text-accent-foreground disabled:opacity-50"
+        className="rounded-md bg-accent px-2.5 py-1.5 font-medium text-accent-foreground transition-colors hover:bg-accent-hover disabled:opacity-50"
       >
-        {isPending ? "Sending…" : "Send report"}
+        {isPending ? t("sending") : t("send")}
       </button>
-      <button type="button" onClick={() => setOpen(false)} className="text-zinc-500 hover:text-accent">
-        Cancel
+      <button
+        type="button"
+        onClick={() => setOpen(false)}
+        className="px-1 text-muted hover:text-foreground"
+      >
+        {t("cancel")}
       </button>
       {error && (
-        <span className="w-full text-red-600 dark:text-red-400">
-          {error}{" "}
-          {error.toLowerCase().includes("log in") && (
-            <Link
-              href={`/login?next=${encodeURIComponent(`/school/${schoolId}/reviews`)}`}
-              className="underline underline-offset-4"
-            >
-              Log in
-            </Link>
+        <span role="alert" className="w-full text-right text-danger">
+          {t(ERROR_KEYS[error])}
+          {error === "LOGIN_REQUIRED" && (
+            <>
+              {" "}
+              <Link
+                href={`/login?next=${encodeURIComponent(`/school/${schoolId}/reviews`)}`}
+                className="font-medium underline underline-offset-4"
+              >
+                {t("logIn")}
+              </Link>
+            </>
           )}
         </span>
       )}

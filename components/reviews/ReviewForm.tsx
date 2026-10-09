@@ -2,17 +2,27 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import type { ReviewTag } from "@prisma/client";
 import { CategoryStarInput } from "./CategoryStarInput";
-import { submitReview } from "@/app/school/[id]/reviews/actions";
+import { submitReview, type SubmitReviewError } from "@/app/school/[id]/reviews/actions";
 import { MAX_REVIEW_LENGTH, MIN_REVIEW_LENGTH } from "@/lib/review-limits";
 
-const TAG_OPTIONS: { value: ReviewTag; label: string }[] = [
-  { value: "DORMITORY", label: "Dormitory" },
-  { value: "LIBRARY", label: "Library" },
-  { value: "FOOD_CANTEEN", label: "Food & Canteen" },
-  { value: "EXTRACURRICULARS", label: "Extracurriculars" },
-];
+const TAG_OPTIONS: ReviewTag[] = ["DORMITORY", "LIBRARY", "FOOD_CANTEEN", "EXTRACURRICULARS"];
+
+type FormError = "RATINGS" | "GENERIC" | SubmitReviewError;
+
+// Message key in the "ReviewForm" namespace for each error.
+const ERROR_KEYS: Record<FormError, string> = {
+  RATINGS: "errorRatings",
+  TOO_SHORT: "errorLength",
+  TOO_LONG: "errorTooLong",
+  INVALID_RATINGS: "errorRatings",
+  LOGIN_REQUIRED: "loginRequired",
+  NOT_ALLOWED: "notAllowed",
+  ALREADY_REVIEWED: "alreadyReviewed",
+  GENERIC: "generic",
+};
 
 type Ratings = {
   academics: number;
@@ -24,6 +34,9 @@ type Ratings = {
 };
 
 export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: boolean }) {
+  const t = useTranslations("ReviewForm");
+  const tRatings = useTranslations("Ratings");
+  const tTag = useTranslations("ReviewTag");
   const [ratings, setRatings] = useState<Ratings>({
     academics: 0,
     facilities: 0,
@@ -34,9 +47,11 @@ export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: b
   });
   const [tags, setTags] = useState<ReviewTag[]>([]);
   const [body, setBody] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<FormError | null>(null);
   const [success, setSuccess] = useState(false);
   const [isPending, startTransition] = useTransition();
+
+  const bodyLength = body.trim().length;
 
   function setRating(key: keyof Ratings, value: number) {
     setRatings((prev) => ({ ...prev, [key]: value }));
@@ -51,17 +66,17 @@ export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: b
     setError(null);
 
     if (!ratings.academics || !ratings.facilities || !ratings.teachers || !ratings.environment) {
-      setError("Please rate academics, facilities, teachers, and campus environment.");
+      setError("RATINGS");
       return;
     }
-    if (body.trim().length < MIN_REVIEW_LENGTH) {
-      setError("Please write at least a couple of sentences.");
+    if (bodyLength < MIN_REVIEW_LENGTH) {
+      setError("TOO_SHORT");
       return;
     }
 
     startTransition(async () => {
       try {
-        await submitReview({
+        const result = await submitReview({
           schoolId,
           bodyText: body.trim(),
           tags,
@@ -72,72 +87,74 @@ export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: b
           dorms: hasDorm && ratings.dorms ? ratings.dorms : undefined,
           library: ratings.library || undefined,
         });
-        setSuccess(true);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+        if (result.ok) setSuccess(true);
+        else setError(result.error);
+      } catch {
+        setError("GENERIC");
       }
     });
   }
 
   if (success) {
     return (
-      <div className="rounded-[var(--radius-card)] border border-accent/30 bg-accent/5 p-6 text-center">
-        <p className="font-medium text-zinc-900 dark:text-zinc-100">Thanks for your review!</p>
-        <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-          It&apos;s live on this school&apos;s page now.
-        </p>
+      <div className="rounded-xl border border-accent/30 bg-accent-soft p-6 text-center">
+        <p className="font-medium text-foreground">{t("thanks")}</p>
+        <p className="mt-1 text-sm text-muted">{t("live")}</p>
       </div>
     );
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-5 rounded-[var(--radius-card)] border border-zinc-200 p-5 dark:border-zinc-800"
-    >
+    <form onSubmit={handleSubmit} className="space-y-6 rounded-xl border border-line bg-surface p-5">
       <div>
-        <CategoryStarInput
-          label="Academics"
-          value={ratings.academics}
-          onChange={(v) => setRating("academics", v)}
-          required
-        />
-        <CategoryStarInput
-          label="Facilities"
-          value={ratings.facilities}
-          onChange={(v) => setRating("facilities", v)}
-          required
-        />
-        <CategoryStarInput
-          label="Teachers"
-          value={ratings.teachers}
-          onChange={(v) => setRating("teachers", v)}
-          required
-        />
-        <CategoryStarInput
-          label="Campus environment"
-          value={ratings.environment}
-          onChange={(v) => setRating("environment", v)}
-          required
-        />
-        <CategoryStarInput
-          label="Library"
-          value={ratings.library}
-          onChange={(v) => setRating("library", v)}
-        />
-        {hasDorm && (
+        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-subtle">{t("ratings")}</p>
+        <div className="mt-1 divide-y divide-line">
           <CategoryStarInput
-            label="Dormitory"
-            value={ratings.dorms}
-            onChange={(v) => setRating("dorms", v)}
+            label={tRatings("academics")}
+            value={ratings.academics}
+            onChange={(v) => setRating("academics", v)}
+            required
           />
-        )}
+          <CategoryStarInput
+            label={tRatings("facilities")}
+            value={ratings.facilities}
+            onChange={(v) => setRating("facilities", v)}
+            required
+          />
+          <CategoryStarInput
+            label={tRatings("teachers")}
+            value={ratings.teachers}
+            onChange={(v) => setRating("teachers", v)}
+            required
+          />
+          <CategoryStarInput
+            label={tRatings("environment")}
+            value={ratings.environment}
+            onChange={(v) => setRating("environment", v)}
+            required
+          />
+          <CategoryStarInput
+            label={tRatings("library")}
+            value={ratings.library}
+            onChange={(v) => setRating("library", v)}
+          />
+          {hasDorm && (
+            <CategoryStarInput
+              label={tRatings("dorms")}
+              value={ratings.dorms}
+              onChange={(v) => setRating("dorms", v)}
+            />
+          )}
+        </div>
       </div>
 
       <div>
-        <span className="text-sm text-zinc-700 dark:text-zinc-300">Tag your review (optional)</span>
+        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-subtle">
+          {t("topics")}{" "}
+          <span className="font-normal normal-case tracking-normal">{t("optional")}</span>
+        </p>
         <div className="mt-2 flex flex-wrap gap-2">
-          {TAG_OPTIONS.filter((t) => hasDorm || t.value !== "DORMITORY").map(({ value, label }) => (
+          {TAG_OPTIONS.filter((tag) => hasDorm || tag !== "DORMITORY").map((value) => (
             <button
               key={value}
               type="button"
@@ -145,19 +162,22 @@ export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: b
               aria-pressed={tags.includes(value)}
               className={`rounded-full border px-3 py-1 text-sm transition-colors ${
                 tags.includes(value)
-                  ? "border-accent bg-accent/10 text-accent"
-                  : "border-zinc-200 text-zinc-600 hover:border-accent/40 dark:border-zinc-700 dark:text-zinc-400"
+                  ? "border-accent bg-accent-soft text-accent"
+                  : "border-line text-muted hover:border-accent/40 hover:text-foreground"
               }`}
             >
-              {label}
+              {tTag(value)}
             </button>
           ))}
         </div>
       </div>
 
       <div>
-        <label htmlFor="review-body" className="text-sm text-zinc-700 dark:text-zinc-300">
-          Your review
+        <label
+          htmlFor="review-body"
+          className="text-xs font-semibold uppercase tracking-[0.12em] text-subtle"
+        >
+          {t("yourReview")}
         </label>
         <textarea
           id="review-body"
@@ -165,24 +185,32 @@ export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: b
           onChange={(e) => setBody(e.target.value)}
           rows={5}
           maxLength={MAX_REVIEW_LENGTH}
-          placeholder="What was your experience with this school?"
-          className="mt-2 w-full rounded-lg border border-zinc-200 p-3 text-sm outline-none focus:border-accent dark:border-zinc-700 dark:bg-zinc-900"
+          placeholder={t("placeholder")}
+          className="field mt-2 resize-y leading-6"
         />
-        <p className="mt-1 text-right text-xs text-zinc-400">
-          {body.length} / {MAX_REVIEW_LENGTH}
-        </p>
+        <div className="mt-1.5 flex justify-between gap-3 text-xs text-subtle">
+          <span>
+            {bodyLength < MIN_REVIEW_LENGTH
+              ? t("moreChars", { count: MIN_REVIEW_LENGTH - bodyLength })
+              : ""}
+          </span>
+          <span className="tabular-nums" aria-live="polite">
+            {t("counter", { count: body.length, max: MAX_REVIEW_LENGTH })}
+          </span>
+        </div>
       </div>
 
       {error && (
-        <p className="text-sm text-red-600 dark:text-red-400">
-          {error}
-          {error.toLowerCase().includes("log in") && (
+        <p role="alert" className="rounded-lg bg-danger-soft px-3 py-2.5 text-sm text-danger">
+          {t(ERROR_KEYS[error])}
+          {error === "LOGIN_REQUIRED" && (
             <>
               {" "}
               <Link
                 href={`/login?next=${encodeURIComponent(`/school/${schoolId}/reviews`)}`}
-                className="underline underline-offset-4">
-                Log in
+                className="font-medium underline underline-offset-4"
+              >
+                {t("logIn")}
               </Link>
             </>
           )}
@@ -192,9 +220,9 @@ export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: b
       <button
         type="submit"
         disabled={isPending}
-        className="rounded-full bg-accent px-5 py-2 text-sm font-medium text-accent-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
+        className="w-full rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover disabled:opacity-50"
       >
-        {isPending ? "Submitting…" : "Submit review"}
+        {isPending ? t("submitting") : t("submit")}
       </button>
     </form>
   );

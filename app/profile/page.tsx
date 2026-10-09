@@ -1,62 +1,114 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { getLocale, getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/current-user";
+import { emailDomain, findSchoolForDomain, getVerifiedEmail } from "@/lib/review-access";
+import { SIGNUP_ROLES, schoolNames } from "@/lib/labels";
 import { LoginPrompt } from "@/components/auth/LoginPrompt";
 import { Badge } from "@/components/common/Badge";
+import { Icon } from "@/components/common/Icon";
 import { Fact, FactGrid } from "@/components/school-profile/ProfileSection";
-import { ROLE_LABELS, SIGNUP_ROLES } from "@/lib/labels";
 import { updateProfile } from "@/app/profile/actions";
 
-export const metadata = { title: "Your profile" };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("Account");
+  return { title: t("title") };
+}
 
 export default async function ProfilePage({
   searchParams,
 }: {
   searchParams: Promise<{ saved?: string; error?: string }>;
 }) {
+  const t = await getTranslations("Account");
   const user = await getCurrentUser();
   if (!user) {
-    return (
-      <LoginPrompt
-        title="Your profile"
-        message="Log in to see and edit your profile."
-        next="/profile"
-      />
-    );
+    return <LoginPrompt title={t("title")} message={t("loginMessage")} next="/profile" />;
   }
 
-  const { saved, error } = await searchParams;
-  const [reviewCount, savedCount] = await Promise.all([
+  const [{ saved, error }, reviewCount, savedCount, verifiedEmail, tRole, locale] = await Promise.all([
+    searchParams,
     prisma.review.count({ where: { userId: user.id } }),
     prisma.savedSchool.count({ where: { userId: user.id } }),
+    getVerifiedEmail(),
+    getTranslations("Role"),
+    getLocale(),
   ]);
 
+  // Which school (if any) this person's verified email lets them review.
+  const domain = verifiedEmail ? emailDomain(verifiedEmail) : null;
+  const reviewSchool = domain ? await findSchoolForDomain(domain) : null;
+
   return (
-    <div className="mx-auto w-full max-w-2xl px-4 py-10 sm:px-6">
-      <div className="flex flex-wrap items-center gap-3">
-        <h1 className="font-display text-3xl font-semibold text-foreground">Your profile</h1>
-        <Badge tone={user.isVerified ? "verified" : "neutral"}>
-          {user.isVerified ? "Verified " : ""}
-          {ROLE_LABELS[user.role]}
-        </Badge>
+    <main className="mx-auto w-full max-w-2xl px-4 py-10 sm:px-6">
+      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">{t("eyebrow")}</p>
+      <div className="mt-2 flex flex-wrap items-center gap-3">
+        <h1 className="font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+          {user.name}
+        </h1>
+        <Badge tone={user.isVerified ? "verified" : "neutral"}>{tRole(user.role)}</Badge>
       </div>
 
-      <div className="mt-6">
+      <div className="mt-8">
         <FactGrid columns={3}>
-          <Fact label="Email">{user.email}</Fact>
-          <Fact label="Reviews">{reviewCount}</Fact>
-          <Fact label="Saved schools">{savedCount}</Fact>
+          <Fact label={t("email")}>
+            <span className="break-all">{user.email}</span>
+          </Fact>
+          <Fact label={t("reviews")}>
+            <Link href="/my-reviews" className="text-accent hover:underline">
+              {reviewCount}
+            </Link>
+          </Fact>
+          <Fact label={t("savedSchools")}>
+            <Link href="/saved" className="text-accent hover:underline">
+              {savedCount}
+            </Link>
+          </Fact>
         </FactGrid>
       </div>
 
-      <form action={updateProfile} className="mt-8 space-y-4 rounded-xl border border-line bg-surface p-5">
-        {saved && <p className="text-sm text-emerald-700 dark:text-emerald-400">Profile saved.</p>}
+      {/* Can this person review? Explains the school-email rule in their own terms. */}
+      <div className="mt-6 flex gap-3 rounded-xl border border-line bg-surface p-5">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-accent-soft text-accent">
+          <Icon name={reviewSchool ? "shield" : "lock"} className="size-4.5" />
+        </span>
+        <div className="text-sm">
+          <p className="font-medium text-foreground">{t("reviewAccessTitle")}</p>
+          <p className="mt-1 leading-6 text-muted">
+            {reviewSchool ? (
+              <>
+                {t("canReview", { school: schoolNames(reviewSchool, locale).primary })}{" "}
+                <Link
+                  href={`/school/${reviewSchool.id}/reviews#write-review`}
+                  className="font-medium text-accent hover:underline"
+                >
+                  {t("writeReview")} →
+                </Link>
+              </>
+            ) : (
+              t("cannotReview", { domain: domain ?? "—" })
+            )}
+          </p>
+        </div>
+      </div>
+
+      <form action={updateProfile} className="mt-6 space-y-5 rounded-xl border border-line bg-surface p-5">
+        <h2 className="font-display text-xl font-semibold text-foreground">{t("editTitle")}</h2>
+        {saved && (
+          <p role="status" className="rounded-lg bg-accent-soft px-3 py-2.5 text-sm text-accent">
+            {t("saved")}
+          </p>
+        )}
         {error === "name" && (
-          <p className="text-sm text-red-600 dark:text-red-400">Please enter a name.</p>
+          <p role="alert" className="rounded-lg bg-danger-soft px-3 py-2.5 text-sm text-danger">
+            {t("nameRequired")}
+          </p>
         )}
 
         <div>
-          <label htmlFor="name" className="text-sm text-zinc-700 dark:text-zinc-300">
-            Name
+          <label htmlFor="name" className="text-sm font-medium text-foreground">
+            {t("name")}
           </label>
           <input
             id="name"
@@ -65,37 +117,33 @@ export default async function ProfilePage({
             required
             maxLength={60}
             defaultValue={user.name}
-            className="mt-1 w-full rounded-lg border border-zinc-200 p-2.5 text-sm outline-none focus:border-accent dark:border-zinc-700 dark:bg-zinc-900"
+            className="field mt-1.5"
           />
         </div>
 
         {user.role !== "ADMIN" && (
           <div>
-            <label htmlFor="role" className="text-sm text-zinc-700 dark:text-zinc-300">
-              I am a…
+            <label htmlFor="role" className="text-sm font-medium text-foreground">
+              {t("role")}
             </label>
-            <select
-              id="role"
-              name="role"
-              defaultValue={user.role}
-              className="mt-1 w-full rounded-lg border border-zinc-200 bg-transparent p-2.5 text-sm outline-none focus:border-accent dark:border-zinc-700 dark:bg-zinc-900"
-            >
+            <select id="role" name="role" defaultValue={user.role} className="field mt-1.5">
               {SIGNUP_ROLES.map((r) => (
                 <option key={r} value={r}>
-                  {ROLE_LABELS[r]}
+                  {tRole(r)}
                 </option>
               ))}
             </select>
+            <p className="mt-1.5 text-xs text-subtle">{t("roleHint")}</p>
           </div>
         )}
 
         <button
           type="submit"
-          className="rounded-full bg-accent px-5 py-2 text-sm font-medium text-accent-foreground transition-opacity hover:opacity-90"
+          className="rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
         >
-          Save changes
+          {t("save")}
         </button>
       </form>
-    </div>
+    </main>
   );
 }

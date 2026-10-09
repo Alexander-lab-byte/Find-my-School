@@ -8,18 +8,15 @@ type BadgeProps = {
 };
 
 const TONE_CLASSES: Record<BadgeTone, string> = {
-  neutral:
-    "border-line bg-surface-muted text-muted",
-  accent:
-    "border-transparent bg-accent-soft text-accent",
+  neutral: "border-line bg-surface-muted text-muted",
+  accent: "border-transparent bg-accent-soft text-accent",
   verified:
     "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950/60 dark:text-emerald-300",
-  private:
-    "border-transparent bg-tone-private-soft text-tone-private",
-  international:
-    "border-transparent bg-tone-international-soft text-tone-international",
+  private: "border-transparent bg-tone-private-soft text-tone-private",
+  international: "border-transparent bg-tone-intl-soft text-tone-intl",
 };
 
+// Each school type gets its own quiet colour, used on badges and monograms.
 export const TYPE_TONE: Record<SchoolType, BadgeTone> = {
   PUBLIC: "accent",
   PRIVATE: "private",

@@ -1,10 +1,12 @@
 "use client";
 
 import { useCallback, useMemo, useSyncExternalStore } from "react";
+import { MAX_COMPARE } from "@/lib/compare";
+
+export { MAX_COMPARE };
 
 const STORAGE_KEY = "compare-school-ids";
 const CHANGE_EVENT = "compare-change";
-export const MAX_COMPARE = 3;
 
 function subscribe(callback: () => void) {
   window.addEventListener("storage", callback);
@@ -41,6 +43,7 @@ function save(ids: string[]) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
   } catch {
+    // Storage unavailable (private mode): the change still applies for this page view.
   }
   window.dispatchEvent(new Event(CHANGE_EVENT));
 }

@@ -2,11 +2,14 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { toggleSavedSchool } from "@/app/school/[id]/actions";
 
 export function SaveButton({ schoolId, initialSaved }: { schoolId: string; initialSaved: boolean }) {
+  const t = useTranslations("Profile");
+  const tCommon = useTranslations("Common");
   const [saved, setSaved] = useState(initialSaved);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<"LOGIN_REQUIRED" | "GENERIC" | null>(null);
   const [isPending, startTransition] = useTransition();
 
   function handleClick() {
@@ -14,9 +17,10 @@ export function SaveButton({ schoolId, initialSaved }: { schoolId: string; initi
     startTransition(async () => {
       try {
         const result = await toggleSavedSchool(schoolId);
-        setSaved(result.saved);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Something went wrong.");
+        if (result.ok) setSaved(result.saved);
+        else setError(result.error === "LOGIN_REQUIRED" ? "LOGIN_REQUIRED" : "GENERIC");
+      } catch {
+        setError("GENERIC");
       }
     });
   }
@@ -28,10 +32,10 @@ export function SaveButton({ schoolId, initialSaved }: { schoolId: string; initi
         onClick={handleClick}
         disabled={isPending}
         aria-pressed={saved}
-        className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm transition-colors disabled:opacity-50 ${
+        className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors disabled:opacity-50 ${
           saved
-            ? "border-accent bg-accent/10 text-accent"
-            : "border-zinc-200 text-zinc-600 hover:border-accent/40 dark:border-zinc-700 dark:text-zinc-400"
+            ? "border-accent/40 bg-accent-soft text-accent"
+            : "border-line bg-surface text-muted hover:border-line-strong hover:text-foreground"
         }`}
       >
         <svg
@@ -45,16 +49,17 @@ export function SaveButton({ schoolId, initialSaved }: { schoolId: string; initi
         >
           <path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z" strokeLinejoin="round" />
         </svg>
-        {saved ? "Saved" : "Save"}
+        {saved ? t("saved") : t("save")}
       </button>
       {error && (
-        <p className="text-xs text-red-600 dark:text-red-400">
-          {error}{" "}
-          {error.toLowerCase().includes("log in") && (
+        <p role="alert" className="text-right text-xs text-danger">
+          {error === "LOGIN_REQUIRED" ? t("saveLoginRequired") : t("genericError")}{" "}
+          {error === "LOGIN_REQUIRED" && (
             <Link
               href={`/login?next=${encodeURIComponent(`/school/${schoolId}`)}`}
-              className="underline underline-offset-4">
-              Log in
+              className="font-medium underline underline-offset-4"
+            >
+              {tCommon("logIn")}
             </Link>
           )}
         </p>

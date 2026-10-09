@@ -5,17 +5,15 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/current-user";
 import { recalculateSchoolRatings } from "@/lib/school-ratings";
 
-async function requireAdmin() {
+/** Admins only; anyone else gets nothing (no hint the action exists). */
+async function isAdmin() {
   const user = await getCurrentUser();
-  if (!user || user.role !== "ADMIN") {
-    throw new Error("Not allowed.");
-  }
-  return user;
+  return user?.role === "ADMIN";
 }
 
 /** Hides the reported review (and its rating) and closes every open report on it. */
 export async function hideReportedReview(reportId: string) {
-  await requireAdmin();
+  if (!(await isAdmin())) return;
 
   const report = await prisma.report.findUnique({
     where: { id: reportId },
@@ -38,7 +36,7 @@ export async function hideReportedReview(reportId: string) {
 
 /** Closes the report and leaves the review up. */
 export async function dismissReport(reportId: string) {
-  await requireAdmin();
+  if (!(await isAdmin())) return;
   await prisma.report.update({ where: { id: reportId }, data: { status: "DISMISSED" } });
   revalidatePath("/admin/reports");
 }

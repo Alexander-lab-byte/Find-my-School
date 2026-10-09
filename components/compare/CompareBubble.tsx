@@ -2,9 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { Icon } from "@/components/common/Icon";
 import { useCompare } from "@/lib/useCompare";
 
+/** Floating shortcut to the compare page once at least one school is picked. */
 export function CompareBubble() {
+  const t = useTranslations("Compare");
   const { ids } = useCompare();
   const pathname = usePathname();
 
@@ -13,22 +17,12 @@ export function CompareBubble() {
   return (
     <Link
       href={`/compare?ids=${ids.join(",")}`}
-      aria-label={`Compare ${ids.length} selected ${ids.length === 1 ? "school" : "schools"}`}
-      className="fixed bottom-6 left-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-accent text-accent-foreground shadow-lg transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+      aria-label={t("bubbleLabel", { count: ids.length })}
+      className="fixed bottom-6 left-6 z-50 flex items-center gap-2 rounded-full bg-accent py-3 pl-4 pr-3 text-sm font-medium text-accent-foreground shadow-[0_16px_32px_-12px_rgb(0_0_0/0.45)] transition-transform hover:scale-[1.03]"
     >
-      <svg
-        viewBox="0 0 24 24"
-        width="24"
-        height="24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinejoin="round"
-        aria-hidden
-      >
-        <path d="M4 5h6v14H4zM14 5h6v14h-6z" />
-      </svg>
-      <span className="absolute -right-1 -top-1 flex h-6 min-w-6 items-center justify-center rounded-full border-2 border-background bg-amber-500 px-1 text-xs font-semibold text-white">
+      <Icon name="columns" className="size-4" strokeWidth={2} />
+      {t("bubble")}
+      <span className="flex size-6 items-center justify-center rounded-full bg-accent-foreground text-xs font-semibold text-accent">
         {ids.length}
       </span>
     </Link>

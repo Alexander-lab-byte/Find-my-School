@@ -7,16 +7,28 @@ type SchoolAverages = {
   avgDorms: number | null;
 };
 
-/** The per-category breakdown shown on a school's overview and reviews tabs. */
+export type RatingCategory =
+  | "academics"
+  | "teachers"
+  | "facilities"
+  | "environment"
+  | "library"
+  | "dorms";
+
+/**
+ * The per-category breakdown shown on a school's overview and reviews tabs.
+ * `key` doubles as the message key in the "Ratings" namespace.
+ */
 export function ratingCategories(school: SchoolAverages, hasDorm: boolean) {
-  return [
-    { label: "Academics", value: school.avgAcademics },
-    { label: "Teachers", value: school.avgTeachers },
-    { label: "Facilities", value: school.avgFacilities },
-    { label: "Campus environment", value: school.avgEnvironment },
-    { label: "Library", value: school.avgLibrary },
-    ...(hasDorm ? [{ label: "Dormitory", value: school.avgDorms }] : []),
+  const categories: { key: RatingCategory; value: number | null }[] = [
+    { key: "academics", value: school.avgAcademics },
+    { key: "teachers", value: school.avgTeachers },
+    { key: "facilities", value: school.avgFacilities },
+    { key: "environment", value: school.avgEnvironment },
+    { key: "library", value: school.avgLibrary },
   ];
+  if (hasDorm) categories.push({ key: "dorms", value: school.avgDorms });
+  return categories;
 }
 
 type CoreRating = {
