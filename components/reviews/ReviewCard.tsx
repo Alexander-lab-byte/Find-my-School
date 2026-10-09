@@ -5,7 +5,7 @@ import { Icon } from "@/components/common/Icon";
 import { Stars } from "@/components/common/StarRating";
 import { ReviewBody } from "@/components/reviews/ReviewBody";
 import { ReportButton } from "@/components/reviews/ReportButton";
-import { reviewAverage, type RatingCategory } from "@/lib/ratings";
+import { reviewAverage, reviewScores } from "@/lib/ratings";
 
 type Review = Awaited<ReturnType<typeof getSchoolReviews>>[number];
 
@@ -23,18 +23,7 @@ export function ReviewCard({
   const tTag = useTranslations("ReviewTag");
   const format = useFormatter();
   const avg = reviewAverage(review.rating);
-  const scores = review.rating
-    ? (
-        [
-          ["academics", review.rating.academics],
-          ["teachers", review.rating.teachers],
-          ["facilities", review.rating.facilities],
-          ["environment", review.rating.environment],
-          ["library", review.rating.library],
-          ["dorms", review.rating.dorms],
-        ] as const
-      ).filter((entry): entry is readonly [RatingCategory, number] => typeof entry[1] === "number")
-    : [];
+  const scores = reviewScores(review.rating);
 
   return (
     <article className="rounded-xl border border-line bg-surface p-5">

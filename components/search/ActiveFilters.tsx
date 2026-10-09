@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Icon } from "@/components/common/Icon";
+import { CURRICULA, LEVELS, SCHOOL_TYPES } from "@/lib/labels";
 import { FILTER_KEYS } from "@/components/search/FilterBar";
 import { useSearchNavigation } from "@/components/search/SearchNavigation";
 
@@ -14,18 +15,21 @@ export function ActiveFilters() {
   const tPlace = useTranslations("Place");
   const { searchParams, update } = useSearchNavigation();
 
+  // Values come straight from the URL, so only translate known keys: a
+  // value like "constructor" would otherwise hit Object.prototype inside the
+  // message lookup and throw.
   function labelFor(key: (typeof FILTER_KEYS)[number], value: string) {
     switch (key) {
       case "type":
-        return tType.has(value) ? tType(value) : value;
+        return (SCHOOL_TYPES as string[]).includes(value) ? tType(value) : value;
       case "level":
-        return tLevel.has(value) ? tLevel(value) : value;
+        return (LEVELS as string[]).includes(value) ? tLevel(value) : value;
       case "curriculum":
-        return tCurriculum.has(value) ? tCurriculum(value) : value;
+        return (CURRICULA as string[]).includes(value) ? tCurriculum(value) : value;
       case "dorm":
         return t("hasDorm");
       default:
-        return tPlace.has(value) ? tPlace(value) : value;
+        return !(value in Object.prototype) && tPlace.has(value) ? tPlace(value) : value;
     }
   }
 

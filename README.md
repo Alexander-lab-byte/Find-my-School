@@ -58,15 +58,29 @@ Pins come from `latitude`/`longitude` in `prisma/data/schools.ts`. Schools witho
 
 This database also holds tables that aren't in `prisma/schema.prisma` (e.g. `comment`). **Don't run `prisma db push` or `prisma migrate dev` against it** — they try to drop unknown tables. Apply schema changes as plain additive SQL (`prisma db execute`) instead, and deploy the code that uses new columns only after the columns exist.
 
-### Moderators
+### Admins and review approval
 
-Signed-in users can report a review; admins see the queue at `/admin/reports` (hidden from everyone else) and can hide a review or dismiss the report. Hidden reviews stop counting toward the school's rating. To make someone an admin, run in the Supabase SQL editor:
+Every new review starts as **awaiting approval**: it isn't shown on the site and doesn't count toward the school's rating until an admin approves it. Admins work at `/admin/reviews` (a 404 for everyone else; the account menu shows a "Moderation" link with a count of what's waiting):
+
+- **Awaiting approval:** approve or reject new reviews. Each shows the author's email and whether it's on the school's domain.
+- **Published / Rejected:** unpublish a live review, or publish a rejected one.
+- **Reports:** reviews people flagged; hide the review or dismiss the report.
+
+Someone whose review was rejected can write a new one; it replaces the rejected one.
+
+To make someone an admin, list their email in the `ADMIN_EMAILS` environment variable (comma-separated, set it in Vercel → Settings → Environment Variables and redeploy):
+
+```
+ADMIN_EMAILS=owner@example.com,second.admin@example.com
+```
+
+Or set the role in the database (they must have signed in once, so their `User` row exists):
 
 ```sql
 UPDATE "User" SET role = 'ADMIN' WHERE email = 'person@example.com';
 ```
 
-They must have signed in once first, so their `User` row exists.
+Admin rights (and the school-email check for reviews) only apply to a session signed in with an emailed code. Supabase's "Confirm email" setting is off, so anyone could register any address with a password through Supabase's API; requiring the code means they still can't act as that address here. Turning "Confirm email" on in Supabase (Authentication → Sign In / Providers → Email) is a good extra safeguard.
 
 ### Demo data
 

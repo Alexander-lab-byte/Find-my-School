@@ -5,6 +5,7 @@ import { Icon } from "@/components/common/Icon";
 import { AccountMenu } from "@/components/layout/AccountMenu";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { getCurrentUser } from "@/lib/current-user";
+import { getAdminUser, getModerationCounts } from "@/lib/admin";
 import { Logo } from "@/components/layout/Logo";
 import { MobileMenu } from "@/components/layout/MobileMenu";
 
@@ -18,6 +19,9 @@ export async function Header() {
   const t = await getTranslations("Common");
   // Only signed-in visitors pay for the user lookup (name + admin flag for the menu).
   const user = isSignedIn ? await getCurrentUser() : null;
+  const isAdmin = user ? Boolean(await getAdminUser()) : false;
+  // Admins see how much is waiting for them on every page.
+  const waiting = isAdmin ? (await getModerationCounts()).total : 0;
 
   return (
     <header className="relative border-b border-line bg-surface">
@@ -34,7 +38,7 @@ export async function Header() {
             {t("map")}
           </Link>
           {user ? (
-            <AccountMenu name={user.name} isAdmin={user.role === "ADMIN"} />
+            <AccountMenu name={user.name} isAdmin={isAdmin} waiting={waiting} />
           ) : (
             <>
               <Link href="/login" className={NAV_LINK}>
@@ -53,7 +57,7 @@ export async function Header() {
 
         <div className="flex items-center gap-2 md:hidden">
           <LanguageSwitcher />
-          <MobileMenu isSignedIn={Boolean(user)} isAdmin={user?.role === "ADMIN"} />
+          <MobileMenu isSignedIn={Boolean(user)} isAdmin={isAdmin} waiting={waiting} />
         </div>
       </div>
     </header>

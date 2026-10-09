@@ -2,13 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import { getCurrentUser } from "@/lib/current-user";
+import { getAdminUser } from "@/lib/admin";
 import { recalculateSchoolRatings } from "@/lib/school-ratings";
 
 /** Admins only; anyone else gets nothing (no hint the action exists). */
 async function isAdmin() {
-  const user = await getCurrentUser();
-  return user?.role === "ADMIN";
+  return Boolean(await getAdminUser());
 }
 
 /** Hides the reported review (and its rating) and closes every open report on it. */
@@ -22,7 +21,10 @@ export async function hideReportedReview(reportId: string) {
   if (!report) return;
 
   await prisma.$transaction(async (tx) => {
-    await tx.review.update({ where: { id: report.reviewId }, data: { status: "HIDDEN" } });
+    await tx.review.update({
+      where: { id: report.reviewId },
+      data: { status: "HIDDEN", moderatedAt: new Date() },
+    });
     await tx.report.updateMany({
       where: { reviewId: report.reviewId, status: "PENDING" },
       data: { status: "RESOLVED" },
@@ -30,13 +32,14 @@ export async function hideReportedReview(reportId: string) {
     await recalculateSchoolRatings(tx, report.review.schoolId);
   });
 
-  revalidatePath("/admin/reports");
+  revalidatePath("/admin", "layout");
   revalidatePath(`/school/${report.review.schoolId}`, "layout");
+  revalidatePath("/");
 }
 
 /** Closes the report and leaves the review up. */
 export async function dismissReport(reportId: string) {
   if (!(await isAdmin())) return;
   await prisma.report.update({ where: { id: reportId }, data: { status: "DISMISSED" } });
-  revalidatePath("/admin/reports");
+  revalidatePath("/admin", "layout");
 }

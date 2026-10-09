@@ -18,6 +18,11 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("title") };
 }
 
+const STATUS_TONE: Record<string, "pending" | "verified" | "neutral"> = {
+  PENDING: "pending",
+  PUBLISHED: "verified",
+};
+
 export default async function MyReviewsPage() {
   const t = await getTranslations("MyReviews");
   const user = await getCurrentUser();
@@ -45,6 +50,7 @@ export default async function MyReviewsPage() {
       <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
         {t("title")}
       </h1>
+      <p className="mt-2 text-sm text-muted">{t("intro")}</p>
 
       <div className="mt-8 space-y-4">
         {reviews.length === 0 && (
@@ -79,7 +85,10 @@ export default async function MyReviewsPage() {
                   {secondary && <p className="text-sm text-muted">{secondary}</p>}
                 </div>
                 <div className="flex items-center gap-3">
-                  {review.status !== "PUBLISHED" && <Badge>{t("hidden")}</Badge>}
+                  <Badge tone={STATUS_TONE[review.status] ?? "neutral"}>
+                    {review.status === "PENDING" && <Icon name="clock" className="size-3" />}
+                    {t.has(`status.${review.status}`) ? t(`status.${review.status}`) : review.status}
+                  </Badge>
                   {avg !== null && (
                     <span className="flex items-center gap-2 text-sm">
                       <Stars value={avg} />
@@ -100,6 +109,18 @@ export default async function MyReviewsPage() {
               )}
 
               <ReviewBody text={review.bodyText} />
+
+              {review.status === "REJECTED" && (
+                <p className="mt-3 text-sm text-muted">
+                  {t("rejectedHint")}{" "}
+                  <Link
+                    href={`/school/${review.school.id}/reviews#write-review`}
+                    className="font-medium text-accent hover:underline"
+                  >
+                    {t("writeAgain")}
+                  </Link>
+                </p>
+              )}
 
               <div className="mt-4 flex items-center justify-between gap-2 border-t border-line pt-3">
                 <p className="text-xs text-subtle">

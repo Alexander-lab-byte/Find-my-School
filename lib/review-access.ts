@@ -1,6 +1,6 @@
 import "server-only";
 import { prisma } from "@/lib/prisma";
-import { getAuthUser } from "@/lib/current-user";
+import { getAuthSession, getAuthUser, provedInbox } from "@/lib/current-user";
 
 /**
  * Who may review a school: only people who proved (by email code) that they
@@ -41,11 +41,15 @@ export function domainMatches(domain: string, allowed: string[]) {
   });
 }
 
-/** The signed-in user's email, only if Supabase has verified they own it. */
+/**
+ * The signed-in user's email, only if they proved they own it: confirmed by
+ * Supabase *and* this session was opened with an emailed code.
+ */
 export async function getVerifiedEmail() {
-  const user = await getAuthUser();
-  if (!user?.email || !user.email_confirmed_at) return null;
-  return user.email.toLowerCase();
+  const session = await getAuthSession();
+  if (!session?.user.email || !session.user.email_confirmed_at) return null;
+  if (!provedInbox(session.signInMethods)) return null;
+  return session.user.email.toLowerCase();
 }
 
 export async function findSchoolForDomain(domain: string) {

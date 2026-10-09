@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
-import { getCurrentUser } from "@/lib/current-user";
+import { getModerationCounts, requireAdmin } from "@/lib/admin";
 import { schoolNames } from "@/lib/labels";
+import { AdminHeader } from "@/components/admin/AdminHeader";
+import { ModerationButton } from "@/components/admin/ModerationButton";
 import { EmptyNote } from "@/components/school-profile/ProfileSection";
 import { dismissReport, hideReportedReview } from "@/app/admin/reports/actions";
 
@@ -14,11 +15,9 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AdminReportsPage() {
-  const user = await getCurrentUser();
-  // Don't reveal that this page exists to anyone who isn't an admin.
-  if (!user || user.role !== "ADMIN") notFound();
+  await requireAdmin();
 
-  const [reports, t, tReason, format, locale] = await Promise.all([
+  const [reports, counts, t, tReason, format, locale] = await Promise.all([
     prisma.report.findMany({
       where: { status: "PENDING" },
       orderBy: { createdAt: "asc" },
@@ -33,6 +32,7 @@ export default async function AdminReportsPage() {
         },
       },
     }),
+    getModerationCounts(),
     getTranslations("Admin"),
     getTranslations("ReportReason"),
     getFormatter(),
@@ -41,12 +41,10 @@ export default async function AdminReportsPage() {
 
   return (
     <main className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6">
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">{t("eyebrow")}</p>
-      <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight text-foreground">{t("title")}</h1>
-      <p className="mt-2 text-sm text-muted">{t("waiting", { count: reports.length })}</p>
+      <AdminHeader active="reports" counts={counts} />
 
-      <div className="mt-8 space-y-4">
-        {reports.length === 0 && <EmptyNote>{t("empty")}</EmptyNote>}
+      <div className="mt-6 space-y-4">
+        {reports.length === 0 && <EmptyNote>{t("emptyReports")}</EmptyNote>}
 
         {reports.map((report) => (
           <article key={report.id} className="rounded-xl border border-line bg-surface p-5">
@@ -73,23 +71,19 @@ export default async function AdminReportsPage() {
               {report.review.bodyText}
             </p>
 
-            <div className="mt-4 flex gap-3">
-              <form action={hideReportedReview.bind(null, report.id)}>
-                <button
-                  type="submit"
-                  className="rounded-lg bg-danger px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90"
-                >
-                  {t("hide")}
-                </button>
-              </form>
-              <form action={dismissReport.bind(null, report.id)}>
-                <button
-                  type="submit"
-                  className="rounded-lg border border-line px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-surface-muted"
-                >
-                  {t("dismiss")}
-                </button>
-              </form>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <ModerationButton
+                action={hideReportedReview.bind(null, report.id)}
+                label={t("hide")}
+                icon="x"
+                variant="danger"
+              />
+              <ModerationButton
+                action={dismissReport.bind(null, report.id)}
+                label={t("dismiss")}
+                icon="check"
+                variant="secondary"
+              />
             </div>
           </article>
         ))}

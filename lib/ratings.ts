@@ -43,3 +43,20 @@ export function reviewAverage(rating: CoreRating | null) {
   if (!rating) return null;
   return (rating.academics + rating.facilities + rating.teachers + rating.environment) / 4;
 }
+
+/** One reviewer's scores in display order, without the optional ones they skipped. */
+export function reviewScores(
+  rating: (CoreRating & { library: number | null; dorms: number | null }) | null
+) {
+  if (!rating) return [];
+  return (
+    [
+      ["academics", rating.academics],
+      ["teachers", rating.teachers],
+      ["facilities", rating.facilities],
+      ["environment", rating.environment],
+      ["library", rating.library],
+      ["dorms", rating.dorms],
+    ] as const
+  ).filter((entry): entry is readonly [RatingCategory, number] => typeof entry[1] === "number");
+}

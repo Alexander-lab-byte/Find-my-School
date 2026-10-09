@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import type { ReviewTag } from "@prisma/client";
+import { Icon } from "@/components/common/Icon";
 import { CategoryStarInput } from "./CategoryStarInput";
 import { submitReview, type SubmitReviewError } from "@/app/school/[id]/reviews/actions";
 import { MAX_REVIEW_LENGTH, MIN_REVIEW_LENGTH } from "@/lib/review-limits";
@@ -97,9 +98,12 @@ export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: b
 
   if (success) {
     return (
-      <div className="rounded-xl border border-accent/30 bg-accent-soft p-6 text-center">
-        <p className="font-medium text-foreground">{t("thanks")}</p>
-        <p className="mt-1 text-sm text-muted">{t("live")}</p>
+      <div role="status" className="rounded-xl border border-accent/30 bg-accent-soft p-6 text-center">
+        <span className="mx-auto flex size-10 items-center justify-center rounded-full bg-surface text-accent">
+          <Icon name="clock" className="size-5" />
+        </span>
+        <p className="mt-3 font-medium text-foreground">{t("thanks")}</p>
+        <p className="mt-1 text-sm leading-6 text-muted">{t("awaitingApproval")}</p>
       </div>
     );
   }
@@ -224,6 +228,10 @@ export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: b
       >
         {isPending ? t("submitting") : t("submit")}
       </button>
+      <p className="-mt-3 flex items-center justify-center gap-1.5 text-xs text-subtle">
+        <Icon name="shield" className="size-3.5" />
+        {t("moderationNote")}
+      </p>
     </form>
   );
 }

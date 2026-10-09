@@ -6,17 +6,49 @@ import { createClient } from "@/lib/supabase/server";
 
 /**
  * The Supabase auth user for this request, verified with Supabase's Auth
- * server (never trust the cookie alone for authorization). Cached so the
- * header, the school layout, its pages, and server actions share one
- * network call per request.
+ * server (never trust the cookie alone for authorization), plus how this
+ * session was signed in. Cached so the header, the school layout, its
+ * pages, and server actions share one network call per request.
  */
-export const getAuthUser = cache(async () => {
+export const getAuthSession = cache(async () => {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  return user;
+  if (!user) return null;
+
+  // getUser() just had Supabase verify this session's access token, so its
+  // claims can be read without verifying them again.
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  return { user, signInMethods: session ? signInMethods(session.access_token) : [] };
 });
+
+export const getAuthUser = cache(async () => (await getAuthSession())?.user ?? null);
+
+/** The token's `amr` claim: how the session was opened ("otp", "password", …). */
+function signInMethods(accessToken: string): string[] {
+  try {
+    const payload = JSON.parse(Buffer.from(accessToken.split(".")[1], "base64url").toString());
+    const amr: unknown[] = Array.isArray(payload.amr) ? payload.amr : [];
+    return amr.map((entry) =>
+      typeof entry === "string" ? entry : String((entry as { method?: string }).method ?? "")
+    );
+  } catch {
+    return [];
+  }
+}
+
+// Ways in that only work for someone who can read the inbox. Supabase
+// auto-confirms password sign-ups made straight against its API, so a
+// "confirmed" email on a password session proves nothing.
+const INBOX_METHODS = new Set(["otp", "magiclink", "email/signup", "invite", "recovery", "email_change"]);
+
+/** True when this session was opened with an emailed code or link. */
+export function provedInbox(methods: string[]) {
+  return methods.some((m) => INBOX_METHODS.has(m));
+}
 
 /**
  * Returns the logged-in Prisma User, creating one on first sight of a new

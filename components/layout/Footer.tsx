@@ -26,6 +26,9 @@ const COLUMNS: { title: string; links: [key: string, href: string][] }[] = [
   },
 ];
 
+// Message keys under Footer.members (names are spelled per language).
+const TEAM = ["gunjid", "munkhjin", "anar", "temuulen", "enkhbold"];
+
 export function Footer() {
   const t = useTranslations("Footer");
 
@@ -35,8 +38,30 @@ export function Footer() {
         <div>
           <Logo />
           <p className="mt-4 max-w-sm text-sm leading-6 text-muted">
-            {t("about")}
+            {t("description")}
           </p>
+          <h2 className="mt-8 text-xs font-semibold uppercase tracking-[0.14em] text-subtle">
+            {t("team")}
+          </h2>
+          <ul className="mt-3 flex max-w-sm flex-wrap gap-2">
+            {TEAM.map((key) => {
+              const name = t(`members.${key}`);
+              return (
+                <li
+                  key={key}
+                  className="flex items-center gap-2 rounded-full border border-line py-1 pl-1 pr-3 text-sm text-foreground"
+                >
+                  <span
+                    aria-hidden
+                    className="flex size-6 items-center justify-center rounded-full bg-accent-soft text-xs font-semibold text-accent"
+                  >
+                    {name.charAt(0)}
+                  </span>
+                  {name}
+                </li>
+              );
+            })}
+          </ul>
         </div>
         {COLUMNS.map((column) => (
           <div key={column.title}>

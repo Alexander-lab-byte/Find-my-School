@@ -2,12 +2,12 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
-import { getSchoolRatings, getSchoolReviews } from "@/lib/schools";
+import { getOwnReview, getSchoolRatings, getSchoolReviews } from "@/lib/schools";
 import { ratingCategories } from "@/lib/ratings";
 import { getReviewAccess } from "@/lib/review-access";
 import { getCurrentUser } from "@/lib/current-user";
 import { schoolNames } from "@/lib/labels";
-import { Icon } from "@/components/common/Icon";
+import { Icon, type IconName } from "@/components/common/Icon";
 import { RatingSummary } from "@/components/reviews/RatingSummary";
 import { ReviewCard } from "@/components/reviews/ReviewCard";
 import { ReviewForm } from "@/components/reviews/ReviewForm";
@@ -18,7 +18,7 @@ function AccessCard({
   title,
   children,
 }: {
-  icon: "mail" | "lock";
+  icon: IconName;
   title: string;
   children: React.ReactNode;
 }) {
@@ -54,6 +54,9 @@ export default async function SchoolReviewsPage({
     getReviewAccess({ id, emailDomains: school.emailDomains }, { isSignedIn }),
     isSignedIn ? getCurrentUser() : null,
   ]);
+  // Their own review, if any: pending, published, rejected, or hidden.
+  const ownReview = viewer ? await getOwnReview(id, viewer.id) : null;
+  const hasActiveReview = ownReview !== null && ownReview.status !== "REJECTED";
   const tAccess = await getTranslations("ReviewAccess");
   const locale = await getLocale();
   const hasDorm = Boolean(school.dormitory);
@@ -87,11 +90,37 @@ export default async function SchoolReviewsPage({
 
         <section id="write-review" aria-labelledby="write-review-heading" className="scroll-mt-20">
           <h2 id="write-review-heading" className="font-display text-xl font-semibold text-foreground">
-            {t("write")}
+            {hasActiveReview ? t("yours") : t("write")}
           </h2>
           <div className="mt-4">
-            {access.status === "allowed" ? (
-              <ReviewForm schoolId={id} hasDorm={hasDorm} />
+            {ownReview?.status === "PENDING" ? (
+              <AccessCard icon="clock" title={t("yourPendingTitle")}>
+                <p>{t("yourPendingBody")}</p>
+              </AccessCard>
+            ) : hasActiveReview ? (
+              <AccessCard icon="check" title={t("yourReviewedTitle")}>
+                <p>
+                  {ownReview.status === "HIDDEN"
+                    ? t("yourHiddenBody")
+                    : t.rich("yourPublishedBody", {
+                        link: (chunks) => (
+                          <Link href="/my-reviews" className="font-medium text-accent hover:underline">
+                            {chunks}
+                          </Link>
+                        ),
+                      })}
+                </p>
+              </AccessCard>
+            ) : access.status === "allowed" ? (
+              <>
+                {ownReview?.status === "REJECTED" && (
+                  <p className="mb-4 flex gap-2 rounded-lg border border-line bg-surface-muted px-3.5 py-3 text-sm leading-6 text-muted">
+                    <Icon name="info" className="mt-1 size-4 shrink-0 text-subtle" />
+                    {t("yourRejectedNote")}
+                  </p>
+                )}
+                <ReviewForm schoolId={id} hasDorm={hasDorm} />
+              </>
             ) : access.status === "signed-out" ? (
               <AccessCard icon="mail" title={tAccess("signedOutTitle")}>
                 <p>{tAccess("signedOutBody", { domains: domainList(access.schoolDomains) })}</p>
