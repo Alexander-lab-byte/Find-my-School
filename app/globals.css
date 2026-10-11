@@ -1,57 +1,69 @@
 @import "tailwindcss";
 
 /*
- * Palette: warm paper background, white surfaces, deep teal accent.
- * Kept deliberately low-contrast between surfaces (but not text) so long
- * reading sessions — comparing schools over days — stay easy on the eyes.
+ * "Your child's path" design system.
+ * Sky-blue tops, cool paper background, white rounded surfaces, one strong
+ * blue accent and a warm gold for "goal" moments (destinations, matches).
  */
 :root {
   color-scheme: light;
-  --background: #f7f6f2;
+  --background: #f4f6fa;
   --surface: #ffffff;
-  --surface-muted: #f1efe9;
-  --foreground: #1c2a30;
-  --muted: #56646b;
-  --subtle: #6f7b81;
-  --line: #e5e2d9;
-  --line-strong: #d4d0c4;
-  --accent: #2f5a66;
-  --accent-hover: #244a55;
-  --accent-foreground: #f0f7f8;
-  --accent-soft: #e6eef0;
-  --star: #c08a1e;
-  --star-empty: #e2ddd0;
-  --tone-private: #4a4472;
-  --tone-private-soft: #ecebf4;
-  --tone-intl: #7a5a1f;
-  --tone-intl-soft: #f5eddc;
-  --danger: #b42318;
-  --danger-soft: #fdf0ee;
+  --surface-muted: #eef1f7;
+  --foreground: #0b1220;
+  --muted: #4a5468;
+  --subtle: #5f697c;
+  --line: #e3e7ef;
+  --line-strong: #cbd3e1;
+  --accent: #2448e8;
+  --accent-hover: #16309f;
+  --accent-foreground: #ffffff;
+  --accent-soft: #e6ecff;
+  --gold: #ffc24d;
+  --gold-soft: #fff3d1;
+  --gold-foreground: #3a2a00;
+  --star: #d9930f;
+  --star-empty: #dce2ec;
+  --tone-private: #6d28d9;
+  --tone-private-soft: #f0eafe;
+  --tone-intl: #9a5806;
+  --tone-intl-soft: #fff1d3;
+  --danger: #c0262d;
+  --danger-soft: #fdeeee;
+  --sky-top: #c9dbfb;
+  --sky-deep: #7fa8f5;
+  --cloud: #ffffff;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
-    --background: #0e1416;
-    --surface: #151d20;
-    --surface-muted: #1c2629;
-    --foreground: #e3e8e8;
-    --muted: #a3afb3;
-    --subtle: #8a9699;
-    --line: #253236;
-    --line-strong: #34444a;
-    --accent: #8fc2cd;
-    --accent-hover: #a9d3dc;
-    --accent-foreground: #0b1e21;
-    --accent-soft: #1a2f36;
-    --star: #e2b04e;
-    --star-empty: #34413f;
-    --tone-private: #c6c0e6;
-    --tone-private-soft: #24213a;
-    --tone-intl: #e3c58c;
-    --tone-intl-soft: #2c2517;
+    --background: #0a1020;
+    --surface: #111a2e;
+    --surface-muted: #18233b;
+    --foreground: #e8edf7;
+    --muted: #a9b4c8;
+    --subtle: #94a0b6;
+    --line: #233049;
+    --line-strong: #33415e;
+    --accent: #8ea6ff;
+    --accent-hover: #b3c3ff;
+    --accent-foreground: #0a1020;
+    --accent-soft: #1a2547;
+    --gold: #f6c25a;
+    --gold-soft: #33280f;
+    --gold-foreground: #2a1e00;
+    --star: #f3c35a;
+    --star-empty: #2c3954;
+    --tone-private: #c9b5ff;
+    --tone-private-soft: #2a2145;
+    --tone-intl: #f6cf84;
+    --tone-intl-soft: #33270f;
     --danger: #f97066;
     --danger-soft: #2d1614;
+    --sky-top: #142347;
+    --sky-deep: #1d3266;
+    --cloud: #2a3a62;
   }
 }
 
@@ -68,6 +80,9 @@
   --color-accent-hover: var(--accent-hover);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent-soft: var(--accent-soft);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-gold-foreground: var(--gold-foreground);
   --color-star: var(--star);
   --color-star-empty: var(--star-empty);
   --color-tone-private: var(--tone-private);
@@ -76,16 +91,25 @@
   --color-tone-intl-soft: var(--tone-intl-soft);
   --color-danger: var(--danger);
   --color-danger-soft: var(--danger-soft);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-display: var(--font-source-serif);
+  --font-sans: var(--font-manrope);
+  --font-display: var(--font-onest);
+  --shadow-card: 0 30px 60px -36px rgb(11 18 32 / 0.35);
+  --shadow-lift: 0 40px 70px -28px rgb(11 18 32 / 0.38);
+  --ease-out-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 @layer base {
   body {
-    background: var(--background);
+    /* Every page starts under a soft sky, like the homepage. */
+    background:
+      linear-gradient(180deg, var(--sky-top) 0, var(--background) 520px) no-repeat,
+      var(--background);
     color: var(--foreground);
-    font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  }
+
+  .font-display {
+    letter-spacing: -0.02em;
   }
 
   ::selection {
@@ -96,17 +120,34 @@
     outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }
 
 @layer components {
   /* Shared text input / select / textarea style. */
   .field {
     width: 100%;
-    border-radius: 0.5rem;
+    border-radius: 0.875rem;
     border: 1px solid var(--line-strong);
     background: var(--surface);
-    padding: 0.625rem 0.75rem;
-    font-size: 0.875rem;
+    padding: 0.7rem 0.9rem;
+    font-size: 0.9rem;
     color: var(--foreground);
     transition:
       border-color 150ms,
@@ -120,7 +161,201 @@
   .field:focus {
     outline: none;
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 18%, transparent);
+    box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent) 16%, transparent);
+  }
+
+  /* Buttons */
+  .btn-primary,
+  .btn-secondary,
+  .btn-gold {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    border-radius: 9999px;
+    padding: 0.7rem 1.4rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition:
+      background-color 200ms,
+      color 200ms,
+      border-color 200ms,
+      transform 200ms var(--ease-out-soft),
+      box-shadow 200ms;
+  }
+  .btn-primary {
+    background: var(--foreground);
+    color: var(--background);
+  }
+  .btn-primary:hover {
+    background: var(--accent);
+    color: var(--accent-foreground);
+    transform: translateY(-2px);
+  }
+  .btn-secondary {
+    background: var(--surface);
+    color: var(--foreground);
+    border: 1px solid var(--line-strong);
+  }
+  .btn-secondary:hover {
+    border-color: var(--foreground);
+    transform: translateY(-2px);
+  }
+  .btn-gold {
+    background: var(--gold);
+    color: var(--gold-foreground);
+  }
+  .btn-gold:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px -12px rgb(255 170 40 / 0.6);
+  }
+  .btn-primary:active,
+  .btn-secondary:active,
+  .btn-gold:active {
+    transform: scale(0.97);
+  }
+
+  /* Pill filter chip; add .is-on (or aria-pressed) for the selected state. */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 40px;
+    border-radius: 9999px;
+    border: 1px solid var(--line-strong);
+    background: color-mix(in oklab, var(--surface) 88%, transparent);
+    padding: 0.5rem 1rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--foreground);
+    transition:
+      background-color 200ms,
+      color 200ms,
+      border-color 200ms,
+      transform 150ms var(--ease-out-soft);
+  }
+  .chip:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .chip.is-on,
+  .chip[aria-pressed="true"] {
+    background: var(--foreground);
+    border-color: var(--foreground);
+    color: var(--background);
+  }
+  .chip.is-accent.is-on,
+  .chip.is-accent[aria-pressed="true"] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+
+  /* Frosted glass panel used over the sky. */
+  .glass {
+    background: color-mix(in oklab, var(--surface) 62%, transparent);
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    border: 1px solid color-mix(in oklab, var(--surface) 70%, transparent);
+  }
+
+  /* Small uppercase label above headings. */
+  .eyebrow {
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  /* Cartoon cloud made from overlapping ellipses. Size it with width/height. */
+  .cloud {
+    background:
+      radial-gradient(ellipse 24% 46% at 26% 62%, var(--cloud) 97%, transparent 100%),
+      radial-gradient(ellipse 30% 60% at 50% 44%, var(--cloud) 97%, transparent 100%),
+      radial-gradient(ellipse 22% 42% at 75% 60%, var(--cloud) 97%, transparent 100%),
+      radial-gradient(ellipse 46% 26% at 50% 76%, var(--cloud) 97%, transparent 100%);
+    filter: drop-shadow(0 18px 24px rgb(42 73 168 / 0.14));
+  }
+  .cloud-drift {
+    animation: cloud-drift 12s ease-in-out infinite;
+  }
+
+  /* Fade-and-rise as an element scrolls into view (supporting browsers only;
+     elsewhere it simply shows). */
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: reveal-up linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 22%;
+    }
+  }
+
+  .enter {
+    animation: reveal-up 0.6s var(--ease-out-soft) both;
+  }
+
+  .lift {
+    transition:
+      transform 300ms var(--ease-out-soft),
+      box-shadow 300ms var(--ease-out-soft),
+      border-color 300ms;
+  }
+  .lift:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lift);
+  }
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes led-sweep {
+  from {
+    background-position: -200% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes window-spark {
+  from {
+    transform: scale(2);
+    filter: brightness(1.8);
+  }
+  to {
+    transform: none;
+    filter: none;
+  }
+}
+
+@keyframes traveller-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes cloud-drift {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 26px 0;
   }
 }
 
@@ -171,7 +406,7 @@
 }
 
 .school-map {
-  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
   background: var(--surface-muted);
 }
 
@@ -195,7 +430,7 @@
 
 .school-map .leaflet-popup-content-wrapper {
   border: 1px solid var(--line);
-  border-radius: 0.75rem;
+  border-radius: 1.25rem;
 }
 
 .school-map .leaflet-popup-content {

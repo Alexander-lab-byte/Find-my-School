@@ -49,7 +49,7 @@ export default async function SchoolLayout({ children, params }: SchoolLayoutPro
   return (
     <div className="flex flex-1 flex-col">
       <SchoolHeader school={school} isSaved={isSaved} reviewStatus={reviewAccess.status} />
-      <div className="sticky top-0 z-10 border-b border-line bg-background/90 backdrop-blur">
+      <div className="sticky top-16 z-30 border-b border-line/70 bg-background/75 backdrop-blur-xl">
         <div className="mx-auto max-w-5xl px-4 sm:px-6">
           <SchoolTabs schoolId={school.id} reviewCount={school.reviewCount} />
         </div>

@@ -24,7 +24,7 @@ function Option({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left text-sm transition-colors ${
+      className={`flex w-full items-center gap-2.5 rounded-xl px-2 py-1.5 text-left text-sm transition-colors ${
         active
           ? "bg-accent-soft font-medium text-accent"
           : "text-muted hover:bg-surface-muted hover:text-foreground"
@@ -82,7 +82,7 @@ export function FilterBar({ districts }: { districts: { name: string; count: num
         onClick={() => setIsOpen((open) => !open)}
         aria-expanded={isOpen}
         aria-controls="search-filters"
-        className="flex w-full items-center justify-between rounded-xl border border-line bg-surface px-4 py-3 text-sm font-medium text-foreground lg:hidden"
+        className="flex w-full items-center justify-between rounded-[1.25rem] border border-line bg-surface px-4 py-3 text-sm font-medium text-foreground lg:hidden"
       >
         <span className="flex items-center gap-2">
           <Icon name="sliders" className="size-4" />
@@ -101,7 +101,7 @@ export function FilterBar({ districts }: { districts: { name: string; count: num
 
       <div
         id="search-filters"
-        className={`${isOpen ? "mt-3 block" : "hidden"} space-y-4 rounded-xl border border-line bg-surface p-4 lg:mt-0 lg:block`}
+        className={`${isOpen ? "mt-3 block" : "hidden"} space-y-4 rounded-[1.25rem] border border-line bg-surface p-4 lg:mt-0 lg:block`}
       >
         <div className="flex items-center justify-between px-2">
           <h2 className="text-sm font-semibold text-foreground">{t("filters")}</h2>

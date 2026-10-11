@@ -102,7 +102,7 @@ export default function LeafletMap({ schools, height, scrollZoom = false }: Leaf
                 <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-accent">
                   {tType(school.type)}
                 </p>
-                <p className="font-display text-base font-semibold leading-snug text-foreground">
+                <p className="font-display text-base font-bold leading-snug text-foreground">
                   {primary}
                 </p>
                 {secondary && <p className="text-xs text-muted">{secondary}</p>}

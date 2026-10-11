@@ -212,6 +212,23 @@ export async function getHomepageData() {
   return { schools, totalSchools, typeCounts, districts, recentReviews };
 }
 
+/** Every school with what the homepage path needs to match it to a destination. */
+export async function getPathSchools() {
+  return prisma.school.findMany({
+    orderBy: { nameEn: "asc" },
+    select: {
+      id: true,
+      nameEn: true,
+      nameMn: true,
+      type: true,
+      curriculum: true,
+      graduateDestinations: true,
+    },
+  });
+}
+
+export type PathSchool = Awaited<ReturnType<typeof getPathSchools>>[number];
+
 // ---------------------------------------------------------------------------
 // School profile
 // ---------------------------------------------------------------------------

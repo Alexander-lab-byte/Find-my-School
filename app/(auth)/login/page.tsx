@@ -35,7 +35,7 @@ export default async function LoginPage({
       }
     >
       {error === "auth-callback-failed" && (
-        <p role="alert" className="mb-6 rounded-lg bg-danger-soft px-3 py-2.5 text-sm text-danger">
+        <p role="alert" className="mb-6 rounded-xl bg-danger-soft px-3 py-2.5 text-sm text-danger">
           {t("callbackFailed")}
         </p>
       )}

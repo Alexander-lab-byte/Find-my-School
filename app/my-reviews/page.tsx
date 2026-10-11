@@ -46,23 +46,23 @@ export default async function MyReviewsPage() {
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-10 sm:px-6">
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">{t("eyebrow")}</p>
-      <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+      <p className="eyebrow">{t("eyebrow")}</p>
+      <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
         {t("title")}
       </h1>
       <p className="mt-2 text-sm text-muted">{t("intro")}</p>
 
       <div className="mt-8 space-y-4">
         {reviews.length === 0 && (
-          <div className="rounded-xl border border-dashed border-line-strong bg-surface px-6 py-14 text-center">
+          <div className="rounded-[1.25rem] border border-dashed border-line-strong bg-surface px-6 py-14 text-center">
             <span className="mx-auto flex size-12 items-center justify-center rounded-full bg-surface-muted text-subtle">
               <Icon name="pencil" className="size-5" />
             </span>
-            <h2 className="mt-4 font-display text-xl font-semibold text-foreground">{t("emptyTitle")}</h2>
+            <h2 className="mt-4 font-display text-xl font-bold text-foreground">{t("emptyTitle")}</h2>
             <p className="mx-auto mt-2 max-w-md text-sm text-muted">{t("emptyBody")}</p>
             <Link
               href="/search"
-              className="mt-6 inline-flex items-center rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
+              className="mt-6 inline-flex items-center rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
             >
               {t("findSchool")}
             </Link>
@@ -73,12 +73,12 @@ export default async function MyReviewsPage() {
           const avg = reviewAverage(review.rating);
           const { primary, secondary } = schoolNames(review.school, locale);
           return (
-            <article key={review.id} className="rounded-xl border border-line bg-surface p-5">
+            <article key={review.id} className="reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)] p-5">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0">
                   <Link
                     href={`/school/${review.school.id}/reviews`}
-                    className="font-display text-lg font-semibold text-foreground hover:text-accent"
+                    className="font-display text-lg font-bold text-foreground hover:text-accent"
                   >
                     {primary}
                   </Link>

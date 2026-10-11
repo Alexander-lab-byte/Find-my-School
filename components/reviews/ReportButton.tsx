@@ -76,7 +76,7 @@ export function ReportButton({ reviewId, schoolId }: { reviewId: string; schoolI
       <button
         type="submit"
         disabled={isPending}
-        className="rounded-md bg-accent px-2.5 py-1.5 font-medium text-accent-foreground transition-colors hover:bg-accent-hover disabled:opacity-50"
+        className="rounded-lg bg-accent px-2.5 py-1.5 font-medium text-accent-foreground transition-colors hover:bg-accent-hover disabled:opacity-50"
       >
         {isPending ? t("sending") : t("send")}
       </button>

@@ -10,7 +10,7 @@ export default function SchoolNotFound() {
       <span className="mx-auto flex size-12 items-center justify-center rounded-full bg-surface-muted text-subtle">
         <Icon name="search" className="size-5" />
       </span>
-      <h1 className="mt-5 font-display text-3xl font-semibold text-foreground">
+      <h1 className="mt-5 font-display text-3xl font-bold text-foreground">
         {t("schoolTitle")}
       </h1>
       <p className="mt-2 text-muted">
@@ -18,7 +18,7 @@ export default function SchoolNotFound() {
       </p>
       <Link
         href="/search"
-        className="mt-8 inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
+        className="mt-8 inline-flex items-center gap-2 rounded-full bg-accent px-4 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
       >
         <Icon name="arrow-left" className="size-4" />
         {t("browseAll")}

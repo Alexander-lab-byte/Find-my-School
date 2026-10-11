@@ -87,7 +87,7 @@ export function HeroSearchBar() {
 
   return (
     <form role="search" onSubmit={handleSubmit} className="relative w-full max-w-2xl text-left">
-      <div className="flex items-center gap-2 rounded-xl border border-line-strong bg-surface p-2 shadow-[0_16px_40px_-24px_rgb(0_0_0/0.35)] transition focus-within:border-accent focus-within:ring-4 focus-within:ring-accent/15">
+      <div className="flex items-center gap-2 rounded-[1.25rem] border border-line-strong bg-surface p-2 shadow-[0_16px_40px_-24px_rgb(0_0_0/0.35)] transition focus-within:border-accent focus-within:ring-4 focus-within:ring-accent/15">
         <Icon name="search" className="ml-2 size-5 shrink-0 text-subtle" />
         <input
           type="text"
@@ -111,7 +111,7 @@ export function HeroSearchBar() {
         />
         <button
           type="submit"
-          className="shrink-0 rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover sm:px-6"
+          className="shrink-0 rounded-full bg-accent px-4 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover sm:px-6"
         >
           {t("search")}
         </button>
@@ -122,7 +122,7 @@ export function HeroSearchBar() {
         // isn't cancelled by the input's blur closing the list first.
         <div
           onMouseDown={(e) => e.preventDefault()}
-          className="absolute inset-x-0 top-full z-20 mt-2 overflow-hidden rounded-xl border border-line bg-surface shadow-[0_20px_40px_-20px_rgb(0_0_0/0.3)]"
+          className="absolute inset-x-0 top-full z-20 mt-2 overflow-hidden rounded-[1.25rem] border border-line bg-surface shadow-[0_20px_40px_-20px_rgb(0_0_0/0.3)]"
         >
           <ul id={listId} role="listbox" aria-label={t("matching")} className="py-1.5">
             {suggestions.map((school, i) => {

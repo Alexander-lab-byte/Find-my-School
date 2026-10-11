@@ -20,12 +20,12 @@ export function SchoolCard({ school }: { school: SchoolCardData }) {
   return (
     <Link
       href={`/school/${school.id}`}
-      className="group flex h-full flex-col rounded-xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgb(0_0_0/0.03)] transition duration-200 hover:-translate-y-0.5 hover:border-line-strong hover:shadow-[0_12px_28px_-16px_rgb(0_0_0/0.22)]"
+      className="lift reveal group flex h-full flex-col rounded-[1.75rem] border border-line bg-surface p-6 shadow-[0_1px_2px_rgb(0_0_0/0.03)] hover:border-line-strong"
     >
       <div className="flex items-start gap-4">
         <SchoolMonogram name={school.nameEn} type={school.type} logoUrl={school.logoUrl} />
         <div className="min-w-0 flex-1">
-          <h3 className="font-display text-lg font-semibold leading-snug text-foreground transition-colors group-hover:text-accent">
+          <h3 className="font-display text-lg font-bold leading-snug text-foreground transition-colors group-hover:text-accent">
             {primary}
           </h3>
           {secondary && <p className="mt-0.5 text-sm text-muted">{secondary}</p>}
@@ -78,8 +78,8 @@ export function SchoolCard({ school }: { school: SchoolCardData }) {
       </ul>
 
       {school.graduateDestinations.length > 0 && (
-        <div className="mt-4 rounded-lg bg-surface-muted px-3 py-2.5">
-          <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-[0.08em] text-subtle">
+        <div className="mt-4 rounded-2xl bg-gold-soft px-3.5 py-3">
+          <p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.08em] text-gold-foreground/80 dark:text-gold">
             <Icon name="graduation" className="size-3.5" />
             {t("graduatesGoTo")}
           </p>

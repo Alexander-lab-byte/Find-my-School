@@ -21,7 +21,7 @@ function hrefFor(params: PaginationProps["params"], page: number) {
 }
 
 const BUTTON =
-  "flex items-center gap-1.5 rounded-lg border border-line bg-surface px-3.5 py-2 text-sm font-medium text-foreground transition-colors hover:border-line-strong hover:bg-surface-muted";
+  "flex items-center gap-1.5 rounded-xl border border-line bg-surface px-3.5 py-2 text-sm font-medium text-foreground transition-colors hover:border-line-strong hover:bg-surface-muted";
 
 export function Pagination({ page, pageCount, params }: PaginationProps) {
   const t = useTranslations("Pagination");

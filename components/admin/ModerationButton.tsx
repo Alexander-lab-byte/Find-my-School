@@ -35,7 +35,7 @@ function Submit({ label, icon, variant }: { label: string; icon: IconName; varia
       type="submit"
       disabled={pending}
       aria-busy={pending}
-      className={`flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium transition-colors disabled:opacity-60 ${VARIANTS[variant]}`}
+      className={`flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-medium transition-colors disabled:opacity-60 ${VARIANTS[variant]}`}
     >
       <Icon name={icon} className={`size-4 ${pending ? "animate-pulse" : ""}`} />
       {label}

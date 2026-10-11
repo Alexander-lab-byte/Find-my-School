@@ -7,8 +7,8 @@ const TONE_CLASSES: Record<SchoolType, string> = {
 };
 
 const SIZE_CLASSES = {
-  md: "size-12 rounded-lg text-base",
-  lg: "size-16 rounded-xl text-xl sm:size-20 sm:text-2xl",
+  md: "size-12 rounded-2xl text-base",
+  lg: "size-16 rounded-[1.25rem] text-xl sm:size-20 sm:text-2xl",
 };
 
 const FILLER_WORDS = new Set(["of", "the", "and", "for", "school"]);
@@ -53,7 +53,7 @@ export function SchoolMonogram({
   return (
     <span
       aria-hidden
-      className={`${SIZE_CLASSES[size]} ${TONE_CLASSES[type]} flex shrink-0 items-center justify-center font-display font-semibold`}
+      className={`${SIZE_CLASSES[size]} ${TONE_CLASSES[type]} flex shrink-0 items-center justify-center font-display font-bold`}
     >
       {initials(name)}
     </span>

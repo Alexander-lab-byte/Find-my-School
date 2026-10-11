@@ -26,8 +26,8 @@ export default async function MapPage() {
 
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6">
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">{t("eyebrow")}</p>
-      <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+      <p className="eyebrow">{t("eyebrow")}</p>
+      <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
         {t("title")}
       </h1>
       <p className="mt-2 max-w-2xl text-muted">{t("intro")}</p>
@@ -52,7 +52,7 @@ export default async function MapPage() {
 
       {unpinned.length > 0 && (
         <section className="mt-10">
-          <h2 className="font-display text-xl font-semibold text-foreground">{t("notPinnedTitle")}</h2>
+          <h2 className="font-display text-xl font-bold text-foreground">{t("notPinnedTitle")}</h2>
           <p className="mt-1 text-sm text-muted">{t("notPinnedBody")}</p>
           <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {unpinned.map((school) => {
@@ -61,7 +61,7 @@ export default async function MapPage() {
                 <li key={school.id}>
                   <Link
                     href={`/school/${school.id}`}
-                    className="flex h-full items-start gap-3 rounded-xl border border-line bg-surface p-4 transition-colors hover:border-line-strong"
+                    className="flex h-full items-start gap-3 reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)] p-4 transition-colors hover:border-line-strong"
                   >
                     <Icon name="map-pin" className="mt-0.5 size-4 shrink-0 text-subtle" />
                     <span className="min-w-0">
