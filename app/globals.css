@@ -106,6 +106,14 @@
       var(--background);
     color: var(--foreground);
     font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+    /* Never let one wide element zoom the whole page out on phones. */
+    overflow-x: clip;
+    /* Long words with no spaces (pasted links, "AAAA…") wrap instead of overflowing. */
+    overflow-wrap: anywhere;
+  }
+
+  html {
+    overflow-x: clip;
   }
 
   .font-display {
