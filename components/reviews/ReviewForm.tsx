@@ -98,7 +98,7 @@ export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: b
 
   if (success) {
     return (
-      <div role="status" className="rounded-xl border border-accent/30 bg-accent-soft p-6 text-center">
+      <div role="status" className="rounded-[1.25rem] border border-accent/30 bg-accent-soft p-6 text-center">
         <span className="mx-auto flex size-10 items-center justify-center rounded-full bg-surface text-accent">
           <Icon name="clock" className="size-5" />
         </span>
@@ -109,7 +109,7 @@ export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: b
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 rounded-xl border border-line bg-surface p-5">
+    <form onSubmit={handleSubmit} className="space-y-6 reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)] p-5">
       <div>
         <p className="text-xs font-semibold uppercase tracking-[0.12em] text-subtle">{t("ratings")}</p>
         <div className="mt-1 divide-y divide-line">
@@ -205,7 +205,7 @@ export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: b
       </div>
 
       {error && (
-        <p role="alert" className="rounded-lg bg-danger-soft px-3 py-2.5 text-sm text-danger">
+        <p role="alert" className="rounded-xl bg-danger-soft px-3 py-2.5 text-sm text-danger">
           {t(ERROR_KEYS[error])}
           {error === "LOGIN_REQUIRED" && (
             <>
@@ -224,7 +224,7 @@ export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: b
       <button
         type="submit"
         disabled={isPending}
-        className="w-full rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover disabled:opacity-50"
+        className="w-full rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover disabled:opacity-50"
       >
         {isPending ? t("submitting") : t("submit")}
       </button>

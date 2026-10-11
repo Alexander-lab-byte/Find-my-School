@@ -26,7 +26,7 @@ export function ReviewCard({
   const scores = reviewScores(review.rating);
 
   return (
-    <article className="rounded-xl border border-line bg-surface p-5">
+    <article className="reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)] p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex items-center gap-3">
           <span

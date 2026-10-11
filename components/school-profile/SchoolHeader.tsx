@@ -10,6 +10,7 @@ import { SaveButton } from "@/components/school-profile/SaveButton";
 import { CompareButton } from "@/components/compare/CompareButton";
 import type { ReviewAccess } from "@/lib/review-access";
 import { displayUrl, externalUrl, formatLocation, schoolNames } from "@/lib/labels";
+import { SkyClouds } from "@/components/common/SkyClouds";
 
 type School = NonNullable<Awaited<ReturnType<typeof getSchoolHeader>>>;
 
@@ -33,7 +34,8 @@ export function SchoolHeader({
   const hasRating = school.reviewCount > 0 && Boolean(school.avgOverall);
 
   return (
-    <header className="border-b border-line bg-surface">
+    <header className="relative isolate border-b border-line/60">
+      <SkyClouds />
       <div className="mx-auto max-w-5xl px-4 pb-8 pt-6 sm:px-6 sm:pb-10">
         <div className="flex items-start justify-between gap-4">
           <BackButton fallbackHref="/search" label={tCommon("backToSearch")} />
@@ -54,7 +56,7 @@ export function SchoolHeader({
                   <Badge>{school.schoolNumber}</Badge>
                 )}
               </div>
-              <h1 className="mt-3 text-balance font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+              <h1 className="mt-3 text-balance font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
                 {primary}
               </h1>
               {secondary && <p className="mt-1 text-lg text-muted">{secondary}</p>}
@@ -88,11 +90,11 @@ export function SchoolHeader({
             </div>
           </div>
 
-          <div className="shrink-0 rounded-xl border border-line bg-background p-5 md:w-64">
+          <div className="shrink-0 rounded-[1.25rem] border border-line bg-background p-5 md:w-64">
             {hasRating ? (
               <>
                 <div className="flex items-baseline gap-1.5">
-                  <span className="font-display text-4xl font-semibold text-foreground">
+                  <span className="font-display text-4xl font-bold text-foreground">
                     {school.avgOverall!.toFixed(1)}
                   </span>
                   <span className="text-sm text-muted">{t("outOf5")}</span>
@@ -111,7 +113,7 @@ export function SchoolHeader({
             {reviewStatus === "allowed" || reviewStatus === "signed-out" ? (
               <Link
                 href={`/school/${school.id}/reviews#write-review`}
-                className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-accent px-4 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
               >
                 <Icon name="pencil" className="size-4" />
                 {tCommon("writeReview")}
@@ -122,7 +124,7 @@ export function SchoolHeader({
               <div className="mt-4">
                 <span
                   aria-disabled
-                  className="flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-lg border border-line bg-surface-muted px-4 py-2.5 text-sm font-medium text-subtle"
+                  className="flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-xl border border-line bg-surface-muted px-4 py-2.5 text-sm font-medium text-subtle"
                 >
                   <Icon name="lock" className="size-4" />
                   {tCommon("writeReview")}

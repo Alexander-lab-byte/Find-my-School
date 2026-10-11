@@ -10,7 +10,7 @@ export function ProfileSection({
   return (
     <section>
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-        <h2 className="font-display text-xl font-semibold text-foreground">{title}</h2>
+        <h2 className="font-display text-xl font-bold text-foreground">{title}</h2>
         {action && <div className="whitespace-nowrap">{action}</div>}
       </div>
       <div className="mt-4">{children}</div>
@@ -37,7 +37,7 @@ export function FactGrid({
 }) {
   return (
     <dl
-      className={`grid grid-cols-1 gap-px overflow-hidden rounded-xl border border-line bg-line ${COLUMN_CLASSES[columns]}`}
+      className={`grid grid-cols-1 gap-px overflow-hidden rounded-[1.25rem] border border-line bg-line ${COLUMN_CLASSES[columns]}`}
     >
       {children}
     </dl>
@@ -56,7 +56,7 @@ export function Fact({ label, children }: { label: string; children: React.React
 /** Prose block for longer free-text fields (living conditions, entrance exams…). */
 export function ProseCard({ children }: { children: React.ReactNode }) {
   return (
-    <div className="whitespace-pre-line rounded-xl border border-line bg-surface p-5 text-sm leading-7 text-muted">
+    <div className="whitespace-pre-line reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)] p-5 text-sm leading-7 text-muted">
       {children}
     </div>
   );
@@ -64,7 +64,7 @@ export function ProseCard({ children }: { children: React.ReactNode }) {
 
 export function EmptyNote({ children }: { children: React.ReactNode }) {
   return (
-    <p className="rounded-xl border border-dashed border-line-strong px-5 py-6 text-center text-sm text-muted">
+    <p className="rounded-[1.25rem] border border-dashed border-line-strong px-5 py-6 text-center text-sm text-muted">
       {children}
     </p>
   );

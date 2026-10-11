@@ -78,7 +78,7 @@ export function EmailOtpForm({ mode, next }: { mode: "login" | "register"; next:
   }
 
   const errorBox = error && (
-    <p role="alert" className="rounded-lg bg-danger-soft px-3 py-2.5 text-sm text-danger">
+    <p role="alert" className="rounded-xl bg-danger-soft px-3 py-2.5 text-sm text-danger">
       {t(error)}
     </p>
   );
@@ -86,7 +86,7 @@ export function EmailOtpForm({ mode, next }: { mode: "login" | "register"; next:
   if (step === "code") {
     return (
       <form onSubmit={verifyCode} className="space-y-5">
-        <div className="rounded-xl border border-accent/30 bg-accent-soft px-4 py-3 text-sm text-foreground">
+        <div className="rounded-[1.25rem] border border-accent/30 bg-accent-soft px-4 py-3 text-sm text-foreground">
           <p className="font-medium">{t("checkEmail")}</p>
           <p className="mt-0.5 text-muted">
             {t.rich("codeSent", {
@@ -121,7 +121,7 @@ export function EmailOtpForm({ mode, next }: { mode: "login" | "register"; next:
         <button
           type="submit"
           disabled={isBusy || code.length < 6}
-          className="w-full rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover disabled:opacity-50"
+          className="w-full rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover disabled:opacity-50"
         >
           {isBusy ? t("verifying") : t("verify")}
         </button>
@@ -218,7 +218,7 @@ export function EmailOtpForm({ mode, next }: { mode: "login" | "register"; next:
       <button
         type="submit"
         disabled={isBusy}
-        className="w-full rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover disabled:opacity-50"
+        className="w-full rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover disabled:opacity-50"
       >
         {isBusy ? t("sending") : t("sendCode")}
       </button>

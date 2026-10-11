@@ -31,20 +31,20 @@ export default async function AboutPage() {
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-12 sm:px-6">
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">{t("eyebrow")}</p>
-      <h1 className="mt-2 text-balance font-display text-4xl font-semibold tracking-tight text-foreground">
+      <p className="eyebrow">{t("eyebrow")}</p>
+      <h1 className="mt-2 text-balance font-display text-4xl font-bold tracking-tight text-foreground">
         {t("title")}
       </h1>
       <p className="mt-4 text-pretty text-lg leading-8 text-muted">{t("intro")}</p>
 
       <div className="mt-10 grid gap-4">
         {SECTIONS.map(([icon, title, body]) => (
-          <section key={title} className="flex gap-4 rounded-xl border border-line bg-surface p-6">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-accent-soft text-accent">
+          <section key={title} className="flex gap-4 reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)] p-6">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent">
               <Icon name={icon} className="size-5" />
             </span>
             <div>
-              <h2 className="font-display text-xl font-semibold text-foreground">{t(title)}</h2>
+              <h2 className="font-display text-xl font-bold text-foreground">{t(title)}</h2>
               <p className="mt-2 leading-7 text-muted">
                 {t.rich(body, {
                   search: inlineLink("/search"),

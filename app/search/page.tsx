@@ -17,6 +17,7 @@ import { SchoolCard } from "@/components/search/SchoolCard";
 import { SearchInput, SortSelect } from "@/components/search/SearchControls";
 import { PendingArea, SearchNavigationProvider } from "@/components/search/SearchNavigation";
 import { Icon } from "@/components/common/Icon";
+import { SkyClouds } from "@/components/common/SkyClouds";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Metadata");
@@ -45,10 +46,11 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   return (
     <SearchNavigationProvider>
       <main>
-        <div className="border-b border-line bg-surface">
+        <div className="relative isolate">
+          <SkyClouds />
           <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">{t("eyebrow")}</p>
-            <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+            <p className="eyebrow">{t("eyebrow")}</p>
+            <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
               {filters.q ? t("resultsFor", { query: filters.q }) : t("title")}
             </h1>
             <p className="mt-2 max-w-2xl text-muted">
@@ -61,7 +63,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         </div>
 
         <div className="mx-auto grid max-w-6xl gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[260px_minmax(0,1fr)]">
-          <aside className="lg:sticky lg:top-6 lg:self-start">
+          <aside className="lg:sticky lg:top-24 lg:self-start">
             <FilterBar districts={districts} />
           </aside>
 
@@ -89,11 +91,11 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                   <Pagination page={page} pageCount={pageCount} params={params} />
                 </div>
               ) : (
-                <div className="rounded-xl border border-dashed border-line-strong bg-surface px-6 py-14 text-center">
+                <div className="rounded-[1.25rem] border border-dashed border-line-strong bg-surface px-6 py-14 text-center">
                   <span className="mx-auto flex size-12 items-center justify-center rounded-full bg-surface-muted text-subtle">
                     <Icon name="search" className="size-5" />
                   </span>
-                  <h2 className="mt-4 font-display text-xl font-semibold text-foreground">
+                  <h2 className="mt-4 font-display text-xl font-bold text-foreground">
                     {total > 0
                       ? t("emptyPageTitle")
                       : isFiltered
@@ -110,7 +112,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                   {(isFiltered || total > 0) && (
                     <Link
                       href="/search"
-                      className="mt-6 inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
+                      className="mt-6 inline-flex items-center gap-2 rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
                     >
                       {t("showAll")}
                     </Link>

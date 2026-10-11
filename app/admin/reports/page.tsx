@@ -47,7 +47,7 @@ export default async function AdminReportsPage() {
         {reports.length === 0 && <EmptyNote>{t("emptyReports")}</EmptyNote>}
 
         {reports.map((report) => (
-          <article key={report.id} className="rounded-xl border border-line bg-surface p-5">
+          <article key={report.id} className="reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)] p-5">
             <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
               <Link
                 href={`/school/${report.review.school.id}/reviews`}
@@ -67,7 +67,7 @@ export default async function AdminReportsPage() {
               {t("reason")}: {tReason.has(report.reason) ? tReason(report.reason) : report.reason}
             </p>
 
-            <p className="mt-3 whitespace-pre-line rounded-lg bg-surface-muted p-3 text-sm text-muted wrap-anywhere">
+            <p className="mt-3 whitespace-pre-line rounded-xl bg-surface-muted p-3 text-sm text-muted wrap-anywhere">
               {report.review.bodyText}
             </p>
 

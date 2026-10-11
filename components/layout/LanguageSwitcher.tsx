@@ -28,7 +28,7 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
     <div
       role="group"
       aria-label={t("language")}
-      className={`inline-flex rounded-lg border border-line bg-surface-muted p-0.5 text-xs font-semibold ${
+      className={`inline-flex rounded-full border border-line bg-surface-muted/80 p-0.5 text-xs font-bold ${
         isPending ? "opacity-60" : ""
       } ${className}`}
     >
@@ -41,7 +41,7 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
           aria-pressed={code === locale}
           aria-label={FULL_NAMES[code]}
           title={FULL_NAMES[code]}
-          className={`rounded-md px-2.5 py-1 transition-colors ${
+          className={`rounded-full px-3 py-1 transition-colors ${
             code === locale
               ? "bg-surface text-foreground shadow-[0_1px_2px_rgb(0_0_0/0.08)]"
               : "text-muted hover:text-foreground"

@@ -15,9 +15,9 @@ export function RatingSummary({ overall, count, categories }: RatingSummaryProps
   const hasRatings = count > 0 && Boolean(overall);
 
   return (
-    <div className="grid gap-6 rounded-xl border border-line bg-surface p-6 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center">
+    <div className="grid gap-6 reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)] p-6 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center">
       <div className="text-center sm:border-r sm:border-line sm:pr-6">
-        <p className="font-display text-5xl font-semibold text-foreground">
+        <p className="font-display text-5xl font-bold text-foreground">
           {hasRatings ? overall!.toFixed(1) : "—"}
         </p>
         <Stars value={hasRatings ? overall : 0} className="mt-2 text-xl" />

@@ -23,8 +23,8 @@ function AccessCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-xl border border-line bg-surface p-6">
-      <span className="flex size-10 items-center justify-center rounded-lg bg-accent-soft text-accent">
+    <div className="reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)] p-6">
+      <span className="flex size-10 items-center justify-center rounded-xl bg-accent-soft text-accent">
         <Icon name={icon} className="size-5" />
       </span>
       <p className="mt-4 font-medium text-foreground">{title}</p>
@@ -73,7 +73,7 @@ export default async function SchoolReviewsPage({
 
       <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px]">
         <section aria-labelledby="reviews-heading">
-          <h2 id="reviews-heading" className="font-display text-xl font-semibold text-foreground">
+          <h2 id="reviews-heading" className="font-display text-xl font-bold text-foreground">
             {reviews.length === 0 ? t("heading") : tCommon("reviewCount", { count: reviews.length })}
           </h2>
           <div className="mt-4 space-y-4">
@@ -89,7 +89,7 @@ export default async function SchoolReviewsPage({
         </section>
 
         <section id="write-review" aria-labelledby="write-review-heading" className="scroll-mt-20">
-          <h2 id="write-review-heading" className="font-display text-xl font-semibold text-foreground">
+          <h2 id="write-review-heading" className="font-display text-xl font-bold text-foreground">
             {hasActiveReview ? t("yours") : t("write")}
           </h2>
           <div className="mt-4">
@@ -114,7 +114,7 @@ export default async function SchoolReviewsPage({
             ) : access.status === "allowed" ? (
               <>
                 {ownReview?.status === "REJECTED" && (
-                  <p className="mb-4 flex gap-2 rounded-lg border border-line bg-surface-muted px-3.5 py-3 text-sm leading-6 text-muted">
+                  <p className="mb-4 flex gap-2 rounded-xl border border-line bg-surface-muted px-3.5 py-3 text-sm leading-6 text-muted">
                     <Icon name="info" className="mt-1 size-4 shrink-0 text-subtle" />
                     {t("yourRejectedNote")}
                   </p>
@@ -126,7 +126,7 @@ export default async function SchoolReviewsPage({
                 <p>{tAccess("signedOutBody", { domains: domainList(access.schoolDomains) })}</p>
                 <Link
                   href={loginHref}
-                  className="mt-5 block rounded-lg bg-accent px-4 py-2.5 text-center text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
+                  className="mt-5 block rounded-full bg-accent px-4 py-2.5 text-center text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
                 >
                   {t("loginToWrite")}
                 </Link>
@@ -143,7 +143,7 @@ export default async function SchoolReviewsPage({
                 {access.ownSchool && (
                   <Link
                     href={`/school/${access.ownSchool.id}/reviews#write-review`}
-                    className="mt-5 flex items-center justify-center gap-2 rounded-lg border border-line px-4 py-2.5 text-center text-sm font-medium text-foreground transition-colors hover:bg-surface-muted"
+                    className="mt-5 flex items-center justify-center gap-2 rounded-xl border border-line px-4 py-2.5 text-center text-sm font-medium text-foreground transition-colors hover:bg-surface-muted"
                   >
                     {tAccess("reviewOwnSchool", { school: schoolNames(access.ownSchool, locale).primary })}
                     <Icon name="arrow-right" className="size-4" />

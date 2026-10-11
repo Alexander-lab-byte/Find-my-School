@@ -35,12 +35,12 @@ export function ModerationReviewCard({ review }: { review: ModerationReview }) {
   const status = review.status as keyof typeof STATUS_TONE;
 
   return (
-    <article className="rounded-xl border border-line bg-surface">
+    <article className="reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)]">
       <header className="flex flex-wrap items-start justify-between gap-3 border-b border-line px-5 py-4">
         <div className="min-w-0">
           <Link
             href={`/school/${review.school.id}/reviews`}
-            className="font-display text-lg font-semibold text-foreground hover:text-accent"
+            className="font-display text-lg font-bold text-foreground hover:text-accent"
           >
             {primary}
           </Link>
@@ -103,7 +103,7 @@ export function ModerationReviewCard({ review }: { review: ModerationReview }) {
           </div>
         )}
 
-        <p className="whitespace-pre-line rounded-lg bg-surface-muted p-3.5 text-sm leading-6 text-foreground wrap-anywhere">
+        <p className="whitespace-pre-line rounded-xl bg-surface-muted p-3.5 text-sm leading-6 text-foreground wrap-anywhere">
           {review.bodyText}
         </p>
       </div>

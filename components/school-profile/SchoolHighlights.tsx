@@ -22,13 +22,13 @@ function StatTile({
   caption?: string;
 }) {
   return (
-    <div className="relative overflow-hidden rounded-xl border border-line bg-surface p-5">
+    <div className="relative overflow-hidden reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)] p-5">
       <span aria-hidden className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-accent via-accent/60 to-transparent" />
       <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.1em] text-subtle">
         <Icon name={icon} className="size-4 text-accent" />
         {label}
       </div>
-      <p className="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground">{value}</p>
+      <p className="mt-3 font-display text-3xl font-bold tracking-tight text-foreground">{value}</p>
       {caption && <p className="mt-1 text-sm text-muted">{caption}</p>}
     </div>
   );
@@ -84,13 +84,13 @@ export function SchoolHighlights({
       )}
 
       {graduateDestinations.length > 0 && (
-        <section className="relative overflow-hidden rounded-xl border border-line bg-surface p-6">
+        <section className="relative overflow-hidden reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)] p-6">
           <div
             aria-hidden
             className="pointer-events-none absolute -right-10 -top-10 size-40 rounded-full bg-accent-soft"
           />
           <div className="relative">
-            <h2 className="flex items-center gap-2 font-display text-xl font-semibold text-foreground">
+            <h2 className="flex items-center gap-2 font-display text-xl font-bold text-foreground">
               <Icon name="graduation" className="size-5 text-accent" />
               {t("graduates")}
             </h2>
@@ -98,7 +98,7 @@ export function SchoolHighlights({
               {graduateDestinations.map((destination) => (
                 <li
                   key={destination}
-                  className="rounded-lg border border-line bg-background px-3 py-1.5 text-sm font-medium text-foreground"
+                  className="rounded-xl border border-line bg-background px-3 py-1.5 text-sm font-medium text-foreground"
                 >
                   {destination}
                 </li>
@@ -109,8 +109,8 @@ export function SchoolHighlights({
       )}
 
       {notableAchievements.length > 0 && (
-        <section className="rounded-xl border border-line bg-surface p-6">
-          <h2 className="flex items-center gap-2 font-display text-xl font-semibold text-foreground">
+        <section className="reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)] p-6">
+          <h2 className="flex items-center gap-2 font-display text-xl font-bold text-foreground">
             <Icon name="trophy" className="size-5 text-star" />
             {t("achievements")}
           </h2>

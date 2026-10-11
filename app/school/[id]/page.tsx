@@ -140,7 +140,7 @@ export default async function SchoolOverviewPage({
             )}
           </div>
         )}
-        <div className="rounded-xl border border-line bg-surface p-5">
+        <div className="reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)] p-5">
           <h2 className="text-sm font-semibold text-foreground">{t("contact")}</h2>
           {contacts.length > 0 ? (
             <ul className="mt-4 space-y-4 text-sm">

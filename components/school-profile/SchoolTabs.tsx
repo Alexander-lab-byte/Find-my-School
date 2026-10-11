@@ -19,7 +19,7 @@ export function SchoolTabs({ schoolId, reviewCount }: { schoolId: string; review
   const base = `/school/${schoolId}`;
 
   return (
-    <nav aria-label={t("sections")} className="-mb-px flex gap-1 overflow-x-auto">
+    <nav aria-label={t("sections")} className="flex gap-1.5 overflow-x-auto py-3">
       {TABS.map((tab) => {
         const href = tab.segment ? `${base}/${tab.segment}` : base;
         const isActive = pathname === href;
@@ -29,17 +29,17 @@ export function SchoolTabs({ schoolId, reviewCount }: { schoolId: string; review
             key={tab.label}
             href={href}
             aria-current={isActive ? "page" : undefined}
-            className={`flex items-center gap-2 whitespace-nowrap border-b-2 px-3 py-3.5 text-sm font-medium transition-colors sm:px-4 ${
+            className={`flex items-center gap-2 whitespace-nowrap rounded-full px-4 py-2.5 text-sm font-bold transition-all duration-300 ${
               isActive
-                ? "border-accent text-accent"
-                : "border-transparent text-muted hover:border-line-strong hover:text-foreground"
+                ? "bg-foreground text-background shadow-[0_10px_24px_-12px_rgba(11,18,32,.55)]"
+                : "text-muted hover:bg-surface hover:text-foreground"
             }`}
           >
             {t(tab.label)}
             {tab.segment === "reviews" && reviewCount > 0 && (
               <span
                 className={`rounded-full px-1.5 py-0.5 text-xs tabular-nums ${
-                  isActive ? "bg-accent-soft text-accent" : "bg-surface-muted text-muted"
+                  isActive ? "bg-gold text-gold-foreground" : "bg-surface-muted text-muted"
                 }`}
               >
                 {reviewCount}

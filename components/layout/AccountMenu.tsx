@@ -8,7 +8,7 @@ import { signOut } from "@/app/(auth)/actions";
 import { Icon } from "@/components/common/Icon";
 
 const ITEM =
-  "flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-left text-sm text-foreground transition-colors hover:bg-surface-muted";
+  "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm text-foreground transition-colors hover:bg-surface-muted";
 
 /** Signed-in user's menu: saved schools, own reviews, profile, admin queue, log out. */
 export function AccountMenu({
@@ -56,7 +56,7 @@ export function AccountMenu({
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-haspopup="menu"
-        className="flex items-center gap-2 rounded-lg py-1.5 pl-1.5 pr-2.5 text-sm font-medium text-foreground transition-colors hover:bg-surface-muted"
+        className="flex items-center gap-2 rounded-xl py-1.5 pl-1.5 pr-2.5 text-sm font-medium text-foreground transition-colors hover:bg-surface-muted"
       >
         <span
           aria-hidden
@@ -74,7 +74,7 @@ export function AccountMenu({
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-full z-40 mt-2 w-56 rounded-xl border border-line bg-surface p-1.5 shadow-[0_16px_40px_-20px_rgb(0_0_0/0.35)]"
+          className="absolute right-0 top-full z-40 mt-2 w-56 rounded-[1.25rem] border border-line bg-surface p-1.5 shadow-[0_16px_40px_-20px_rgb(0_0_0/0.35)]"
         >
           <Link role="menuitem" href="/saved" className={ITEM}>
             <Icon name="bookmark" className="size-4 text-subtle" />

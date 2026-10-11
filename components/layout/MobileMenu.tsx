@@ -7,7 +7,7 @@ import { signOut } from "@/app/(auth)/actions";
 import { Icon } from "@/components/common/Icon";
 
 const ITEM =
-  "rounded-lg px-3 py-2.5 font-medium text-foreground transition-colors hover:bg-surface-muted";
+  "rounded-xl px-3 py-2.5 font-medium text-foreground transition-colors hover:bg-surface-muted";
 
 export function MobileMenu({
   isSignedIn,
@@ -29,7 +29,7 @@ export function MobileMenu({
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-label={open ? t("closeMenu") : t("openMenu")}
-        className="relative flex size-9 items-center justify-center rounded-lg border border-line text-muted transition-colors hover:bg-surface-muted"
+        className="relative flex size-9 items-center justify-center rounded-xl border border-line text-muted transition-colors hover:bg-surface-muted"
       >
         {waiting > 0 && !open && (
           <span aria-hidden className="absolute -right-1 -top-1 size-2.5 rounded-full border-2 border-surface bg-danger" />
@@ -44,7 +44,7 @@ export function MobileMenu({
       </button>
 
       {open && (
-        <div className="absolute inset-x-0 top-full z-30 border-b border-line bg-surface px-4 py-3 shadow-[0_16px_32px_-20px_rgb(0_0_0/0.3)]">
+        <div className="absolute inset-x-3 top-full z-30 mt-2 rounded-[1.5rem] border border-line bg-surface px-4 py-3 shadow-[0_16px_32px_-20px_rgb(0_0_0/0.3)]">
           <nav className="flex flex-col text-sm">
             <Link href="/search" onClick={close} className={ITEM}>
               {t("browseSchools")}
@@ -90,14 +90,14 @@ export function MobileMenu({
                 <Link
                   href="/login"
                   onClick={close}
-                  className="rounded-lg border border-line px-3 py-2.5 text-center font-medium text-foreground"
+                  className="rounded-xl border border-line px-3 py-2.5 text-center font-medium text-foreground"
                 >
                   {t("logIn")}
                 </Link>
                 <Link
                   href="/register"
                   onClick={close}
-                  className="rounded-lg bg-accent px-3 py-2.5 text-center font-medium text-accent-foreground"
+                  className="rounded-full bg-accent px-3 py-2.5 text-center font-medium text-accent-foreground"
                 >
                   {t("signUp")}
                 </Link>

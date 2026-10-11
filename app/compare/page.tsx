@@ -154,21 +154,21 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
 
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6">
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">{t("eyebrow")}</p>
-      <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+      <p className="eyebrow">{t("eyebrow")}</p>
+      <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
         {t("title")}
       </h1>
 
       {schools.length === 0 ? (
-        <div className="mt-8 rounded-xl border border-dashed border-line-strong bg-surface px-6 py-14 text-center">
+        <div className="mt-8 rounded-[1.25rem] border border-dashed border-line-strong bg-surface px-6 py-14 text-center">
           <span className="mx-auto flex size-12 items-center justify-center rounded-full bg-surface-muted text-subtle">
             <Icon name="columns" className="size-5" />
           </span>
-          <h2 className="mt-4 font-display text-xl font-semibold text-foreground">{t("emptyTitle")}</h2>
+          <h2 className="mt-4 font-display text-xl font-bold text-foreground">{t("emptyTitle")}</h2>
           <p className="mx-auto mt-2 max-w-md text-sm text-muted">{t("emptyBody", { max: MAX_COMPARE })}</p>
           <Link
             href="/search"
-            className="mt-6 inline-flex items-center rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
+            className="mt-6 inline-flex items-center rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
           >
             {tCommon("browseSchools")}
           </Link>
@@ -179,7 +179,7 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
             {schools.length === 1 ? t("addOneMore") : t("bestHighlighted")}
           </p>
 
-          <div className="mt-6 overflow-x-auto rounded-xl border border-line bg-surface">
+          <div className="mt-6 overflow-x-auto reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)]">
             <table className="w-full min-w-[40rem] border-collapse text-left text-sm">
               <thead>
                 <tr>
@@ -190,7 +190,7 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
                       <th key={s.id} scope="col" className="p-4 align-top font-normal">
                         <Link
                           href={`/school/${s.id}`}
-                          className="font-display text-base font-semibold text-foreground hover:text-accent"
+                          className="font-display text-base font-bold text-foreground hover:text-accent"
                         >
                           {primary}
                         </Link>
