@@ -25,12 +25,24 @@ const STOPS: { key: Stage | "uni"; y: number; side: "l" | "r" }[] = [
 
 // The path winds around the centre line; it ends exactly in the middle so it
 // can flow straight on into the campus.
-const pathX = (y: number) => 110 + 70 * Math.sin((2 * Math.PI * y) / 1320);
-const PATH_D = (() => {
-  let d = `M ${pathX(0).toFixed(1)} 0`;
-  for (let y = 20; y <= PATH_HEIGHT; y += 20) d += ` L ${pathX(y).toFixed(1)} ${y}`;
+// On phones the path is a straight line down the left edge (amplitude 0).
+const pathX = (y: number, amp: number) => 110 + amp * Math.sin((2 * Math.PI * y) / 1320);
+const buildPath = (amp: number) => {
+  let d = `M ${pathX(0, amp).toFixed(1)} 0`;
+  for (let y = 20; y <= PATH_HEIGHT; y += 20) d += ` L ${pathX(y, amp).toFixed(1)} ${y}`;
   return d;
-})();
+};
+const PATH_D_WIDE = buildPath(70);
+const PATH_D_PHONE = buildPath(0);
+
+const PHONE_QUERY = "(max-width: 767px)";
+function subscribePhone(onChange: () => void) {
+  const media = window.matchMedia(PHONE_QUERY);
+  media.addEventListener("change", onChange);
+  return () => media.removeEventListener("change", onChange);
+}
+const getPhone = () => window.matchMedia(PHONE_QUERY).matches;
+const getPhoneOnServer = () => false;
 
 const clamp = (x: number) => (x < 0 ? 0 : x > 1 ? 1 : x);
 const smooth = (x: number) => {
@@ -86,6 +98,10 @@ export function PathExperience({
   const [progress, setProgress] = useState<Progress>({ hero: 0, path: 0, campus: 0 });
   const [mouse, setMouse] = useState({ x: 0, y: 0 });
   const reduceMotion = useSyncExternalStore(subscribeReduceMotion, getReduceMotion, getReduceMotionOnServer);
+  const isPhone = useSyncExternalStore(subscribePhone, getPhone, getPhoneOnServer);
+  const amp = isPhone ? 0 : 70;
+  const px = (y: number) => pathX(y, amp);
+  const pathD = isPhone ? PATH_D_PHONE : PATH_D_WIDE;
 
   const heroRef = useRef<HTMLElement>(null);
   const pathRef = useRef<HTMLElement>(null);
@@ -213,7 +229,7 @@ export function PathExperience({
           <div
             key={`back${i}`}
             aria-hidden
-            className="cloud cloud-drift pointer-events-none absolute opacity-80 transition-transform duration-500 ease-out"
+            className="cloud cloud-drift pointer-events-none absolute origin-top-left opacity-80 transition-transform duration-500 ease-out max-md:scale-[.45]"
             style={{
               left: `${c.x}%`,
               top: `${c.y}%`,
@@ -276,7 +292,7 @@ export function PathExperience({
           <div
             key={`front${i}`}
             aria-hidden
-            className="cloud pointer-events-none absolute z-[4]"
+            className={`cloud pointer-events-none absolute z-[4] origin-bottom-left max-md:scale-[.6] ${i >= 3 ? "max-md:hidden" : ""}`}
             style={{
               left: `${c.x}%`,
               top: `${c.y}%`,
@@ -293,7 +309,7 @@ export function PathExperience({
       <section
         ref={pathRef}
         aria-label={t("pathAria")}
-        className="relative mx-auto w-full max-w-6xl"
+        className="relative mx-auto w-full max-w-6xl max-md:mb-72"
         style={{ height: PATH_HEIGHT }}
       >
         {/* Cloud floor you pass through when leaving the sky */}
@@ -305,7 +321,7 @@ export function PathExperience({
           {FLOOR_CLOUDS.map((c, i) => (
             <div
               key={`floor${i}`}
-              className="cloud absolute"
+              className="cloud absolute max-md:scale-[.55]"
               style={{
                 left: `${c.x}%`,
                 top: `${c.y}%`,
@@ -327,11 +343,11 @@ export function PathExperience({
           }}
           aria-hidden
         >
-          <div className="glass flex items-center gap-3 rounded-full !bg-surface/85 px-5 py-2.5 text-sm font-bold text-foreground shadow-[0_16px_30px_-12px_rgba(11,18,32,.45)]">
+          <div className="glass flex items-center gap-3 whitespace-nowrap rounded-full !bg-surface/85 px-5 py-2.5 text-sm font-bold text-foreground shadow-[0_16px_30px_-12px_rgba(11,18,32,.45)] max-md:gap-2 max-md:px-4 max-md:py-2 max-md:text-xs">
             <span>
               {t(`stages.${stage}`)} → {t(`regions.${dest}`)}
             </span>
-            <span className="h-1.5 w-24 overflow-hidden rounded-full bg-line">
+            <span className="h-1.5 w-24 overflow-hidden rounded-full bg-line max-md:w-12">
               <span
                 className="block h-full origin-left rounded-full bg-gradient-to-r from-accent to-gold"
                 style={{ transform: `scaleX(${p})` }}
@@ -341,17 +357,17 @@ export function PathExperience({
           </div>
         </div>
 
-        <div aria-hidden className="absolute left-1/2 top-0 -ml-[110px] w-[220px] max-md:left-0 max-md:-ml-10" style={{ height: PATH_HEIGHT }}>
+        <div aria-hidden className="absolute left-1/2 top-0 -ml-[110px] w-[220px] max-md:left-0 max-md:-ml-[72px]" style={{ height: PATH_HEIGHT }}>
           <svg width="220" height={PATH_HEIGHT} viewBox={`0 0 220 ${PATH_HEIGHT}`} className="absolute inset-0 overflow-visible">
             <defs>
-              <linearGradient id="path-gradient" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id="path-gradient" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2={PATH_HEIGHT}>
                 <stop offset="0" stopColor="#2448e8" />
                 <stop offset="1" stopColor="#ffc24d" />
               </linearGradient>
             </defs>
-            <path d={PATH_D} fill="none" className="stroke-surface" strokeOpacity={0.9} strokeWidth={10} strokeLinecap="round" strokeDasharray="2 22" />
+            <path d={pathD} fill="none" className="stroke-surface" strokeOpacity={0.9} strokeWidth={10} strokeLinecap="round" strokeDasharray="2 22" />
             <path
-              d={PATH_D}
+              d={pathD}
               fill="none"
               stroke="url(#path-gradient)"
               strokeWidth={10}
@@ -366,7 +382,7 @@ export function PathExperience({
             const reached = p * PATH_HEIGHT >= stop.y - 40;
             const isNow = i === nowIndex;
             const done = i < nowIndex;
-            const nx = pathX(stop.y);
+            const nx = px(stop.y);
             const lineLeft = stop.side === "r" ? nx + 28 : -10;
             const lineWidth = stop.side === "r" ? Math.max(0, 230 - nx - 28) : Math.max(0, nx - 18);
             return (
@@ -408,8 +424,8 @@ export function PathExperience({
           })}
 
           <div
-            className="absolute z-[3] -ml-8 -mt-8 size-16 transition-opacity duration-300"
-            style={{ left: pathX(travellerY), top: travellerY, opacity: progress.campus > 0.12 ? 0 : 1 }}
+            className="absolute z-[3] -ml-8 -mt-8 size-16 transition-opacity duration-300 max-md:scale-75"
+            style={{ left: px(travellerY), top: travellerY, opacity: progress.campus > 0.12 ? 0 : 1 }}
           >
             <div className="grid size-16 animate-[traveller-bob_2.2s_ease-in-out_infinite] place-items-center rounded-full border-4 border-accent bg-surface shadow-[0_14px_30px_-10px_rgba(11,18,32,.45)]">
               <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="text-foreground">
@@ -432,7 +448,7 @@ export function PathExperience({
             <article
               key={stop.key}
               id={`stage-${stop.key}`}
-              className={`absolute w-[min(470px,40%)] transition-[opacity,transform] duration-700 ease-[var(--ease-out-soft)] max-md:!left-[120px] max-md:!right-4 max-md:!w-auto ${
+              className={`absolute w-[min(470px,40%)] transition-[opacity,transform] duration-700 ease-[var(--ease-out-soft)] max-md:!left-[80px] max-md:!right-4 max-md:!w-auto ${
                 stop.side === "r" ? "left-[calc(50%+120px)]" : "right-[calc(50%+120px)]"
               }`}
               style={{
@@ -441,7 +457,7 @@ export function PathExperience({
                 transform: reached ? "none" : `translateX(${stop.side === "r" ? 70 : -70}px)`,
               }}
             >
-              <div className="flex flex-col gap-4 rounded-[1.75rem] border border-line bg-surface/92 p-7 shadow-[var(--shadow-card)] backdrop-blur-md">
+              <div className="flex flex-col gap-4 rounded-[1.75rem] border border-line bg-surface/92 p-7 shadow-[var(--shadow-card)] backdrop-blur-md max-md:gap-3 max-md:rounded-3xl max-md:p-5">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <span className="eyebrow">{t(`ages.${stop.key}`)}</span>
                   <span
@@ -452,10 +468,10 @@ export function PathExperience({
                     {badge}
                   </span>
                 </div>
-                <h2 className="font-display text-3xl font-extrabold leading-tight text-foreground sm:text-4xl">
+                <h2 className="font-display text-2xl font-extrabold leading-tight text-foreground sm:text-4xl">
                   {isUni ? (dest === "Anywhere" ? t("uniAnywhere") : t("uniIn", { place })) : t(`stageTitles.${stop.key}`)}
                 </h2>
-                <p className="leading-relaxed text-muted">{t(`stageTexts.${stop.key}`)}</p>
+                <p className="leading-relaxed text-muted max-md:text-[15px]">{t(`stageTexts.${stop.key}`)}</p>
 
                 {(stop.key === "kinder" || stop.key === "primary" || stop.key === "middle") && (
                   <ul className="flex flex-wrap gap-2">
@@ -489,7 +505,7 @@ export function PathExperience({
                 {isUni && universities.length > 0 && (
                   <div className="flex flex-col gap-2.5">
                     <p className="text-sm font-extrabold text-foreground">{t("reportedBySchools")}</p>
-                    <div className="grid grid-cols-2 gap-2.5">
+                    <div className="grid grid-cols-2 gap-2.5 max-md:[&>*:nth-child(n+5)]:hidden">
                       {universities.map(([name, from]) => (
                         <div key={name} className="flex flex-col gap-1 rounded-2xl bg-gradient-to-br from-[#fff6da] to-[#ffe7a3] p-3.5">
                           <span className="font-display font-bold leading-tight text-[#3a2a00]">{name}</span>
@@ -513,12 +529,12 @@ export function PathExperience({
       <section
         ref={campusRef}
         id="campus"
-        className="relative h-[1240px] overflow-hidden bg-gradient-to-b from-transparent via-[#c9d8f5] to-[#f3c9a0] max-lg:h-[1080px] max-md:h-[860px] max-sm:h-[680px] dark:via-[#1b2a52] dark:to-[#3b2a3a]"
+        className="relative h-[1240px] overflow-hidden bg-gradient-to-b from-transparent via-[#c9d8f5] to-[#f3c9a0] max-lg:h-[1080px] max-md:h-[900px] max-sm:h-[820px] dark:via-[#1b2a52] dark:to-[#3b2a3a]"
       >
         <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(800px_circle_at_18%_70%,rgba(255,190,120,.5),transparent_70%)] dark:opacity-40" />
         <div
           aria-hidden
-          className="absolute left-1/2 top-0 z-[3] -ml-[5px] h-24 w-2.5 origin-top rounded-full bg-gradient-to-b from-[#f4b740] to-gold"
+          className="absolute left-1/2 top-0 z-[3] -ml-[5px] h-24 w-2.5 origin-top rounded-full bg-gradient-to-b from-[#f4b740] to-gold max-md:hidden"
           style={{ transform: `scaleY(${smooth(progress.campus / 0.25)})` }}
         />
         <div
@@ -535,7 +551,7 @@ export function PathExperience({
         </div>
 
         <div
-          className="relative z-[3] flex flex-col items-center gap-3 px-4 pt-40 text-center"
+          className="relative z-[3] flex flex-col items-center gap-3 px-4 pt-40 text-center max-md:pt-32"
           style={{ opacity: reduceMotion ? 1 : clamp(progress.campus * 1.4) }}
         >
           <p className="eyebrow">{t("arrived", { place: dest === "Anywhere" ? t("uniAnywhere") : t("uniIn", { place }) })}</p>
