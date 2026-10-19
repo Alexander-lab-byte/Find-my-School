@@ -213,29 +213,21 @@ export async function getHomepageData() {
 }
 
 /** Every school with what the homepage path needs to match it to a destination. */
-/** Everything the homepage night-city scene and card turntable need. */
-export async function getCitySchools() {
+export async function getPathSchools() {
   return prisma.school.findMany({
-    orderBy: [{ avgOverall: "desc" }, { nameEn: "asc" }],
+    orderBy: { nameEn: "asc" },
     select: {
       id: true,
       nameEn: true,
       nameMn: true,
       type: true,
-      district: true,
-      latitude: true,
-      longitude: true,
       curriculum: true,
-      teachingLanguages: true,
-      foundedYear: true,
       graduateDestinations: true,
-      avgOverall: true,
-      reviewCount: true,
     },
   });
 }
 
-export type CitySchool = Awaited<ReturnType<typeof getCitySchools>>[number];
+export type PathSchool = Awaited<ReturnType<typeof getPathSchools>>[number];
 
 // ---------------------------------------------------------------------------
 // School profile
@@ -259,8 +251,6 @@ export const getSchoolHeader = cache((id: string) =>
       district: true,
       khoroo: true,
       address: true,
-      latitude: true,
-      longitude: true,
       phone: true,
       website: true,
       email: true,

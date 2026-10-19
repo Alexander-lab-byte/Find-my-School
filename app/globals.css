@@ -1,43 +1,70 @@
 @import "tailwindcss";
 
 /*
- * "Night city" design system.
- * Ulaanbaatar after dark: a deep navy ground, glass panels, and one bold
- * colour — the amber of a lit window — for schools, actions and matches.
- * Ice blue is the quiet second colour (the river, international schools).
- * This is a single committed dark look; there is no light variant.
+ * "Your child's path" design system.
+ * Sky-blue tops, cool paper background, white rounded surfaces, one strong
+ * blue accent and a warm gold for "goal" moments (destinations, matches).
  */
 :root {
-  color-scheme: dark;
-  --background: #070b16;
-  --surface: #0e1628;
-  --surface-muted: #131d33;
-  --foreground: #eef1f7;
-  --muted: #a9b4ca;
-  --subtle: #8a96ae;
-  --line: #1c2741;
-  --line-strong: #2a3858;
-  --accent: #ffb547;
-  --accent-hover: #ffc978;
-  --accent-foreground: #2a1a00;
-  --accent-soft: #2a2213;
-  --gold: #ffb547;
-  --gold-soft: #2a2213;
-  --gold-foreground: #2a1a00;
-  --star: #ffc24d;
-  --star-empty: #2a3858;
-  --ice: #8fb4ff;
-  --ice-soft: #16213d;
-  --good: #5fd6a4;
-  --good-soft: #10291f;
-  --tone-private: #c9b5ff;
-  --tone-private-soft: #221c3d;
-  --tone-intl: #8fb4ff;
-  --tone-intl-soft: #16213d;
-  --danger: #ff7a70;
-  --danger-soft: #2d1614;
-  --glass: rgb(18 28 52 / 0.58);
-  --glass-line: rgb(160 182 230 / 0.16);
+  color-scheme: light;
+  --background: #f4f6fa;
+  --surface: #ffffff;
+  --surface-muted: #eef1f7;
+  --foreground: #0b1220;
+  --muted: #4a5468;
+  --subtle: #5f697c;
+  --line: #e3e7ef;
+  --line-strong: #cbd3e1;
+  --accent: #2448e8;
+  --accent-hover: #16309f;
+  --accent-foreground: #ffffff;
+  --accent-soft: #e6ecff;
+  --gold: #ffc24d;
+  --gold-soft: #fff3d1;
+  --gold-foreground: #3a2a00;
+  --star: #d9930f;
+  --star-empty: #dce2ec;
+  --tone-private: #6d28d9;
+  --tone-private-soft: #f0eafe;
+  --tone-intl: #9a5806;
+  --tone-intl-soft: #fff1d3;
+  --danger: #c0262d;
+  --danger-soft: #fdeeee;
+  --sky-top: #c9dbfb;
+  --sky-deep: #7fa8f5;
+  --cloud: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --background: #0a1020;
+    --surface: #111a2e;
+    --surface-muted: #18233b;
+    --foreground: #e8edf7;
+    --muted: #a9b4c8;
+    --subtle: #94a0b6;
+    --line: #233049;
+    --line-strong: #33415e;
+    --accent: #8ea6ff;
+    --accent-hover: #b3c3ff;
+    --accent-foreground: #0a1020;
+    --accent-soft: #1a2547;
+    --gold: #f6c25a;
+    --gold-soft: #33280f;
+    --gold-foreground: #2a1e00;
+    --star: #f3c35a;
+    --star-empty: #2c3954;
+    --tone-private: #c9b5ff;
+    --tone-private-soft: #2a2145;
+    --tone-intl: #f6cf84;
+    --tone-intl-soft: #33270f;
+    --danger: #f97066;
+    --danger-soft: #2d1614;
+    --sky-top: #142347;
+    --sky-deep: #1d3266;
+    --cloud: #2a3a62;
+  }
 }
 
 @theme inline {
@@ -62,44 +89,27 @@
   --color-tone-private-soft: var(--tone-private-soft);
   --color-tone-intl: var(--tone-intl);
   --color-tone-intl-soft: var(--tone-intl-soft);
-  --color-ice: var(--ice);
-  --color-ice-soft: var(--ice-soft);
-  --color-good: var(--good);
-  --color-good-soft: var(--good-soft);
   --color-danger: var(--danger);
   --color-danger-soft: var(--danger-soft);
   --font-sans: var(--font-manrope);
-  --font-display: var(--font-unbounded);
-  --font-mono: var(--font-jetbrains), ui-monospace, Menlo, monospace;
-  --shadow-card: 0 30px 60px -36px rgb(0 0 0 / 0.7);
-  --shadow-lift: 0 40px 70px -28px rgb(0 0 0 / 0.75), 0 0 0 1px rgb(255 181 71 / 0.25);
+  --font-display: var(--font-onest);
+  --shadow-card: 0 30px 60px -36px rgb(11 18 32 / 0.35);
+  --shadow-lift: 0 40px 70px -28px rgb(11 18 32 / 0.38);
   --ease-out-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 @layer base {
   body {
-    /* Every page starts under a faint city glow, like the homepage at night. */
+    /* Every page starts under a soft sky, like the homepage. */
     background:
-      radial-gradient(900px 420px at 80% -120px, rgb(143 180 255 / 0.13), transparent 70%) no-repeat,
-      radial-gradient(700px 360px at 10% -80px, rgb(255 181 71 / 0.08), transparent 70%) no-repeat,
+      linear-gradient(180deg, var(--sky-top) 0, var(--background) 520px) no-repeat,
       var(--background);
     color: var(--foreground);
     font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
-    /* Never let one wide element zoom the whole page out on phones. */
-    overflow-x: clip;
-    /* Long words with no spaces (pasted links, "AAAA…") wrap instead of overflowing. */
-    overflow-wrap: anywhere;
   }
 
   .font-display {
     letter-spacing: -0.02em;
-    font-weight: 700;
-  }
-
-  h1,
-  h2,
-  h3 {
-    text-wrap: balance;
   }
 
   ::selection {
@@ -113,7 +123,6 @@
 
   html {
     scroll-behavior: smooth;
-    overflow-x: clip;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -176,18 +185,16 @@
       box-shadow 200ms;
   }
   .btn-primary {
-    background: var(--accent);
-    color: var(--accent-foreground);
+    background: var(--foreground);
+    color: var(--background);
   }
   .btn-primary:hover {
-    background: var(--accent-hover);
+    background: var(--accent);
+    color: var(--accent-foreground);
     transform: translateY(-2px);
-    box-shadow:
-      0 0 0 6px rgb(255 181 71 / 0.16),
-      0 18px 40px -12px rgb(255 181 71 / 0.55);
   }
   .btn-secondary {
-    background: rgb(255 255 255 / 0.04);
+    background: var(--surface);
     color: var(--foreground);
     border: 1px solid var(--line-strong);
   }
@@ -201,7 +208,7 @@
   }
   .btn-gold:hover {
     transform: translateY(-2px);
-    box-shadow: 0 0 0 6px rgb(255 181 71 / 0.16), 0 14px 30px -12px rgb(255 170 40 / 0.6);
+    box-shadow: 0 14px 30px -12px rgb(255 170 40 / 0.6);
   }
   .btn-primary:active,
   .btn-secondary:active,
@@ -217,7 +224,7 @@
     min-height: 40px;
     border-radius: 9999px;
     border: 1px solid var(--line-strong);
-    background: rgb(255 255 255 / 0.04);
+    background: color-mix(in oklab, var(--surface) 88%, transparent);
     padding: 0.5rem 1rem;
     font-weight: 700;
     font-size: 0.9rem;
@@ -234,9 +241,9 @@
   }
   .chip.is-on,
   .chip[aria-pressed="true"] {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: var(--accent-foreground);
+    background: var(--foreground);
+    border-color: var(--foreground);
+    color: var(--background);
   }
   .chip.is-accent.is-on,
   .chip.is-accent[aria-pressed="true"] {
@@ -245,52 +252,34 @@
     color: var(--accent-foreground);
   }
 
-  /* Frosted night glass, used over the 3D city and on raised panels. */
+  /* Frosted glass panel used over the sky. */
   .glass {
-    background: var(--glass);
-    backdrop-filter: blur(18px) saturate(140%);
-    -webkit-backdrop-filter: blur(18px) saturate(140%);
-    border: 1px solid var(--glass-line);
-  }
-
-  /* A card with a soft amber light that follows the pointer (set --mx/--my). */
-  .holo {
-    position: relative;
-    isolation: isolate;
-  }
-  .holo::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: radial-gradient(380px circle at var(--mx, 50%) var(--my, 0%), rgb(255 181 71 / 0.14), transparent 45%);
-    opacity: 0;
-    transition: opacity 300ms;
-    pointer-events: none;
-    z-index: -1;
-  }
-  .holo:hover::before {
-    opacity: 1;
-  }
-
-  /* Monospace label for coordinates, counts and data. */
-  .data-label {
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--subtle);
-    font-variant-numeric: tabular-nums;
+    background: color-mix(in oklab, var(--surface) 62%, transparent);
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    border: 1px solid color-mix(in oklab, var(--surface) 70%, transparent);
   }
 
   /* Small uppercase label above headings. */
   .eyebrow {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    font-weight: 600;
+    font-size: 0.78rem;
+    font-weight: 800;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--accent);
+  }
+
+  /* Cartoon cloud made from overlapping ellipses. Size it with width/height. */
+  .cloud {
+    background:
+      radial-gradient(ellipse 24% 46% at 26% 62%, var(--cloud) 97%, transparent 100%),
+      radial-gradient(ellipse 30% 60% at 50% 44%, var(--cloud) 97%, transparent 100%),
+      radial-gradient(ellipse 22% 42% at 75% 60%, var(--cloud) 97%, transparent 100%),
+      radial-gradient(ellipse 46% 26% at 50% 76%, var(--cloud) 97%, transparent 100%);
+    filter: drop-shadow(0 18px 24px rgb(42 73 168 / 0.14));
+  }
+  .cloud-drift {
+    animation: cloud-drift 12s ease-in-out infinite;
   }
 
   /* Fade-and-rise as an element scrolls into view (supporting browsers only;
@@ -360,13 +349,13 @@
   }
 }
 
-@keyframes beam-pulse {
+@keyframes cloud-drift {
   0%,
   100% {
-    opacity: 0.55;
+    translate: 0 0;
   }
   50% {
-    opacity: 1;
+    translate: 26px 0;
   }
 }
 
@@ -382,8 +371,8 @@
   border-radius: 50% 50% 50% 0;
   transform: rotate(-45deg);
   background: var(--accent);
-  border: 2px solid var(--background);
-  box-shadow: 0 0 0 4px rgb(255 181 71 / 0.18), 0 0 18px rgb(255 181 71 / 0.55);
+  border: 2px solid var(--surface);
+  box-shadow: 0 6px 14px -4px rgb(0 0 0 / 0.45);
   transition: transform 150ms;
 }
 
@@ -391,7 +380,7 @@
   width: 10px;
   height: 10px;
   border-radius: 9999px;
-  background: var(--background);
+  background: var(--surface);
 }
 
 .school-pin--private {
@@ -400,7 +389,6 @@
 
 .school-pin--international {
   background: var(--tone-intl);
-  box-shadow: 0 0 0 4px rgb(143 180 255 / 0.18), 0 0 18px rgb(143 180 255 / 0.5);
 }
 
 /* Placed from a landmark, not the school's own building: faded, no centre dot. */
@@ -423,9 +411,14 @@
 }
 
 /* Quieter basemap: mostly greyscale, so the coloured pins carry the meaning. */
-/* Night basemap: inverted and tinted blue so the amber pins glow on it. */
 .school-map .leaflet-tile-pane {
-  filter: grayscale(1) invert(1) sepia(0.35) hue-rotate(180deg) saturate(2.2) brightness(0.62) contrast(1.15);
+  filter: grayscale(0.85) contrast(0.92) brightness(1.04);
+}
+
+@media (prefers-color-scheme: dark) {
+  .school-map .leaflet-tile-pane {
+    filter: grayscale(0.9) invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9);
+  }
 }
 
 .school-map .leaflet-popup-content-wrapper,

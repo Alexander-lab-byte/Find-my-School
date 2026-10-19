@@ -33,19 +33,19 @@ export function Footer() {
   const t = useTranslations("Footer");
 
   return (
-    <footer className="relative mt-16 border-t border-line bg-[#050811] text-foreground">
-      {/* A thin horizon of school lights along the top edge. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-accent/70 to-transparent"
-      />
+    <footer className="relative mt-16 bg-foreground text-background">
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 -top-16 h-16 overflow-hidden">
+        <div className="cloud absolute -left-10 top-4 h-24 w-72 opacity-90" />
+        <div className="cloud absolute left-1/3 top-6 h-20 w-60 opacity-80" />
+        <div className="cloud absolute right-0 top-2 h-28 w-80 opacity-90" />
+      </div>
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-[1.6fr_1fr_1fr]">
         <div>
-          <Logo />
-          <p className="mt-4 max-w-sm text-sm leading-6 text-muted">
+          <Logo inverted />
+          <p className="mt-4 max-w-sm text-sm leading-6 text-background/70">
             {t("description")}
           </p>
-          <h2 className="mt-8 text-xs font-bold uppercase tracking-[0.14em] text-subtle">
+          <h2 className="mt-8 text-xs font-bold uppercase tracking-[0.14em] text-background/60">
             {t("team")}
           </h2>
           <ul className="mt-3 flex max-w-sm flex-wrap gap-2">
@@ -54,7 +54,7 @@ export function Footer() {
               return (
                 <li
                   key={key}
-                  className="flex items-center gap-2 rounded-full border border-line-strong py-1 pl-1 pr-3 text-sm text-foreground"
+                  className="flex items-center gap-2 rounded-full border border-background/15 py-1 pl-1 pr-3 text-sm text-background"
                 >
                   <span
                     aria-hidden
@@ -70,13 +70,13 @@ export function Footer() {
         </div>
         {COLUMNS.map((column) => (
           <div key={column.title}>
-            <h2 className="text-xs font-bold uppercase tracking-[0.14em] text-subtle">
+            <h2 className="text-xs font-bold uppercase tracking-[0.14em] text-background/60">
               {t(column.title)}
             </h2>
             <ul className="mt-4 space-y-2.5 text-sm">
               {column.links.map(([key, href]) => (
                 <li key={key}>
-                  <Link href={href} className="text-muted transition-colors hover:text-gold">
+                  <Link href={href} className="text-background/80 transition-colors hover:text-gold">
                     {t(key)}
                   </Link>
                 </li>
@@ -86,7 +86,7 @@ export function Footer() {
         ))}
       </div>
       <div className="border-t border-background/10">
-        <div className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-5 text-xs text-subtle sm:flex-row sm:justify-between sm:px-6">
+        <div className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-5 text-xs text-background/60 sm:flex-row sm:justify-between sm:px-6">
           <p>{t("copyright", { year: new Date().getFullYear() })}</p>
           <p>{t("disclaimer")}</p>
         </div>

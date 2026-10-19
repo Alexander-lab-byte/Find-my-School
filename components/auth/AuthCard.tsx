@@ -1,4 +1,4 @@
-import { NightGlow } from "@/components/common/NightGlow";
+import { SkyClouds } from "@/components/common/SkyClouds";
 
 /** Centered card shared by the log-in and sign-up pages. */
 export function AuthCard({
@@ -14,7 +14,7 @@ export function AuthCard({
 }) {
   return (
     <main className="relative isolate flex flex-1 items-center justify-center px-4 py-16 sm:px-6">
-      <NightGlow />
+      <SkyClouds />
       <div className="w-full max-w-md">
         <div className="glass enter rounded-[2rem] p-7 shadow-[var(--shadow-lift)] sm:p-10">
           <h1 className="font-display text-3xl font-bold tracking-tight text-foreground">
