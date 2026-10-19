@@ -462,3 +462,117 @@
 .school-map .leaflet-control-attribution a {
   color: var(--muted);
 }
+
+/* --- Page-open effects (see app/template.tsx, app/school/[id]/template.tsx) ---
+ * Paper-like motion: a book cover swinging open from its spine, a folded map
+ * opening out, and a page turning. Only transform/opacity are animated, and the
+ * fill mode is "backwards" so no transform remains once the effect ends
+ * (a leftover transform would break sticky and fixed elements on the page).
+ * The perspective lives inside the transform for the same reason.
+ * Reduced motion: the global rule above shortens these to nothing.
+ */
+.fx-book,
+.fx-unfold,
+.fx-turn {
+  position: relative;
+}
+
+/* Book cover: the left edge is the spine; the page swings toward the reader. */
+.fx-book {
+  transform-origin: left center;
+  animation: book-open 0.85s var(--ease-out-soft) backwards;
+}
+.fx-book::after {
+  /* The shadow in the gutter of an opening book, fading as it lies flat. */
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgb(11 18 32 / 0.28), rgb(11 18 32 / 0.08) 18%, transparent 45%);
+  opacity: 0;
+  animation: spine-shadow 0.85s ease-out;
+}
+
+/* Paper map: opens out from a fold along the top, with a crease fading away. */
+.fx-unfold {
+  transform-origin: center top;
+  animation: map-unfold 0.8s var(--ease-out-soft) backwards;
+}
+.fx-unfold::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent 0 32%, rgb(11 18 32 / 0.18) 33%, transparent 34% 65%, rgb(11 18 32 / 0.18) 66%, transparent 67%);
+  opacity: 0;
+  animation: spine-shadow 0.8s ease-out;
+}
+
+/* Page turn: a lighter, quicker swing for moving between a school's tabs. */
+.fx-turn {
+  transform-origin: left center;
+  animation: page-turn 0.6s var(--ease-out-soft) backwards;
+}
+.fx-turn::after {
+  /* The curl of the turning page: a soft highlight then shadow at its edge. */
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+  background: linear-gradient(270deg, rgb(11 18 32 / 0.16), rgb(255 255 255 / 0.12) 8%, transparent 22%);
+  opacity: 0;
+  animation: spine-shadow 0.6s ease-out;
+}
+
+@keyframes book-open {
+  from {
+    opacity: 0.15;
+    transform: perspective(1800px) rotateY(62deg) scale(0.98);
+  }
+  65% {
+    opacity: 1;
+    transform: perspective(1800px) rotateY(-3deg);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(1800px) rotateY(0deg);
+  }
+}
+
+@keyframes map-unfold {
+  from {
+    opacity: 0.1;
+    transform: perspective(1600px) rotateX(-72deg) scaleY(0.55);
+  }
+  60% {
+    opacity: 1;
+    transform: perspective(1600px) rotateX(5deg) scaleY(1.01);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(1600px) rotateX(0deg) scaleY(1);
+  }
+}
+
+@keyframes page-turn {
+  from {
+    opacity: 0;
+    transform: perspective(1600px) rotateY(45deg);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(1600px) rotateY(0deg);
+  }
+}
+
+@keyframes spine-shadow {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
