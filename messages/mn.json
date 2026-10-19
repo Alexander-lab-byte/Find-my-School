@@ -51,15 +51,7 @@
     "copyright": "© {year} Find My School Mongolia",
     "disclaimer": "Сэтгэгдлүүд нь олон нийтийн гишүүдийн хувийн байр суурийг илэрхийлнэ.",
     "logIn": "Нэвтрэх",
-    "schoolMap": "Сургуулийн газрын зураг",
-    "team": "Манай баг",
-    "members": {
-      "gunjid": "Гүнжид",
-      "munkhjin": "Мөнхжин",
-      "anar": "Анар",
-      "temuulen": "Тэмүүлэн",
-      "enkhbold": "Энхболд"
-    }
+    "schoolMap": "Сургуулийн газрын зураг"
   },
   "Home": {
     "eyebrow": "Монгол даяарх сургуулиуд",

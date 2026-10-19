@@ -51,15 +51,7 @@
     "copyright": "© {year} Find My School Mongolia",
     "disclaimer": "Reviews reflect the views of individual community members.",
     "logIn": "Log in",
-    "schoolMap": "School map",
-    "team": "The team",
-    "members": {
-      "gunjid": "Gunjid",
-      "munkhjin": "Munkhjin",
-      "anar": "Anar",
-      "temuulen": "Temuulen",
-      "enkhbold": "Enkhbold"
-    }
+    "schoolMap": "School map"
   },
   "Home": {
     "eyebrow": "Schools across Mongolia",
