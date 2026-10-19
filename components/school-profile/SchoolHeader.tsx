@@ -10,7 +10,7 @@ import { SaveButton } from "@/components/school-profile/SaveButton";
 import { CompareButton } from "@/components/compare/CompareButton";
 import type { ReviewAccess } from "@/lib/review-access";
 import { displayUrl, externalUrl, formatLocation, schoolNames } from "@/lib/labels";
-import { NightGlow } from "@/components/common/NightGlow";
+import { SkyClouds } from "@/components/common/SkyClouds";
 
 type School = NonNullable<Awaited<ReturnType<typeof getSchoolHeader>>>;
 
@@ -35,7 +35,7 @@ export function SchoolHeader({
 
   return (
     <header className="relative isolate border-b border-line/60">
-      <NightGlow />
+      <SkyClouds />
       <div className="mx-auto max-w-5xl px-4 pb-8 pt-6 sm:px-6 sm:pb-10">
         <div className="flex items-start justify-between gap-4">
           <BackButton fallbackHref="/search" label={tCommon("backToSearch")} />
@@ -56,12 +56,7 @@ export function SchoolHeader({
                   <Badge>{school.schoolNumber}</Badge>
                 )}
               </div>
-              {school.latitude != null && school.longitude != null && (
-                <p className="data-label mt-3">
-                  {school.latitude.toFixed(4)}° N · {school.longitude.toFixed(4)}° E
-                </p>
-              )}
-              <h1 className="mt-2 text-balance font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+              <h1 className="mt-3 text-balance font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
                 {primary}
               </h1>
               {secondary && <p className="mt-1 text-lg text-muted">{secondary}</p>}
