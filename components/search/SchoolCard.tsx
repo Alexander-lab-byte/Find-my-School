@@ -20,7 +20,7 @@ export function SchoolCard({ school }: { school: SchoolCardData }) {
   return (
     <Link
       href={`/school/${school.id}`}
-      className="lift reveal group flex h-full flex-col rounded-[1.75rem] border border-line bg-surface p-6 shadow-[0_1px_2px_rgb(0_0_0/0.03)] hover:border-line-strong"
+      className="holo lift reveal group flex h-full flex-col rounded-[1.75rem] border border-line bg-surface p-6 shadow-[0_1px_2px_rgb(0_0_0/0.03)] hover:border-line-strong"
     >
       <div className="flex items-start gap-4">
         <SchoolMonogram name={school.nameEn} type={school.type} logoUrl={school.logoUrl} />
@@ -79,7 +79,7 @@ export function SchoolCard({ school }: { school: SchoolCardData }) {
 
       {school.graduateDestinations.length > 0 && (
         <div className="mt-4 rounded-2xl bg-gold-soft px-3.5 py-3">
-          <p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.08em] text-gold-foreground/80 dark:text-gold">
+          <p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.08em] text-accent">
             <Icon name="graduation" className="size-3.5" />
             {t("graduatesGoTo")}
           </p>

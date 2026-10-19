@@ -17,7 +17,7 @@ import { SchoolCard } from "@/components/search/SchoolCard";
 import { SearchInput, SortSelect } from "@/components/search/SearchControls";
 import { PendingArea, SearchNavigationProvider } from "@/components/search/SearchNavigation";
 import { Icon } from "@/components/common/Icon";
-import { SkyClouds } from "@/components/common/SkyClouds";
+import { NightGlow } from "@/components/common/NightGlow";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Metadata");
@@ -47,7 +47,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     <SearchNavigationProvider>
       <main>
         <div className="relative isolate">
-          <SkyClouds />
+          <NightGlow />
           <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
             <p className="eyebrow">{t("eyebrow")}</p>
             <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">

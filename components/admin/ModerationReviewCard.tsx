@@ -64,12 +64,12 @@ export function ModerationReviewCard({ review }: { review: ModerationReview }) {
           <Badge>{tRole(review.user.role)}</Badge>
           <span className="break-all text-muted">{review.user.email}</span>
           {fromSchoolEmail ? (
-            <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 dark:text-emerald-400">
+            <span className="inline-flex items-center gap-1 text-xs font-medium text-good">
               <Icon name="shield" className="size-3.5" />
               {t("schoolEmail")}
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-700 dark:text-amber-400">
+            <span className="inline-flex items-center gap-1 text-xs font-medium text-accent">
               <Icon name="info" className="size-3.5" />
               {t("notSchoolEmail")}
             </span>
