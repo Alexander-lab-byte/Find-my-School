@@ -1,12 +1,11 @@
 import Link from "next/link";
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 import type { SchoolType } from "@prisma/client";
-import { getHomepageData, getMapSchools, getPathSchools } from "@/lib/schools";
-import { regionsWithSchools } from "@/lib/destinations";
-import { PathExperience } from "@/components/home/PathExperience";
+import { getCitySchools, getHomepageData, getMapSchools } from "@/lib/schools";
+import { NightCity } from "@/components/home/NightCity";
+import { SchoolTurntable } from "@/components/home/SchoolTurntable";
 import { reviewAverage } from "@/lib/ratings";
 import { SCHOOL_TYPES, schoolNames } from "@/lib/labels";
-import { SchoolCard } from "@/components/search/SchoolCard";
 import { Icon, type IconName } from "@/components/common/Icon";
 import { Stars } from "@/components/common/StarRating";
 import { SchoolMap } from "@/components/map/SchoolMap";
@@ -43,12 +42,13 @@ function SectionHeading({
 }
 
 export default async function Home() {
-  const [{ schools, totalSchools, typeCounts, districts, recentReviews }, { pinned }, pathSchools] = await Promise.all([
+  const [{ totalSchools, typeCounts, districts, recentReviews }, { pinned }, citySchools] = await Promise.all([
     getHomepageData(),
     getMapSchools(),
-    getPathSchools(),
+    getCitySchools(),
   ]);
   const t = await getTranslations("Home");
+  const tCity = await getTranslations("City");
   const tMap = await getTranslations("Map");
   const tCommon = await getTranslations("Common");
   const tType = await getTranslations("SchoolTypePlural");
@@ -60,43 +60,39 @@ export default async function Home() {
 
   return (
     <main>
-      {/* Sky hero → your child's path → campus */}
-      <PathExperience schools={pathSchools} regions={regionsWithSchools(pathSchools)} />
+      {/* Ulaanbaatar at night in 3D — every light is a school */}
+      <NightCity schools={citySchools} />
 
-      {/* School list — visible straight away, no search needed */}
-      <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-24">
-        <SectionHeading
-          eyebrow={t("directoryEyebrow")}
-          title={t("directoryTitle")}
-          description={t("directoryDescription")}
-          action={
-            totalSchools > 0 && (
-              <Link
-                href="/search"
-                className="btn-secondary shrink-0"
-              >
-                {t("viewAll", { count: totalSchools })}
-                <Icon name="arrow-right" className="size-4" />
-              </Link>
-            )
-          }
-        />
-
-        {schools.length > 0 ? (
-          <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {schools.map((school) => (
-              <SchoolCard key={school.id} school={school} />
-            ))}
-          </div>
-        ) : (
-          <p className="mt-8 rounded-[1.75rem] border border-dashed border-line-strong p-10 text-center text-muted">
-            {t("noSchools")}
-          </p>
-        )}
+      {/* Card turntable — every school, visible straight away */}
+      <section className="py-20 sm:py-24">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <SectionHeading
+            eyebrow={tCity("turnEyebrow")}
+            title={tCity("turnTitle")}
+            description={tCity("turnLede")}
+            action={
+              totalSchools > 0 && (
+                <Link href="/search" className="btn-secondary shrink-0">
+                  {t("viewAll", { count: totalSchools })}
+                  <Icon name="arrow-right" className="size-4" />
+                </Link>
+              )
+            }
+          />
+        </div>
+        <div className="mt-8">
+          {citySchools.length > 0 ? (
+            <SchoolTurntable schools={citySchools} />
+          ) : (
+            <p className="mx-auto max-w-6xl rounded-[1.75rem] border border-dashed border-line-strong p-10 text-center text-muted">
+              {t("noSchools")}
+            </p>
+          )}
+        </div>
       </section>
 
       {/* Browse by type & district */}
-      <section className="relative overflow-hidden bg-surface-muted/60">
+      <section className="relative overflow-hidden border-y border-line bg-surface/40">
         <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-24">
           <SectionHeading
             eyebrow={t("browseEyebrow")}
@@ -111,7 +107,7 @@ export default async function Home() {
                 <Link
                   key={type}
                   href={`/search?type=${type}`}
-                  className="lift reveal group rounded-[1.75rem] border border-line bg-surface p-7"
+                  className="holo lift reveal group rounded-[1.75rem] border border-line bg-surface p-7"
                 >
                   <span className="flex size-12 items-center justify-center rounded-2xl bg-accent-soft text-accent transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110">
                     <Icon name={TYPE_ICONS[type]} className="size-5" />
@@ -183,7 +179,7 @@ export default async function Home() {
             {recentReviews.map((review) => (
               <article
                 key={review.id}
-                className="lift reveal flex flex-col rounded-[1.75rem] border border-line bg-surface p-7"
+                className="holo lift reveal flex flex-col rounded-[1.75rem] border border-line bg-surface p-7"
               >
                 <Stars value={reviewAverage(review.rating)} className="text-base" />
                 <p className="mt-3 line-clamp-4 text-sm leading-6 text-foreground">
@@ -208,10 +204,21 @@ export default async function Home() {
 
       {/* Call to action */}
       <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-24">
-        <div className="reveal relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#6f98ee] via-[#a9c6f7] to-[#dce7fa] px-6 py-16 text-center text-[#0b1220] sm:px-12 dark:from-[#16264d] dark:via-[#1d3266] dark:to-[#26386b] dark:text-white">
-          <div aria-hidden className="cloud cloud-drift pointer-events-none absolute -left-16 top-6 h-28 w-72 opacity-90" />
-          <div aria-hidden className="cloud cloud-drift pointer-events-none absolute -right-10 bottom-4 h-32 w-80 opacity-90 [animation-delay:-4s]" />
-          <Icon name="message" className="relative mx-auto size-8 opacity-80" />
+        <div className="reveal relative isolate overflow-hidden rounded-[2rem] border border-line-strong bg-surface px-6 py-16 text-center sm:px-12">
+          {/* A skyline of lit windows rising from the bottom edge. */}
+          <div
+            aria-hidden
+            className="absolute inset-x-0 bottom-0 -z-10 h-2/3 opacity-70"
+            style={{
+              backgroundImage:
+                "radial-gradient(circle, rgb(255 181 71 / 0.9) 0 1.2px, transparent 1.8px), radial-gradient(circle, rgb(143 180 255 / 0.6) 0 1px, transparent 1.5px)",
+              backgroundSize: "28px 22px, 14px 14px",
+              maskImage: "linear-gradient(to top, #000, transparent)",
+              WebkitMaskImage: "linear-gradient(to top, #000, transparent)",
+            }}
+          />
+          <div aria-hidden className="absolute -bottom-32 left-1/2 -z-10 h-64 w-[80%] -translate-x-1/2 rounded-full bg-accent/20 blur-3xl" />
+          <Icon name="message" className="relative mx-auto size-8 text-accent" />
           <h2 className="relative mx-auto mt-4 max-w-xl text-balance font-display text-4xl font-extrabold tracking-tight">
             {t("ctaTitle")}
           </h2>

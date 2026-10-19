@@ -31,15 +31,15 @@ export function SchoolTabs({ schoolId, reviewCount }: { schoolId: string; review
             aria-current={isActive ? "page" : undefined}
             className={`flex items-center gap-2 whitespace-nowrap rounded-full px-4 py-2.5 text-sm font-bold transition-all duration-300 ${
               isActive
-                ? "bg-foreground text-background shadow-[0_10px_24px_-12px_rgba(11,18,32,.55)]"
-                : "text-muted hover:bg-surface hover:text-foreground"
+                ? "bg-accent text-accent-foreground shadow-[0_0_24px_-6px_rgb(255_181_71/0.7)]"
+                : "text-muted hover:bg-white/5 hover:text-foreground"
             }`}
           >
             {t(tab.label)}
             {tab.segment === "reviews" && reviewCount > 0 && (
               <span
                 className={`rounded-full px-1.5 py-0.5 text-xs tabular-nums ${
-                  isActive ? "bg-gold text-gold-foreground" : "bg-surface-muted text-muted"
+                  isActive ? "bg-accent-foreground/15 text-accent-foreground" : "bg-surface-muted text-muted"
                 }`}
               >
                 {reviewCount}

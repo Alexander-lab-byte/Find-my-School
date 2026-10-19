@@ -10,7 +10,7 @@ import { Logo } from "@/components/layout/Logo";
 import { MobileMenu } from "@/components/layout/MobileMenu";
 
 const NAV_LINK =
-  "rounded-full px-3.5 py-2 font-semibold text-muted transition-colors hover:bg-surface/70 hover:text-foreground";
+  "rounded-full px-3.5 py-2 font-semibold text-muted transition-colors hover:bg-white/5 hover:text-foreground";
 
 export async function Header() {
   // Set by lib/supabase/middleware.ts — avoids a second network round
@@ -24,7 +24,7 @@ export async function Header() {
   const waiting = isAdmin ? (await getModerationCounts()).total : 0;
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line/70 bg-surface/65 backdrop-blur-xl backdrop-saturate-150">
+    <header className="sticky top-0 z-40 border-b border-[var(--glass-line)] bg-background/70 backdrop-blur-xl backdrop-saturate-150">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
         <Logo />
 
