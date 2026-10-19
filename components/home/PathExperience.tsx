@@ -209,6 +209,80 @@ export function PathExperience({
   const floor = 1 - smooth(travellerY / 380);
   const compareHref = `/compare?ids=${top.slice(0, MAX_COMPARE).map((x) => x.school.id).join(",")}`;
 
+  // One stage card. Shared by the winding desktop path and the phone timeline.
+  const renderCard = (stop: (typeof STOPS)[number], i: number) => {
+    const isNow = i === nowIndex;
+    const done = i < nowIndex;
+    const isUni = stop.key === "uni";
+    const isHigh = stop.key === "high";
+    const badge = isNow ? t("badgeNow") : done ? t("badgeDone") : isUni ? t("badgeGoal") : t("badgeNext");
+    return (
+          <div className="flex flex-col gap-4 rounded-[1.75rem] border border-line bg-surface/92 p-7 shadow-[var(--shadow-card)] backdrop-blur-md max-md:gap-3 max-md:rounded-3xl max-md:p-5">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <span className="eyebrow">{t(`ages.${stop.key}`)}</span>
+              <span
+                className={`rounded-full px-3 py-1 text-xs font-extrabold ${
+                  isNow ? "bg-accent text-accent-foreground" : isUni ? "bg-gold text-gold-foreground" : "bg-surface-muted text-muted"
+                }`}
+              >
+                {badge}
+              </span>
+            </div>
+            <h2 className="font-display text-2xl font-extrabold leading-tight text-foreground sm:text-4xl">
+              {isUni ? (dest === "Anywhere" ? t("uniAnywhere") : t("uniIn", { place })) : t(`stageTitles.${stop.key}`)}
+            </h2>
+            <p className="leading-relaxed text-muted max-md:text-[15px]">{t(`stageTexts.${stop.key}`)}</p>
+
+            {(stop.key === "kinder" || stop.key === "primary" || stop.key === "middle") && (
+              <ul className="flex flex-wrap gap-2">
+                {(t.raw(`stageTags.${stop.key}`) as string[]).map((tag) => (
+                  <li key={tag} className="rounded-full bg-accent-soft px-3 py-1.5 text-sm font-bold text-accent">
+                    {tag}
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {isHigh && top.length > 0 && (
+              <div className="flex flex-col gap-2.5">
+                <p className="text-sm font-extrabold text-foreground">{t("bestOnPath")}</p>
+                {top.map(({ school, hits }) => (
+                  <Link
+                    key={school.id}
+                    href={`/school/${school.id}`}
+                    className="lift flex items-center gap-3.5 rounded-2xl border border-line bg-background/70 p-3"
+                  >
+                    <SchoolMonogram name={school.nameEn} type={school.type} />
+                    <span className="flex min-w-0 flex-col">
+                      <span className="font-display font-bold text-foreground">{schoolNames(school, locale).primary}</span>
+                      <span className="truncate text-sm text-muted">{hits.slice(0, 3).join(", ")}</span>
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            )}
+
+            {isUni && universities.length > 0 && (
+              <div className="flex flex-col gap-2.5">
+                <p className="text-sm font-extrabold text-foreground">{t("reportedBySchools")}</p>
+                <div className="grid grid-cols-2 gap-2.5 max-md:grid-cols-1 max-md:[&>*:nth-child(n+5)]:hidden">
+                  {universities.map(([name, from]) => (
+                    <div key={name} className="flex flex-col gap-1 rounded-2xl bg-gradient-to-br from-[#fff6da] to-[#ffe7a3] p-3.5">
+                      <span className="font-display font-bold leading-tight text-[#3a2a00]">{name}</span>
+                      <span className="line-clamp-2 text-xs font-bold text-[#6b5310]">{from.join(", ")}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {(isHigh || isUni) && ranked.length === 0 && (
+              <p className="rounded-2xl bg-surface-muted p-4 text-muted">{t("noMatches")}</p>
+            )}
+          </div>
+    );
+  };
+
   return (
     <>
       {/* ---------------- Hero: in the clouds ---------------- */}
@@ -305,11 +379,72 @@ export function PathExperience({
         ))}
       </section>
 
-      {/* ---------------- The path ---------------- */}
+      {/* Floating summary of the chosen path, only while walking it */}
+        <div
+          className="pointer-events-none fixed inset-x-0 bottom-5 z-30 flex justify-center px-4 transition-[opacity,transform] duration-500"
+          style={{
+            opacity: p > 0.01 && progress.campus < 0.1 ? 1 : 0,
+            transform: `translateY(${p > 0.01 && progress.campus < 0.1 ? 0 : 24}px)`,
+          }}
+          aria-hidden
+        >
+          <div className="glass flex items-center gap-3 whitespace-nowrap rounded-full !bg-surface/85 px-5 py-2.5 text-sm font-bold text-foreground shadow-[0_16px_30px_-12px_rgba(11,18,32,.45)] max-md:gap-2 max-md:px-4 max-md:py-2 max-md:text-xs">
+            <span>
+              {t(`stages.${stage}`)} → {t(`regions.${dest}`)}
+            </span>
+            <span className="h-1.5 w-24 overflow-hidden rounded-full bg-line max-md:w-12">
+              <span
+                className="block h-full origin-left rounded-full bg-gradient-to-r from-accent to-gold"
+                style={{ transform: `scaleX(${p})` }}
+              />
+            </span>
+            <span className="text-muted">{t("matchShort", { count: ranked.length })}</span>
+          </div>
+        </div>
+
+
+      {/* ---------------- The path on phones: a plain timeline ----------------
+          The winding desktop path leaves big empty gaps on a narrow screen, so
+          phones get the same stages as a list, with a line that fills as you
+          scroll and cards that sharpen into view. */}
+      {isPhone ? (
+        <section ref={pathRef} aria-label={t("pathAria")} className="relative px-4 pb-24 pt-6">
+          <ol className="relative flex flex-col gap-7 pl-14">
+            <span aria-hidden className="absolute bottom-8 left-[20px] top-8 w-1.5 rounded-full bg-surface" />
+            <span
+              aria-hidden
+              className="absolute bottom-8 left-[20px] top-8 w-1.5 origin-top rounded-full bg-gradient-to-b from-accent to-gold"
+              style={{ transform: `scaleY(${p})` }}
+            />
+            {STOPS.map((stop, i) => {
+              const reached = reduceMotion || p >= i / (STOPS.length - 1) - 0.04;
+              const isNow = i === nowIndex;
+              const done = i < nowIndex;
+              return (
+                <li key={stop.key} id={`stage-${stop.key}`} className="reveal relative">
+                  <span
+                    aria-hidden
+                    className={`absolute -left-14 top-5 grid size-11 place-items-center rounded-full font-display text-base font-extrabold transition-all duration-500 ${
+                      reached
+                        ? isNow
+                          ? "bg-accent text-accent-foreground shadow-[0_0_0_6px_color-mix(in_oklab,var(--accent)_18%,transparent)]"
+                          : "bg-foreground text-background"
+                        : "border-[3px] border-line bg-surface text-subtle"
+                    }`}
+                  >
+                    {done ? "✓" : i + 1}
+                  </span>
+                  {renderCard(stop, i)}
+                </li>
+              );
+            })}
+          </ol>
+        </section>
+      ) : (
       <section
         ref={pathRef}
         aria-label={t("pathAria")}
-        className="relative mx-auto w-full max-w-6xl max-md:mb-72"
+        className="relative mx-auto w-full max-w-6xl"
         style={{ height: PATH_HEIGHT }}
       >
         {/* Cloud floor you pass through when leaving the sky */}
@@ -332,29 +467,6 @@ export function PathExperience({
               }}
             />
           ))}
-        </div>
-
-        {/* Floating summary of the chosen path, only while walking it */}
-        <div
-          className="pointer-events-none fixed inset-x-0 bottom-5 z-30 flex justify-center px-4 transition-[opacity,transform] duration-500"
-          style={{
-            opacity: p > 0.01 && progress.campus < 0.1 ? 1 : 0,
-            transform: `translateY(${p > 0.01 && progress.campus < 0.1 ? 0 : 24}px)`,
-          }}
-          aria-hidden
-        >
-          <div className="glass flex items-center gap-3 whitespace-nowrap rounded-full !bg-surface/85 px-5 py-2.5 text-sm font-bold text-foreground shadow-[0_16px_30px_-12px_rgba(11,18,32,.45)] max-md:gap-2 max-md:px-4 max-md:py-2 max-md:text-xs">
-            <span>
-              {t(`stages.${stage}`)} → {t(`regions.${dest}`)}
-            </span>
-            <span className="h-1.5 w-24 overflow-hidden rounded-full bg-line max-md:w-12">
-              <span
-                className="block h-full origin-left rounded-full bg-gradient-to-r from-accent to-gold"
-                style={{ transform: `scaleX(${p})` }}
-              />
-            </span>
-            <span className="text-muted">{t("matchShort", { count: ranked.length })}</span>
-          </div>
         </div>
 
         <div aria-hidden className="absolute left-1/2 top-0 -ml-[110px] w-[220px] max-md:left-0 max-md:-ml-[72px]" style={{ height: PATH_HEIGHT }}>
@@ -439,11 +551,7 @@ export function PathExperience({
 
         {STOPS.map((stop, i) => {
           const reached = reduceMotion || p * PATH_HEIGHT >= stop.y - 40;
-          const isNow = i === nowIndex;
           const done = i < nowIndex;
-          const isUni = stop.key === "uni";
-          const isHigh = stop.key === "high";
-          const badge = isNow ? t("badgeNow") : done ? t("badgeDone") : isUni ? t("badgeGoal") : t("badgeNext");
           return (
             <article
               key={stop.key}
@@ -457,73 +565,12 @@ export function PathExperience({
                 transform: reached ? "none" : `translateX(${stop.side === "r" ? 70 : -70}px)`,
               }}
             >
-              <div className="flex flex-col gap-4 rounded-[1.75rem] border border-line bg-surface/92 p-7 shadow-[var(--shadow-card)] backdrop-blur-md max-md:gap-3 max-md:rounded-3xl max-md:p-5">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <span className="eyebrow">{t(`ages.${stop.key}`)}</span>
-                  <span
-                    className={`rounded-full px-3 py-1 text-xs font-extrabold ${
-                      isNow ? "bg-accent text-accent-foreground" : isUni ? "bg-gold text-gold-foreground" : "bg-surface-muted text-muted"
-                    }`}
-                  >
-                    {badge}
-                  </span>
-                </div>
-                <h2 className="font-display text-2xl font-extrabold leading-tight text-foreground sm:text-4xl">
-                  {isUni ? (dest === "Anywhere" ? t("uniAnywhere") : t("uniIn", { place })) : t(`stageTitles.${stop.key}`)}
-                </h2>
-                <p className="leading-relaxed text-muted max-md:text-[15px]">{t(`stageTexts.${stop.key}`)}</p>
-
-                {(stop.key === "kinder" || stop.key === "primary" || stop.key === "middle") && (
-                  <ul className="flex flex-wrap gap-2">
-                    {(t.raw(`stageTags.${stop.key}`) as string[]).map((tag) => (
-                      <li key={tag} className="rounded-full bg-accent-soft px-3 py-1.5 text-sm font-bold text-accent">
-                        {tag}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-
-                {isHigh && top.length > 0 && (
-                  <div className="flex flex-col gap-2.5">
-                    <p className="text-sm font-extrabold text-foreground">{t("bestOnPath")}</p>
-                    {top.map(({ school, hits }) => (
-                      <Link
-                        key={school.id}
-                        href={`/school/${school.id}`}
-                        className="lift flex items-center gap-3.5 rounded-2xl border border-line bg-background/70 p-3"
-                      >
-                        <SchoolMonogram name={school.nameEn} type={school.type} />
-                        <span className="flex min-w-0 flex-col">
-                          <span className="font-display font-bold text-foreground">{schoolNames(school, locale).primary}</span>
-                          <span className="truncate text-sm text-muted">{hits.slice(0, 3).join(", ")}</span>
-                        </span>
-                      </Link>
-                    ))}
-                  </div>
-                )}
-
-                {isUni && universities.length > 0 && (
-                  <div className="flex flex-col gap-2.5">
-                    <p className="text-sm font-extrabold text-foreground">{t("reportedBySchools")}</p>
-                    <div className="grid grid-cols-2 gap-2.5 max-md:[&>*:nth-child(n+5)]:hidden">
-                      {universities.map(([name, from]) => (
-                        <div key={name} className="flex flex-col gap-1 rounded-2xl bg-gradient-to-br from-[#fff6da] to-[#ffe7a3] p-3.5">
-                          <span className="font-display font-bold leading-tight text-[#3a2a00]">{name}</span>
-                          <span className="line-clamp-2 text-xs font-bold text-[#6b5310]">{from.join(", ")}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {(isHigh || isUni) && ranked.length === 0 && (
-                  <p className="rounded-2xl bg-surface-muted p-4 text-muted">{t("noMatches")}</p>
-                )}
-              </div>
+              {renderCard(stop, i)}
             </article>
           );
         })}
       </section>
+      )}
 
       {/* ---------------- Arrival: the campus ---------------- */}
       <section
