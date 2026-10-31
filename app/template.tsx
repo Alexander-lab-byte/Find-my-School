@@ -10,7 +10,7 @@ import { isClientNavigation, markHydrated, markRootRender, revealPage } from "@/
  *    after another (see revealPage);
  *  - on a fresh page load, the page as a whole fades out of a light blur
  *    (pure CSS, so it plays before JavaScript loads).
- * The homepage keeps its own scroll animation. Reduced motion turns it off.
+ * The homepage skips it so its hero and search show instantly. Reduced motion turns it off.
  */
 export default function Template({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
