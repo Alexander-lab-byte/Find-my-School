@@ -283,6 +283,9 @@
       radial-gradient(ellipse 46% 26% at 50% 76%, var(--cloud) 97%, transparent 100%);
     filter: drop-shadow(0 18px 24px rgb(42 73 168 / 0.14));
   }
+  .cloud-drift {
+    animation: cloud-drift 12s ease-in-out infinite;
+  }
 
   /* Fade-and-rise as an element scrolls into view (supporting browsers only;
      elsewhere it simply shows). */
@@ -313,11 +316,22 @@
 @keyframes reveal-up {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    filter: blur(8px);
+    transform: translateY(32px);
   }
   to {
     opacity: 1;
     transform: none;
+  }
+}
+
+@keyframes cloud-drift {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 26px 0;
   }
 }
 
@@ -360,12 +374,6 @@
 
 .school-pin--approximate > span {
   visibility: hidden;
-}
-
-/* The school picked in the map's list. */
-.school-pin--selected {
-  transform: rotate(-45deg) scale(1.35);
-  box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent) 30%, transparent), 0 8px 18px -4px rgb(0 0 0 / 0.5);
 }
 
 .leaflet-marker-icon:hover .school-pin,
@@ -426,3 +434,25 @@
   color: var(--muted);
 }
 
+/* --- Page entrance (see app/template.tsx and lib/page-motion.ts) ---------
+ * On a fresh page load the page fades out of a light blur. Client-side
+ * navigations get a per-element stagger from JavaScript instead.
+ * Fill mode "backwards" leaves no filter/transform behind afterwards
+ * (a leftover one would break sticky and fixed elements on the page).
+ */
+.fx-focus {
+  animation: page-focus 0.7s var(--ease-out-soft) backwards;
+}
+
+@keyframes page-focus {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: none;
+  }
+}

@@ -24,7 +24,7 @@ function Option({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`flex min-h-10 w-full items-center gap-2.5 rounded-xl px-2 text-left text-sm transition-colors ${
+      className={`flex w-full items-center gap-2.5 rounded-xl px-2 py-1.5 text-left text-sm transition-colors ${
         active
           ? "bg-accent-soft font-medium text-accent"
           : "text-muted hover:bg-surface-muted hover:text-foreground"

@@ -27,7 +27,7 @@ export function BackButton({
     <button
       type="button"
       onClick={handleClick}
-      className="-ml-2 inline-flex min-h-10 items-center gap-1.5 rounded-xl px-2 text-sm text-muted transition-colors hover:text-accent"
+      className="inline-flex items-center gap-1.5 text-sm text-muted transition-colors hover:text-accent"
     >
       <Icon name="arrow-left" className="size-4" />
       {label}

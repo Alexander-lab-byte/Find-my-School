@@ -6,10 +6,8 @@ import { StarRating } from "@/components/common/StarRating";
 import {
   Fact,
   FactGrid,
-  IncompleteProfile,
   ProfileSection,
   ProseCard,
-  factColumns,
 } from "@/components/school-profile/ProfileSection";
 
 export default async function SchoolDormitoryPage({
@@ -23,6 +21,7 @@ export default async function SchoolDormitoryPage({
   if (!school) notFound();
 
   const t = await getTranslations("Dorm");
+  const tCommon = await getTranslations("Common");
 
   if (!school.dormitory) {
     return (
@@ -41,42 +40,22 @@ export default async function SchoolDormitoryPage({
   }
 
   const dorm = school.dormitory;
-  const tIncomplete = await getTranslations("Incomplete");
-
-  // Known facts only; what's missing is listed once at the bottom.
-  const facts: { key: string; label: string; value: React.ReactNode }[] = [];
-  if (school.avgDorms) {
-    facts.push({ key: "rating", label: t("rating"), value: <StarRating value={school.avgDorms} size="sm" /> });
-  }
-  if (dorm.roomCapacity) {
-    facts.push({ key: "capacity", label: t("capacity"), value: t("perRoom", { count: dorm.roomCapacity }) });
-  }
-  if (dorm.monthlyFeeAmount) {
-    facts.push({
-      key: "fee",
-      label: t("fee"),
-      value: t("feeValue", { amount: dorm.monthlyFeeAmount.toLocaleString("en-US") }),
-    });
-  }
-  const missing = [
-    !dorm.roomCapacity && t("capacity"),
-    !dorm.monthlyFeeAmount && t("fee"),
-    !dorm.livingConditions && t("living"),
-    !dorm.boardingRules && t("rules"),
-    !dorm.safetyInfo && t("safety"),
-  ].filter((label): label is string => Boolean(label));
 
   return (
     <div className="space-y-10">
-      {facts.length > 0 && (
-        <FactGrid columns={factColumns(facts.length)}>
-          {facts.map((fact) => (
-            <Fact key={fact.key} label={fact.label}>
-              {fact.value}
-            </Fact>
-          ))}
-        </FactGrid>
-      )}
+      <FactGrid>
+        <Fact label={t("rating")}>
+          <StarRating value={school.avgDorms} size="sm" />
+        </Fact>
+        <Fact label={t("capacity")}>
+          {dorm.roomCapacity ? t("perRoom", { count: dorm.roomCapacity }) : tCommon("notReported")}
+        </Fact>
+        <Fact label={t("fee")}>
+          {dorm.monthlyFeeAmount
+            ? t("feeValue", { amount: dorm.monthlyFeeAmount.toLocaleString("en-US") })
+            : tCommon("notReported")}
+        </Fact>
+      </FactGrid>
 
       {dorm.livingConditions && (
         <ProfileSection title={t("living")}>
@@ -95,8 +74,6 @@ export default async function SchoolDormitoryPage({
           <ProseCard>{dorm.safetyInfo}</ProseCard>
         </ProfileSection>
       )}
-
-      <IncompleteProfile title={tIncomplete("title")} body={tIncomplete("body")} missing={missing} />
     </div>
   );
 }

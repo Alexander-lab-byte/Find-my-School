@@ -1,11 +1,10 @@
 "use client";
 
 import "leaflet/dist/leaflet.css";
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo } from "react";
 import Link from "next/link";
 import { divIcon, latLngBounds } from "leaflet";
-import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
-import type { Marker as LeafletMarker } from "leaflet";
+import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import { useLocale, useTranslations } from "next-intl";
 import type { SchoolType } from "@prisma/client";
 import { formatLocation, schoolNames } from "@/lib/labels";
@@ -30,10 +29,6 @@ export type LeafletMapProps = {
   height: number;
   /** Allow scroll-wheel zoom (off for maps embedded in a scrolling page). */
   scrollZoom?: boolean;
-  /** Highlighted school: its pin grows and its popup opens. */
-  selectedId?: string | null;
-  /** Called when a pin is clicked. */
-  onSelect?: (id: string) => void;
 };
 
 const UB_CENTER: [number, number] = [47.9077, 106.9172];
@@ -49,15 +44,15 @@ const ATTRIBUTION =
 
 // One icon per type × precision; Leaflet icons are plain HTML, styled in globals.css.
 const icons = new Map<string, ReturnType<typeof divIcon>>();
-function pinIcon(type: SchoolType, approximate: boolean, selected = false) {
-  const key = `${type}-${approximate}-${selected}`;
+function pinIcon(type: SchoolType, approximate: boolean) {
+  const key = `${type}-${approximate}`;
   let icon = icons.get(key);
   if (!icon) {
     icon = divIcon({
       className: "",
       html: `<span class="school-pin school-pin--${type.toLowerCase()}${
         approximate ? " school-pin--approximate" : ""
-      }${selected ? " school-pin--selected" : ""}"><span></span></span>`,
+      }"><span></span></span>`,
       iconSize: [30, 30],
       iconAnchor: [15, 30],
       popupAnchor: [0, -28],
@@ -67,35 +62,7 @@ function pinIcon(type: SchoolType, approximate: boolean, selected = false) {
   return icon;
 }
 
-/** Pans to the selected school and opens its popup. */
-function FocusSelected({
-  selectedId,
-  schools,
-  markers,
-}: {
-  selectedId?: string | null;
-  schools: MapPoint[];
-  markers: React.RefObject<Map<string, LeafletMarker>>;
-}) {
-  const map = useMap();
-  useEffect(() => {
-    if (!selectedId) return;
-    const school = schools.find((s) => s.id === selectedId);
-    if (!school) return;
-    map.flyTo([school.latitude, school.longitude], Math.max(map.getZoom(), 14), { duration: 0.6 });
-    markers.current.get(selectedId)?.openPopup();
-  }, [selectedId, schools, map, markers]);
-  return null;
-}
-
-export default function LeafletMap({
-  schools,
-  height,
-  scrollZoom = false,
-  selectedId,
-  onSelect,
-}: LeafletMapProps) {
-  const markers = useRef(new Map<string, LeafletMarker>());
+export default function LeafletMap({ schools, height, scrollZoom = false }: LeafletMapProps) {
   const t = useTranslations("Map");
   const tType = useTranslations("SchoolType");
   const tPlace = useTranslations("Place");
@@ -120,22 +87,15 @@ export default function LeafletMap({
       className="school-map z-0 w-full"
     >
       <TileLayer url={TILE_URL} attribution={ATTRIBUTION} maxZoom={19} />
-      <FocusSelected selectedId={selectedId} schools={schools} markers={markers} />
       {schools.map((school) => {
         const { primary, secondary } = schoolNames(school, locale);
         return (
           <Marker
             key={school.id}
             position={[school.latitude, school.longitude]}
-            icon={pinIcon(school.type, school.locationApproximate, school.id === selectedId)}
-            zIndexOffset={school.id === selectedId ? 1000 : 0}
+            icon={pinIcon(school.type, school.locationApproximate)}
             title={primary}
             alt={primary}
-            ref={(marker) => {
-              if (marker) markers.current.set(school.id, marker);
-              else markers.current.delete(school.id);
-            }}
-            eventHandlers={onSelect ? { click: () => onSelect(school.id) } : undefined}
           >
             <Popup>
               <div className="min-w-48 space-y-1.5">

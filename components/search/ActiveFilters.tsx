@@ -47,7 +47,7 @@ export function ActiveFilters() {
           <button
             type="button"
             onClick={() => update({ [key]: null })}
-            className="flex min-h-9 items-center gap-1.5 rounded-full border border-accent/30 bg-accent-soft pl-3 pr-2.5 text-sm font-medium text-accent transition-colors hover:border-accent"
+            className="flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent-soft py-1 pl-3 pr-2 text-xs font-medium text-accent transition-colors hover:border-accent"
           >
             {labelFor(key, value)}
             <Icon name="x" className="size-3.5" />

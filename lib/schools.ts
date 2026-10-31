@@ -121,7 +121,6 @@ export const schoolCardSelect = {
   district: true,
   aimagCity: true,
   logoUrl: true,
-  coverImageUrl: true,
   avgOverall: true,
   reviewCount: true,
   tuitionMinAnnual: true,
