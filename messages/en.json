@@ -79,121 +79,6 @@
     "ctaFind": "Find your school to review",
     "ctaRegister": "Create a free account"
   },
-  "Path": {
-    "eyebrow": "Your child's path",
-    "title": "From the first school day to the university they dream of.",
-    "questionNow": "1. Where is your child now?",
-    "questionDest": "2. Where could they study after school?",
-    "showPath": "Show the path",
-    "orSearch": "Or search by name →",
-    "matchCount": "{count, plural, =0 {No schools match yet} one {# school matches this path} other {# schools match this path}}",
-    "matchShort": "{count, plural, =0 {no matches} one {# match} other {# matches}}",
-    "pathAria": "Your child's path from kindergarten to university",
-    "stages": {
-      "kinder": "Kindergarten",
-      "primary": "Primary",
-      "middle": "Middle",
-      "high": "High school",
-      "uni": "University"
-    },
-    "ages": {
-      "kinder": "Age 3–5",
-      "primary": "Age 6–10",
-      "middle": "Age 11–14",
-      "high": "Age 15–17",
-      "uni": "Age 18+"
-    },
-    "stageTitles": {
-      "kinder": "Kindergarten",
-      "primary": "Primary school",
-      "middle": "Middle school",
-      "high": "High school"
-    },
-    "stageTexts": {
-      "kinder": "This is where language starts. Many schools here teach in two languages from the first year, and most run all the way to grade 12, so your child can stay on one path.",
-      "primary": "The curriculum you choose now shapes the exams later. A Cambridge, IB or national track leads to different universities.",
-      "middle": "Strengths show up here. Look at what each school is good at, not only grades. Our reviews rate six areas.",
-      "high": "Exams and university counselling matter most now. These schools report the strongest record for your chosen destination.",
-      "uni": "The finish line. These are universities that graduates of these schools went to."
-    },
-    "stageTags": {
-      "kinder": [
-        "Dual language",
-        "National curriculum",
-        "Language of teaching"
-      ],
-      "primary": [
-        "Cambridge",
-        "IB",
-        "AP later",
-        "National"
-      ],
-      "middle": [
-        "Academics",
-        "Teachers",
-        "Facilities",
-        "Dorms",
-        "Library",
-        "Environment"
-      ]
-    },
-    "badgeNow": "Your child is here",
-    "badgeDone": "Done",
-    "badgeNext": "Coming up",
-    "badgeGoal": "Goal",
-    "bestOnPath": "Best on this path",
-    "reportedBySchools": "Where graduates went, as reported by the schools",
-    "noMatches": "No school in our list reports graduates there yet. Try another destination.",
-    "uniIn": "University in {place}",
-    "uniAnywhere": "University, anywhere",
-    "arrived": "Arrived · {place}",
-    "campusTitle": "{count, plural, =0 {No matches yet. Try another destination.} one {Your # match lights up.} other {Your # matches light up.}}",
-    "campusSign": "Find My School",
-    "campusAria": "School building. Each lit window is a school; gold ones are on your path.",
-    "legendOnPath": "On your path",
-    "legendOther": "Other schools",
-    "legendEmpty": "Empty room",
-    "compareTop": "Compare my top {count}",
-    "changeDest": "Change destination",
-    "onYourPath": "on your path",
-    "onPathTo": "On your path to {place}",
-    "notOnPath": "Not on this path",
-    "graduatesWent": "Graduates went to {list}",
-    "openProfile": "Open school profile",
-    "close": "Close",
-    "emptyRoomShort": "Empty room · a future school",
-    "emptyRoomTitle": "This room is empty",
-    "emptyRoomBody": "It's waiting for a school. Is your school missing from Find My School?",
-    "suggestSchool": "Tell us about it",
-    "regions": {
-      "US": "US",
-      "UK": "UK",
-      "Japan": "Japan",
-      "Korea": "Korea",
-      "China": "China",
-      "Australia": "Australia",
-      "Canada": "Canada",
-      "Europe": "Europe",
-      "Turkey": "Turkey",
-      "Asia": "Asia",
-      "Mongolia": "Mongolia",
-      "Anywhere": "Anywhere"
-    },
-    "places": {
-      "US": "the US",
-      "UK": "the UK",
-      "Japan": "Japan",
-      "Korea": "Korea",
-      "China": "China",
-      "Australia": "Australia",
-      "Canada": "Canada",
-      "Europe": "Europe",
-      "Turkey": "Turkey",
-      "Asia": "Asia",
-      "Mongolia": "Mongolia",
-      "Anywhere": "anywhere"
-    }
-  },
   "HeroSearch": {
     "placeholder": "Name, number, or district…",
     "search": "Search",
@@ -322,7 +207,8 @@
     "established": "Est. {year}",
     "ratio": "{ratio} ratio",
     "graduatesGoTo": "Graduates go to",
-    "more": "+{count} more"
+    "more": "+{count} more",
+    "beFirst": "No reviews yet — be the first"
   },
   "Profile": {
     "sections": "School sections",
@@ -376,7 +262,10 @@
     "facilities": "Facilities",
     "environment": "Campus environment",
     "library": "Library",
-    "dorms": "Dormitory"
+    "dorms": "Dormitory",
+    "emptyTitle": "No reviews yet",
+    "emptyBody": "Be the first to rate this school. Your review helps other families decide.",
+    "emptyCta": "Write the first review"
   },
   "Facilities": {
     "overall": "Facilities overall",
@@ -513,7 +402,8 @@
     "approximateNote": "Pin shows the approximate location.",
     "viewProfile": "View school",
     "notPinnedTitle": "Not on the map yet",
-    "notPinnedBody": "We haven't confirmed exact locations for these schools yet."
+    "notPinnedBody": "We haven't confirmed exact locations for these schools yet.",
+    "listTitle": "{count, plural, one {# school} other {# schools}}"
   },
   "Compare": {
     "eyebrow": "Compare",
@@ -666,5 +556,9 @@
     "role": "I am a…",
     "roleHint": "Shown next to your reviews.",
     "save": "Save changes"
+  },
+  "Incomplete": {
+    "title": "Help us complete this profile",
+    "body": "We don't have this information for the school yet. If you attend or work here, your review helps fill the gaps."
   }
 }

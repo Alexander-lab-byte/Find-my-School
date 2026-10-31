@@ -32,7 +32,7 @@ export default async function AboutPage() {
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-12 sm:px-6">
       <p className="eyebrow">{t("eyebrow")}</p>
-      <h1 className="mt-2 text-balance font-display text-4xl font-bold tracking-tight text-foreground">
+      <h1 className="mt-2 text-balance font-display text-3xl font-bold tracking-tight sm:text-4xl text-foreground">
         {t("title")}
       </h1>
       <p className="mt-4 text-pretty text-lg leading-8 text-muted">{t("intro")}</p>

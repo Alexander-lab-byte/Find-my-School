@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 import type { SchoolType } from "@prisma/client";
-import { getHomepageData, getMapSchools, getPathSchools } from "@/lib/schools";
-import { regionsWithSchools } from "@/lib/destinations";
-import { PathExperience } from "@/components/home/PathExperience";
+import { getHomepageData, getMapSchools } from "@/lib/schools";
+import { HeroSearchBar } from "@/components/search/HeroSearchBar";
 import { reviewAverage } from "@/lib/ratings";
 import { SCHOOL_TYPES, schoolNames } from "@/lib/labels";
 import { SchoolCard } from "@/components/search/SchoolCard";
@@ -32,7 +31,7 @@ function SectionHeading({
     <div className="reveal flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div>
         <p className="eyebrow">{eyebrow}</p>
-        <h2 className="mt-2 font-display text-3xl font-extrabold tracking-tight text-foreground sm:text-5xl">
+        <h2 className="mt-2 font-display text-2xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
           {title}
         </h2>
         {description && <p className="mt-2 max-w-2xl text-muted">{description}</p>}
@@ -43,10 +42,9 @@ function SectionHeading({
 }
 
 export default async function Home() {
-  const [{ schools, totalSchools, typeCounts, districts, recentReviews }, { pinned }, pathSchools] = await Promise.all([
+  const [{ schools, totalSchools, typeCounts, districts, recentReviews }, { pinned }] = await Promise.all([
     getHomepageData(),
     getMapSchools(),
-    getPathSchools(),
   ]);
   const t = await getTranslations("Home");
   const tMap = await getTranslations("Map");
@@ -60,8 +58,52 @@ export default async function Home() {
 
   return (
     <main>
-      {/* Sky hero → your child's path → campus */}
-      <PathExperience schools={pathSchools} regions={regionsWithSchools(pathSchools)} />
+      {/* Hero: search first — one input instead of a questionnaire */}
+      <section className="relative -mt-16 overflow-hidden bg-gradient-to-b from-[#6f98ee] via-[#a9c6f7] to-[#dce7fa] pt-16 dark:from-[#0e1a3a] dark:via-[#16264d] dark:to-[#1a2a52]">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(600px_circle_at_85%_15%,rgba(255,226,150,.5),transparent_70%)] dark:opacity-30"
+        />
+        <div aria-hidden className="cloud pointer-events-none absolute -left-20 top-24 h-28 w-72 opacity-70 max-md:hidden" />
+        <div aria-hidden className="cloud pointer-events-none absolute -right-16 bottom-10 h-32 w-80 opacity-70 max-md:hidden" />
+
+        <div className="relative mx-auto flex max-w-6xl flex-col items-center px-4 pb-20 pt-16 text-center sm:px-6 sm:pb-24 sm:pt-20">
+          <p className="eyebrow !text-[#16309f] dark:!text-[#b3c3ff]">{t("eyebrow")}</p>
+          <h1 className="mt-3 max-w-3xl text-balance font-display text-[2.1rem] font-extrabold leading-[1.08] tracking-tight text-[#0b1220] sm:text-5xl lg:text-6xl dark:text-white">
+            {t("title")}
+          </h1>
+          <p className="mt-4 max-w-2xl text-pretty text-base leading-7 text-[#1e2a44] sm:text-lg dark:text-white/80">
+            {t("subtitle")}
+          </p>
+
+          <div className="mt-8 flex w-full justify-center">
+            <HeroSearchBar />
+          </div>
+
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
+            <span className="text-sm font-semibold text-[#1e2a44] dark:text-white/70">{t("browseLabel")}</span>
+            {(
+              [
+                ["/search?type=PUBLIC", "quickPublic"],
+                ["/search?type=PRIVATE", "quickPrivate"],
+                ["/search?type=INTERNATIONAL", "quickInternational"],
+                ["/search?level=HIGH", "quickHigh"],
+                ["/search?dorm=true", "quickDorm"],
+              ] as const
+            ).map(([href, key]) => (
+              <Link key={key} href={href} className="chip">
+                {t(key)}
+              </Link>
+            ))}
+          </div>
+
+          {totalSchools > 0 && (
+            <p className="mt-6 text-sm font-medium text-[#1e2a44]/80 dark:text-white/60">
+              {tCommon("schoolCount", { count: totalSchools })}
+            </p>
+          )}
+        </div>
+      </section>
 
       {/* School list — visible straight away, no search needed */}
       <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-24">
@@ -209,10 +251,10 @@ export default async function Home() {
       {/* Call to action */}
       <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-24">
         <div className="reveal relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#6f98ee] via-[#a9c6f7] to-[#dce7fa] px-6 py-16 text-center text-[#0b1220] sm:px-12 dark:from-[#16264d] dark:via-[#1d3266] dark:to-[#26386b] dark:text-white">
-          <div aria-hidden className="cloud cloud-drift pointer-events-none absolute -left-16 top-6 h-28 w-72 opacity-90" />
-          <div aria-hidden className="cloud cloud-drift pointer-events-none absolute -right-10 bottom-4 h-32 w-80 opacity-90 [animation-delay:-4s]" />
+          <div aria-hidden className="cloud pointer-events-none absolute -left-16 top-6 h-28 w-72 opacity-90" />
+          <div aria-hidden className="cloud pointer-events-none absolute -right-10 bottom-4 h-32 w-80 opacity-90" />
           <Icon name="message" className="relative mx-auto size-8 opacity-80" />
-          <h2 className="relative mx-auto mt-4 max-w-xl text-balance font-display text-4xl font-extrabold tracking-tight">
+          <h2 className="relative mx-auto mt-4 max-w-xl text-balance font-display text-3xl font-extrabold tracking-tight sm:text-4xl">
             {t("ctaTitle")}
           </h2>
           <p className="relative mx-auto mt-3 max-w-xl text-pretty leading-7 opacity-85">

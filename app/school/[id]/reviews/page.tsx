@@ -69,6 +69,7 @@ export default async function SchoolReviewsPage({
         overall={school.avgOverall}
         count={school.reviewCount}
         categories={ratingCategories(school, hasDorm)}
+        writeHref="#write-review"
       />
 
       <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px]">
@@ -77,11 +78,7 @@ export default async function SchoolReviewsPage({
             {reviews.length === 0 ? t("heading") : tCommon("reviewCount", { count: reviews.length })}
           </h2>
           <div className="mt-4 space-y-4">
-            {reviews.length === 0 && (
-              <EmptyNote>
-                {t("none")}
-              </EmptyNote>
-            )}
+            {reviews.length === 0 && <EmptyNote>{t("none")}</EmptyNote>}
             {reviews.map((review) => (
               <ReviewCard key={review.id} review={review} showReport={review.userId !== viewer?.id} />
             ))}

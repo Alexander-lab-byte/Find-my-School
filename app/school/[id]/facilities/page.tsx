@@ -18,6 +18,8 @@ export default async function SchoolFacilitiesPage({
 
   return (
     <div className="space-y-10">
+      {/* Rating tiles only once someone has rated; empty stars look broken. */}
+      {(school.avgFacilities || school.avgLibrary) ? (
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)] p-5">
           <p className="text-xs font-medium uppercase tracking-[0.08em] text-subtle">
@@ -34,6 +36,7 @@ export default async function SchoolFacilitiesPage({
           </div>
         </div>
       </div>
+      ) : null}
 
       <ProfileSection title={t("onCampus")}>
         {school.facilities.length === 0 ? (

@@ -7,7 +7,13 @@ import { displayUrl, externalUrl, formatLocation, tuitionSummary } from "@/lib/l
 import { Badge } from "@/components/common/Badge";
 import { Icon, type IconName } from "@/components/common/Icon";
 import { RatingSummary } from "@/components/reviews/RatingSummary";
-import { Fact, FactGrid, ProfileSection } from "@/components/school-profile/ProfileSection";
+import {
+  Fact,
+  FactGrid,
+  IncompleteProfile,
+  ProfileSection,
+  factColumns,
+} from "@/components/school-profile/ProfileSection";
 import { SchoolHighlights } from "@/components/school-profile/SchoolHighlights";
 import { SchoolMap } from "@/components/map/SchoolMap";
 
@@ -31,7 +37,6 @@ export default async function SchoolOverviewPage({
   if (!school) notFound();
 
   const t = await getTranslations("Overview");
-  const tCommon = await getTranslations("Common");
   const tType = await getTranslations("SchoolType");
   const tLevel = await getTranslations("Level");
   const tCurriculum = await getTranslations("Curriculum");
@@ -39,6 +44,34 @@ export default async function SchoolOverviewPage({
   const tTuition = await getTranslations("Tuition");
   const tMap = await getTranslations("Map");
   const tPlace = await getTranslations("Place");
+
+  const tIncomplete = await getTranslations("Incomplete");
+
+  // Only facts we actually know; the unknown ones are listed once, below.
+  const hasTuition = school.type === "PUBLIC" || school.tuitionMinAnnual || school.tuitionMaxAnnual;
+  const languages = school.teachingLanguages.map((l) => (tLanguage.has(l) ? tLanguage(l) : l)).join(", ");
+  const facts: { label: string; value: string }[] = [
+    { label: t("schoolType"), value: tType(school.type) },
+    { label: t("gradeLevels"), value: tLevel(school.level) },
+    { label: t("dormitory"), value: school.dormitory ? t("available") : t("notOffered") },
+  ];
+  if (hasTuition) {
+    facts.push({
+      label: t("tuition"),
+      value: tuitionSummary(tTuition, school.type, school.tuitionMinAnnual, school.tuitionMaxAnnual),
+    });
+  }
+  if (languages) facts.push({ label: t("languages"), value: languages });
+  if (school.accreditation) facts.push({ label: t("accreditation"), value: school.accreditation });
+
+  const missing = [
+    !hasTuition && t("tuition"),
+    !languages && t("languages"),
+    !school.accreditation && t("accreditation"),
+    !school.phone && t("phone"),
+    !school.email && t("email"),
+    !school.website && t("website"),
+  ].filter((label): label is string => Boolean(label));
 
   const contacts: Contact[] = [];
   contacts.push({
@@ -75,31 +108,26 @@ export default async function SchoolOverviewPage({
         />
 
         <ProfileSection title={t("atAGlance")}>
-          <FactGrid>
-            <Fact label={t("schoolType")}>{tType(school.type)}</Fact>
-            <Fact label={t("gradeLevels")}>{tLevel(school.level)}</Fact>
-            <Fact label={t("tuition")}>
-              {tuitionSummary(tTuition, school.type, school.tuitionMinAnnual, school.tuitionMaxAnnual)}
-            </Fact>
-            <Fact label={t("languages")}>
-              {school.teachingLanguages.length > 0
-                ? school.teachingLanguages.map((l) => (tLanguage.has(l) ? tLanguage(l) : l)).join(", ")
-                : tCommon("notReported")}
-            </Fact>
-            <Fact label={t("accreditation")}>{school.accreditation ?? tCommon("notReported")}</Fact>
-            <Fact label={t("dormitory")}>{school.dormitory ? t("available") : t("notOffered")}</Fact>
+          <FactGrid columns={factColumns(facts.length)}>
+            {facts.map((fact) => (
+              <Fact key={fact.label} label={fact.label}>
+                {fact.value}
+              </Fact>
+            ))}
           </FactGrid>
         </ProfileSection>
 
-        <ProfileSection title={t("curriculum")}>
-          <div className="flex flex-wrap gap-2">
-            {school.curriculum.map((c) => (
-              <Badge key={c} tone="accent">
-                {tCurriculum(c)}
-              </Badge>
-            ))}
-          </div>
-        </ProfileSection>
+        {school.curriculum.length > 0 && (
+          <ProfileSection title={t("curriculum")}>
+            <div className="flex flex-wrap gap-2">
+              {school.curriculum.map((c) => (
+                <Badge key={c} tone="accent">
+                  {tCurriculum(c)}
+                </Badge>
+              ))}
+            </div>
+          </ProfileSection>
+        )}
 
         <ProfileSection
           title={t("ratings")}
@@ -117,8 +145,15 @@ export default async function SchoolOverviewPage({
             overall={school.avgOverall}
             count={school.reviewCount}
             categories={ratingCategories(school, Boolean(school.dormitory))}
+            writeHref={`/school/${id}/reviews#write-review`}
           />
         </ProfileSection>
+
+        <IncompleteProfile
+          title={tIncomplete("title")}
+          body={tIncomplete("body")}
+          missing={missing}
+        />
       </div>
 
       <aside className="space-y-4">

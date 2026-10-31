@@ -41,7 +41,7 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
           aria-pressed={code === locale}
           aria-label={FULL_NAMES[code]}
           title={FULL_NAMES[code]}
-          className={`rounded-full px-3 py-1 transition-colors ${
+          className={`flex min-h-9 min-w-10 items-center justify-center rounded-full px-3 transition-colors ${
             code === locale
               ? "bg-surface text-foreground shadow-[0_1px_2px_rgb(0_0_0/0.08)]"
               : "text-muted hover:text-foreground"
