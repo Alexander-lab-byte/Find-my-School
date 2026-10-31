@@ -3,7 +3,7 @@ import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 import { getMapSchools } from "@/lib/schools";
 import { formatLocation, schoolNames } from "@/lib/labels";
-import { SchoolMap } from "@/components/map/SchoolMap";
+import { MapExplorer } from "@/components/map/MapExplorer";
 import { Icon } from "@/components/common/Icon";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -47,7 +47,7 @@ export default async function MapPage() {
       </div>
 
       <div className="mt-4">
-        <SchoolMap schools={pinned} height={560} scrollZoom />
+        <MapExplorer schools={pinned} />
       </div>
 
       {unpinned.length > 0 && (

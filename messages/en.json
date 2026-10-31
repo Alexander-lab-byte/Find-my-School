@@ -207,7 +207,8 @@
     "established": "Est. {year}",
     "ratio": "{ratio} ratio",
     "graduatesGoTo": "Graduates go to",
-    "more": "+{count} more"
+    "more": "+{count} more",
+    "beFirst": "No reviews yet — be the first"
   },
   "Profile": {
     "sections": "School sections",
@@ -261,7 +262,10 @@
     "facilities": "Facilities",
     "environment": "Campus environment",
     "library": "Library",
-    "dorms": "Dormitory"
+    "dorms": "Dormitory",
+    "emptyTitle": "No reviews yet",
+    "emptyBody": "Be the first to rate this school. Your review helps other families decide.",
+    "emptyCta": "Write the first review"
   },
   "Facilities": {
     "overall": "Facilities overall",
@@ -398,7 +402,8 @@
     "approximateNote": "Pin shows the approximate location.",
     "viewProfile": "View school",
     "notPinnedTitle": "Not on the map yet",
-    "notPinnedBody": "We haven't confirmed exact locations for these schools yet."
+    "notPinnedBody": "We haven't confirmed exact locations for these schools yet.",
+    "listTitle": "{count, plural, one {# school} other {# schools}}"
   },
   "Compare": {
     "eyebrow": "Compare",
@@ -551,5 +556,9 @@
     "role": "I am a…",
     "roleHint": "Shown next to your reviews.",
     "save": "Save changes"
+  },
+  "Incomplete": {
+    "title": "Help us complete this profile",
+    "body": "We don't have this information for the school yet. If you attend or work here, your review helps fill the gaps."
   }
 }

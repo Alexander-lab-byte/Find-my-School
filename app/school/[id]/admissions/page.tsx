@@ -3,8 +3,8 @@ import { getFormatter, getTranslations } from "next-intl/server";
 import { getSchoolAdmissions } from "@/lib/schools";
 import { tuitionSummary } from "@/lib/labels";
 import {
-  EmptyNote,
   Fact,
+  IncompleteProfile,
   FactGrid,
   ProfileSection,
   ProseCard,
@@ -23,6 +23,13 @@ export default async function SchoolAdmissionsPage({
   const t = await getTranslations("Admissions");
   const tTuition = await getTranslations("Tuition");
   const format = await getFormatter();
+  const tIncomplete = await getTranslations("Incomplete");
+  const missing = [
+    school.type !== "PUBLIC" && !school.tuitionMinAnnual && !school.tuitionMaxAnnual && t("tuition"),
+    !school.applicationDeadline && t("deadline"),
+    !school.entranceExamInfo && t("entrance"),
+    school.type === "PUBLIC" && !school.catchmentAreaInfo && t("catchment"),
+  ].filter((label): label is string => Boolean(label));
 
   return (
     <div className="space-y-10">
@@ -30,30 +37,26 @@ export default async function SchoolAdmissionsPage({
         <Fact label={t("tuition")}>
           {tuitionSummary(tTuition, school.type, school.tuitionMinAnnual, school.tuitionMaxAnnual)}
         </Fact>
-        <Fact label={t("deadline")}>
-          {school.applicationDeadline
-            ? format.dateTime(school.applicationDeadline, { dateStyle: "long" })
-            : t("rolling")}
-        </Fact>
+        {school.applicationDeadline && (
+          <Fact label={t("deadline")}>
+            {format.dateTime(school.applicationDeadline, { dateStyle: "long" })}
+          </Fact>
+        )}
       </FactGrid>
 
-      <ProfileSection title={t("entrance")}>
-        {school.entranceExamInfo ? (
+      {school.entranceExamInfo && (
+        <ProfileSection title={t("entrance")}>
           <ProseCard>{school.entranceExamInfo}</ProseCard>
-        ) : (
-          <EmptyNote>{t("entranceNone")}</EmptyNote>
-        )}
-      </ProfileSection>
-
-      {school.type === "PUBLIC" && (
-        <ProfileSection title={t("catchment")}>
-          {school.catchmentAreaInfo ? (
-            <ProseCard>{school.catchmentAreaInfo}</ProseCard>
-          ) : (
-            <EmptyNote>{t("catchmentNone")}</EmptyNote>
-          )}
         </ProfileSection>
       )}
+
+      {school.type === "PUBLIC" && school.catchmentAreaInfo && (
+        <ProfileSection title={t("catchment")}>
+          <ProseCard>{school.catchmentAreaInfo}</ProseCard>
+        </ProfileSection>
+      )}
+
+      <IncompleteProfile title={tIncomplete("title")} body={tIncomplete("body")} missing={missing} />
     </div>
   );
 }

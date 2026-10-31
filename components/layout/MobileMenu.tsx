@@ -7,7 +7,7 @@ import { signOut } from "@/app/(auth)/actions";
 import { Icon } from "@/components/common/Icon";
 
 const ITEM =
-  "rounded-xl px-3 py-2.5 font-medium text-foreground transition-colors hover:bg-surface-muted";
+  "flex min-h-11 items-center rounded-xl px-3 font-medium text-foreground transition-colors hover:bg-surface-muted";
 
 export function MobileMenu({
   isSignedIn,
@@ -29,7 +29,7 @@ export function MobileMenu({
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-label={open ? t("closeMenu") : t("openMenu")}
-        className="relative flex size-9 items-center justify-center rounded-xl border border-line text-muted transition-colors hover:bg-surface-muted"
+        className="relative flex size-11 items-center justify-center rounded-xl border border-line text-muted transition-colors hover:bg-surface-muted"
       >
         {waiting > 0 && !open && (
           <span aria-hidden className="absolute -right-1 -top-1 size-2.5 rounded-full border-2 border-surface bg-danger" />
@@ -90,14 +90,14 @@ export function MobileMenu({
                 <Link
                   href="/login"
                   onClick={close}
-                  className="rounded-xl border border-line px-3 py-2.5 text-center font-medium text-foreground"
+                  className="flex min-h-11 items-center justify-center rounded-xl border border-line px-3 text-center font-medium text-foreground"
                 >
                   {t("logIn")}
                 </Link>
                 <Link
                   href="/register"
                   onClick={close}
-                  className="rounded-full bg-accent px-3 py-2.5 text-center font-medium text-accent-foreground"
+                  className="flex min-h-11 items-center justify-center rounded-full bg-accent px-3 text-center font-medium text-accent-foreground"
                 >
                   {t("signUp")}
                 </Link>

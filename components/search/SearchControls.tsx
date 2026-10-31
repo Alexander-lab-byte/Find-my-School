@@ -63,7 +63,7 @@ export function SearchInput() {
           type="button"
           onClick={() => setValue("")}
           aria-label={t("clear")}
-          className="absolute right-3 top-1/2 flex size-7 -translate-y-1/2 items-center justify-center rounded-lg text-subtle transition-colors hover:bg-surface-muted hover:text-foreground"
+          className="absolute right-3 top-1/2 flex size-9 -translate-y-1/2 items-center justify-center rounded-lg text-subtle transition-colors hover:bg-surface-muted hover:text-foreground"
         >
           <Icon name="x" className="size-4" />
         </button>
