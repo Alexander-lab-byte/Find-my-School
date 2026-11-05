@@ -31,8 +31,23 @@ export const REVIEW_TAGS: ReviewTag[] = [
 /** Roles a person can pick for themselves (never ADMIN). From Temuulen's sign-up work. */
 export const SIGNUP_ROLES: UserRole[] = ["PARENT", "STUDENT", "ALUMNI", "EDUCATOR"];
 
-export const SORT_KEYS = ["rating", "reviews", "name", "founded"] as const;
+export const SORT_KEYS = ["rating", "reviews", "tuition", "distance", "name", "founded"] as const;
 export type SortKey = (typeof SORT_KEYS)[number];
+
+/**
+ * Budget filter: the most a family can pay per year, in MNT. Public schools
+ * (free) always fit. A private school fits when its lowest listed fee is at
+ * or under the limit; schools with no fee listed are left out, because we
+ * can't promise they fit.
+ */
+export const BUDGETS = ["free", "10m", "25m", "50m"] as const;
+export type BudgetKey = (typeof BUDGETS)[number];
+export const BUDGET_MAX_MNT: Record<BudgetKey, number> = {
+  free: 0,
+  "10m": 10_000_000,
+  "25m": 25_000_000,
+  "50m": 50_000_000,
+};
 
 /**
  * A clickable URL for a website stored with or without its protocol

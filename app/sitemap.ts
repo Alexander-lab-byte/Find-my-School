@@ -12,6 +12,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     { url: `${base}/`, changeFrequency: "daily", priority: 1 },
     { url: `${base}/search`, changeFrequency: "daily", priority: 0.8 },
+    { url: `${base}/match`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${base}/map`, changeFrequency: "weekly", priority: 0.6 },
     { url: `${base}/about`, changeFrequency: "monthly", priority: 0.3 },
     ...schools.flatMap((school) =>

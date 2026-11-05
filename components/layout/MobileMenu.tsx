@@ -49,6 +49,9 @@ export function MobileMenu({
             <Link href="/search" onClick={close} className={ITEM}>
               {t("browseSchools")}
             </Link>
+            <Link href="/match" onClick={close} className={ITEM}>
+              {t("findMatch")}
+            </Link>
             <Link href="/map" onClick={close} className={ITEM}>
               {t("map")}
             </Link>

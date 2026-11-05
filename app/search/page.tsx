@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import {
   SEARCH_PAGE_SIZE,
   getDistricts,
+  getTeachingLanguages,
   hasActiveFilters,
   parsePage,
   parseSchoolFilters,
@@ -15,6 +16,8 @@ import { FilterBar } from "@/components/search/FilterBar";
 import { Pagination } from "@/components/search/Pagination";
 import { SchoolCard } from "@/components/search/SchoolCard";
 import { SearchInput, SortSelect } from "@/components/search/SearchControls";
+import { NearMeButton } from "@/components/search/NearMeButton";
+import { parseNear } from "@/lib/geo";
 import { PendingArea, SearchNavigationProvider } from "@/components/search/SearchNavigation";
 import { Icon } from "@/components/common/Icon";
 import { SkyClouds } from "@/components/common/SkyClouds";
@@ -33,10 +36,12 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const filters = parseSchoolFilters(params);
   const sort = parseSort(params.sort);
   const page = parsePage(params.page);
+  const near = parseNear(params.near);
 
-  const [{ schools, total }, districts] = await Promise.all([
-    searchSchools({ filters, sort, page }),
+  const [{ schools, total, sort: appliedSort }, districts, languages] = await Promise.all([
+    searchSchools({ filters, sort, page, near }),
     getDistricts(),
+    getTeachingLanguages(),
   ]);
 
   const pageCount = Math.max(1, Math.ceil(total / SEARCH_PAGE_SIZE));
@@ -59,12 +64,15 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             <div className="mt-6 max-w-3xl">
               <SearchInput />
             </div>
+            <div className="mt-3">
+              <NearMeButton active={Boolean(near)} />
+            </div>
           </div>
         </div>
 
         <div className="mx-auto grid max-w-6xl gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[260px_minmax(0,1fr)]">
           <aside className="lg:sticky lg:top-24 lg:self-start">
-            <FilterBar districts={districts} />
+            <FilterBar districts={districts} languages={languages} />
           </aside>
 
           <section aria-label={t("results")} className="space-y-5">
@@ -75,7 +83,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                   b: (chunks) => <span className="font-semibold text-foreground">{chunks}</span>,
                 })}
               </p>
-              <SortSelect value={sort} />
+              <SortSelect value={appliedSort} hasLocation={Boolean(near)} />
             </div>
 
             <ActiveFilters />
@@ -85,7 +93,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                 <div className="space-y-8">
                   <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
                     {schools.map((school) => (
-                      <SchoolCard key={school.id} school={school} />
+                      <SchoolCard key={school.id} school={school} distanceKm={school.distanceKm} />
                     ))}
                   </div>
                   <Pagination page={page} pageCount={pageCount} params={params} />
