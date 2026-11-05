@@ -38,11 +38,17 @@ export function ReviewCard({
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-sm font-medium text-foreground">{review.user.name}</span>
-              <Badge tone={review.user.isVerified ? "verified" : "neutral"}>
-                {review.user.isVerified && <Icon name="shield" className="size-3" />}
-                {review.user.isVerified ? `${t("verified")} ` : ""}
-                {tRole(review.user.role)}
-              </Badge>
+              <Badge tone="neutral">{tRole(review.user.role)}</Badge>
+              {review.isVerified ? (
+                <Badge tone="verified">
+                  <Icon name="shield" className="size-3" />
+                  {t("verified")}
+                </Badge>
+              ) : (
+                <span className="text-xs text-subtle" title={t("notVerifiedHint")}>
+                  {t("notVerified")}
+                </span>
+              )}
             </div>
             <p className="mt-0.5 text-xs text-subtle">{format.dateTime(new Date(review.createdAt), { dateStyle: "long" })}</p>
           </div>

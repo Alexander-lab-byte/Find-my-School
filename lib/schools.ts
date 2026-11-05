@@ -2,12 +2,16 @@ import { cache } from "react";
 import type { Curriculum, Prisma, SchoolLevel, SchoolType } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import {
+  BUDGETS,
+  BUDGET_MAX_MNT,
   CURRICULA,
   LEVELS,
   SCHOOL_TYPES,
   SORT_KEYS,
+  type BudgetKey,
   type SortKey,
 } from "@/lib/labels";
+import { schoolDistance, type LatLng } from "@/lib/geo";
 
 // ---------------------------------------------------------------------------
 // Search & listing
@@ -21,6 +25,9 @@ export type SchoolFilters = {
   type?: SchoolType;
   curriculum?: Curriculum;
   district?: string;
+  budget?: BudgetKey;
+  /** Teaching language code, e.g. "en". */
+  lang?: string;
   dorm: boolean;
 };
 
@@ -42,6 +49,8 @@ export function parseSchoolFilters(params: RawParams): SchoolFilters {
     type: pick(first(params.type), SCHOOL_TYPES),
     curriculum: pick(first(params.curriculum), CURRICULA),
     district: first(params.district)?.trim() || undefined,
+    budget: pick(first(params.budget), BUDGETS),
+    lang: /^[a-z]{2}$/.test(first(params.lang) ?? "") ? first(params.lang) : undefined,
     dorm: first(params.dorm) === "true",
   };
 }
@@ -56,8 +65,8 @@ export function parsePage(value: string | string[] | undefined) {
 }
 
 export function hasActiveFilters(filters: SchoolFilters) {
-  const { q, level, type, curriculum, district, dorm } = filters;
-  return Boolean(q || level || type || curriculum || district || dorm);
+  const { q, level, type, curriculum, district, budget, lang, dorm } = filters;
+  return Boolean(q || level || type || curriculum || district || budget || lang || dorm);
 }
 
 // A K–12 school also teaches elementary, middle, and high school, so picking
@@ -69,8 +78,15 @@ const LEVEL_COVERAGE: Record<SchoolLevel, SchoolLevel[]> = {
   K12: ["K12"],
 };
 
+function budgetWhere(budget: BudgetKey): Prisma.SchoolWhereInput {
+  if (budget === "free") return { type: "PUBLIC" };
+  return {
+    OR: [{ type: "PUBLIC" }, { tuitionMinAnnual: { lte: BUDGET_MAX_MNT[budget] } }],
+  };
+}
+
 function buildSchoolWhere(filters: SchoolFilters): Prisma.SchoolWhereInput {
-  const { q, level, type, curriculum, district, dorm } = filters;
+  const { q, level, type, curriculum, district, budget, lang, dorm } = filters;
   return {
     AND: [
       q
@@ -88,6 +104,8 @@ function buildSchoolWhere(filters: SchoolFilters): Prisma.SchoolWhereInput {
       type ? { type } : {},
       curriculum ? { curriculum: { has: curriculum } } : {},
       district ? { district: { equals: district, mode: "insensitive" } } : {},
+      budget ? budgetWhere(budget) : {},
+      lang ? { teachingLanguages: { has: lang } } : {},
       dorm ? { dormitory: { isNot: null } } : {},
     ],
   };
@@ -95,6 +113,10 @@ function buildSchoolWhere(filters: SchoolFilters): Prisma.SchoolWhereInput {
 
 // Postgres sorts NULLs first on DESC, which would float unrated schools to
 // the top — so NULL averages are pushed explicitly to the end.
+// "tuition" and "distance" can't be expressed in SQL here (free public
+// schools have no fee; distance needs the visitor's location), so they're
+// sorted in memory by sortInMemory() below. Their entries are the
+// tie-breakers used when that isn't possible.
 const SORT_ORDER: Record<SortKey, Prisma.SchoolOrderByWithRelationInput[]> = {
   rating: [
     { avgOverall: { sort: "desc", nulls: "last" } },
@@ -106,6 +128,8 @@ const SORT_ORDER: Record<SortKey, Prisma.SchoolOrderByWithRelationInput[]> = {
     { avgOverall: { sort: "desc", nulls: "last" } },
     { nameEn: "asc" },
   ],
+  tuition: [{ tuitionMinAnnual: { sort: "asc", nulls: "last" } }, { nameEn: "asc" }],
+  distance: [{ avgOverall: { sort: "desc", nulls: "last" } }, { nameEn: "asc" }],
   name: [{ nameEn: "asc" }],
   founded: [{ foundedYear: { sort: "asc", nulls: "last" } }, { nameEn: "asc" }],
 };
@@ -129,6 +153,9 @@ export const schoolCardSelect = {
   foundedYear: true,
   studentTeacherRatio: true,
   graduateDestinations: true,
+  teachingLanguages: true,
+  latitude: true,
+  longitude: true,
   dormitory: { select: { id: true } },
 } satisfies Prisma.SchoolSelect;
 
@@ -151,25 +178,82 @@ export function listSchools({ filters, sort = "rating", skip = 0, take }: ListOp
   });
 }
 
+/** Every school passing the filters, unpaged — for ranking in memory (the match quiz). */
+export function listAllSchools(filters: SchoolFilters) {
+  return prisma.school.findMany({ where: buildSchoolWhere(filters), select: schoolCardSelect });
+}
+
+/** Lower is cheaper: free public schools first, unknown fees last. */
+function tuitionRank(school: Pick<SchoolCardData, "type" | "tuitionMinAnnual">) {
+  if (school.type === "PUBLIC") return 0;
+  return school.tuitionMinAnnual ?? Number.POSITIVE_INFINITY;
+}
+
+function sortInMemory(schools: SchoolCardData[], sort: "tuition" | "distance", near?: LatLng) {
+  const byName = (a: SchoolCardData, b: SchoolCardData) => a.nameEn.localeCompare(b.nameEn);
+  if (sort === "tuition") {
+    return [...schools].sort((a, b) => tuitionRank(a) - tuitionRank(b) || byName(a, b));
+  }
+  // Schools without a map pin go last.
+  const far = Number.POSITIVE_INFINITY;
+  return [...schools].sort(
+    (a, b) => (schoolDistance(near, a) ?? far) - (schoolDistance(near, b) ?? far) || byName(a, b)
+  );
+}
+
+export type SchoolResult = SchoolCardData & { distanceKm: number | null };
+
 export async function searchSchools({
   filters,
   sort,
   page,
+  near,
 }: {
   filters: SchoolFilters;
   sort: SortKey;
   page: number;
-}) {
+  /** The visitor's (rounded) location, when they shared it. */
+  near?: LatLng;
+}): Promise<{ schools: SchoolResult[]; total: number; sort: SortKey }> {
+  // Without a location there's nothing to measure, so "nearest" falls back.
+  const effectiveSort: SortKey = sort === "distance" && !near ? "rating" : sort;
+  const skip = (page - 1) * SEARCH_PAGE_SIZE;
+  const withDistance = (school: SchoolCardData): SchoolResult => ({
+    ...school,
+    distanceKm: schoolDistance(near, school),
+  });
+
+  if (effectiveSort === "tuition" || effectiveSort === "distance") {
+    // Few enough schools to sort them all here, then cut out the page.
+    const all = await prisma.school.findMany({
+      where: buildSchoolWhere(filters),
+      select: schoolCardSelect,
+    });
+    const sorted = sortInMemory(all, effectiveSort, near);
+    return {
+      schools: sorted.slice(skip, skip + SEARCH_PAGE_SIZE).map(withDistance),
+      total: all.length,
+      sort: effectiveSort,
+    };
+  }
+
   const [schools, total] = await Promise.all([
-    listSchools({
-      filters,
-      sort,
-      skip: (page - 1) * SEARCH_PAGE_SIZE,
-      take: SEARCH_PAGE_SIZE,
-    }),
+    listSchools({ filters, sort: effectiveSort, skip, take: SEARCH_PAGE_SIZE }),
     prisma.school.count({ where: buildSchoolWhere(filters) }),
   ]);
-  return { schools, total };
+  return { schools: schools.map(withDistance), total, sort: effectiveSort };
+}
+
+/** Every teaching language used by at least one school, most common first. */
+export async function getTeachingLanguages() {
+  const rows = await prisma.school.findMany({ select: { teachingLanguages: true } });
+  const counts = new Map<string, number>();
+  for (const row of rows) {
+    for (const lang of row.teachingLanguages) counts.set(lang, (counts.get(lang) ?? 0) + 1);
+  }
+  return [...counts.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .map(([code, count]) => ({ code, count }));
 }
 
 export async function getDistricts() {

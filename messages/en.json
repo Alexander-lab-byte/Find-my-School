@@ -34,7 +34,8 @@
     "myReviews": "My reviews",
     "profile": "Profile",
     "moderation": "Moderation",
-    "about": "About"
+    "about": "About",
+    "findMatch": "Find my match"
   },
   "Footer": {
     "description": "An independent guide to schools in Mongolia — curriculum, fees, dormitories, and reviews from parents, students, alumni, and educators.",
@@ -77,7 +78,8 @@
     "ctaTitle": "Know a school well?",
     "ctaBody": "Your review helps another family make one of the most important decisions they face. It takes about three minutes.",
     "ctaFind": "Find your school to review",
-    "ctaRegister": "Create a free account"
+    "ctaRegister": "Create a free account",
+    "matchCta": "Not sure where to start? Answer 5 questions"
   },
   "HeroSearch": {
     "placeholder": "Name, number, or district…",
@@ -117,7 +119,10 @@
     "features": "Features",
     "hasDorm": "Has dormitory",
     "active": "Active filters",
-    "remove": "Remove filter"
+    "remove": "Remove filter",
+    "budget": "Budget per year",
+    "budgetNote": "Public schools are free. Private schools with no listed fee aren't shown.",
+    "language": "Teaching language"
   },
   "Pagination": {
     "label": "Pagination",
@@ -189,7 +194,9 @@
     "rating": "Top rated",
     "reviews": "Most reviewed",
     "name": "Name (A–Z)",
-    "founded": "Oldest established"
+    "founded": "Oldest established",
+    "tuition": "Lowest fees",
+    "distance": "Nearest to me"
   },
   "Tuition": {
     "free": "Free (public school)",
@@ -200,7 +207,16 @@
   },
   "Place": {
     "Ulaanbaatar": "Ulaanbaatar",
-    "khoroo": "Khoroo {number}"
+    "khoroo": "Khoroo {number}",
+    "Baganuur": "Baganuur",
+    "Bagakhangai": "Bagakhangai",
+    "Bayangol": "Bayangol",
+    "Bayanzurkh": "Bayanzurkh",
+    "Chingeltei": "Chingeltei",
+    "Khan-Uul": "Khan-Uul",
+    "Nalaikh": "Nalaikh",
+    "Songinokhairkhan": "Songinokhairkhan",
+    "Sukhbaatar": "Sukhbaatar"
   },
   "Card": {
     "dormitory": "Dormitory",
@@ -208,7 +224,9 @@
     "ratio": "{ratio} ratio",
     "graduatesGoTo": "Graduates go to",
     "more": "+{count} more",
-    "beFirst": "No reviews yet — be the first"
+    "beFirst": "No reviews yet — be the first",
+    "notVerified": "not verified",
+    "distance": "{km} km"
   },
   "Profile": {
     "sections": "School sections",
@@ -233,7 +251,8 @@
     "programme": "Programme",
     "tracks": "{count} tracks",
     "graduates": "Where graduates go",
-    "achievements": "Notable achievements"
+    "achievements": "Notable achievements",
+    "unverified": "Not verified: collected from public information, not confirmed by the school."
   },
   "Overview": {
     "atAGlance": "At a glance",
@@ -311,7 +330,9 @@
     "yourReviewedTitle": "You've reviewed this school",
     "yourPublishedBody": "Thanks for sharing. You can find it in <link>My reviews</link>.",
     "yourHiddenBody": "Moderators removed your review after it was reported.",
-    "yourRejectedNote": "Your previous review wasn't approved. You're welcome to write a new one."
+    "yourRejectedNote": "Your previous review wasn't approved. You're welcome to write a new one.",
+    "notVerified": "Not verified",
+    "notVerifiedHint": "Written without a school email. An admin approved it before it was published."
   },
   "ReviewForm": {
     "ratings": "Ratings",
@@ -338,7 +359,7 @@
     "veryGood": "Very good",
     "excellent": "Excellent",
     "errorTooLong": "Reviews can be at most 200 characters.",
-    "notAllowed": "Only verified members of this school can review it.",
+    "notAllowed": "This school can't be reviewed right now.",
     "counter": "{count} / {max}",
     "awaitingApproval": "An admin will check it before it's published on this page.",
     "moderationNote": "Reviews are published after an admin approves them."
@@ -350,12 +371,12 @@
     "haveAccount": "Already have an account?",
     "callbackFailed": "That sign-in link didn't work or has expired. Please log in again.",
     "createTitle": "Create an account",
-    "registerIntro": "Create an account with your email. Use your school email if you want to review your school.",
+    "registerIntro": "Create an account with your email. Use your school email if you want a Verified badge on your reviews.",
     "name": "Name",
     "email": "Email",
     "checkEmail": "Check your email",
     "emailPlaceholder": "you@school.edu.mn",
-    "schoolEmailHint": "To write a review, use your school email (e.g. @isumongolia.edu.mn). Any email works for saving and comparing schools.",
+    "schoolEmailHint": "Any email works for reviews, saving and comparing. Use your school email (e.g. @isumongolia.edu.mn) to get a Verified badge on your reviews.",
     "sendCode": "Email me a code",
     "sending": "Sending…",
     "codeSent": "We sent a sign-in code to <b>{email}</b>.",
@@ -439,15 +460,13 @@
     "reviews": "Reviews"
   },
   "ReviewAccess": {
-    "signedOutTitle": "Reviews come from verified school members",
-    "signedOutBody": "To review this school, sign in with your school email ({domains}). We'll send you a one-time code to confirm it.",
-    "wrongDomainTitle": "You can't review this school",
-    "wrongDomainBody": "Only people with a verified {domains} email can review this school. You're signed in as <b>{email}</b>.",
+    "signedOutTitle": "Sign in to write a review",
+    "signedOutBody": "Anyone can review after signing in. Use your school email ({domains}) to get a Verified badge. We'll send you a one-time code.",
     "reviewOwnSchool": "Review {school} instead",
-    "closedTitle": "Reviews aren't open yet",
-    "closedBody": "This school's email domain hasn't been verified yet, so it can't receive reviews for now.",
-    "wrongDomainShort": "Only verified members of this school can review it.",
-    "closedShort": "Reviews open once the school's email domain is verified."
+    "signedOutBodyNoDomain": "Parents, students, alumni and teachers can all review after signing in. We'll send you a one-time code by email.",
+    "verifiedNote": "You're signed in with this school's email, so your review will show a Verified badge.",
+    "unverifiedNote": "Your review will be marked \"Not verified\". An admin checks every review before it's published.",
+    "unverifiedNoteWithDomains": "Your review will be marked \"Not verified\". To get a Verified badge, sign in with a school email ({domains}). An admin checks every review before it's published."
   },
   "Report": {
     "report": "Report",
@@ -531,8 +550,8 @@
     "intro": "Choosing or changing schools is a big decision, and the information is scattered. This site puts the basics in one place — curriculum, languages, fees, dormitories — next to reviews from the people who actually attend the schools.",
     "useTitle": "How to use it",
     "useBody": "<search>Search</search> by name, school number, or district, and narrow by level, type, curriculum, or dormitory. Save schools to come back to them, <compare>compare</compare> up to three side by side, or see them on the <map>map</map>.",
-    "verifiedTitle": "Only verified school members review",
-    "verifiedBody": "To write a review you sign in with your school email and confirm it with a one-time code. You can only review the school that email belongs to, so every review comes from someone who's actually there.",
+    "verifiedTitle": "Every review is checked",
+    "verifiedBody": "Parents, students, alumni and teachers can all write reviews, and an admin checks each one before it's published. Reviews written from the school's own email get a Verified badge, so you can see who is actually there.",
     "ratingsTitle": "How ratings work",
     "ratingsBody": "Reviewers score academics, facilities, teachers, and campus environment from 1 to 5; library and dormitory scores are optional. A school's overall rating is the average of the four main categories. Each person reviews a school once and can delete their review from <myReviews>My reviews</myReviews>.",
     "moderationTitle": "Reviews and moderation",
@@ -548,7 +567,7 @@
     "reviewAccessTitle": "Writing reviews",
     "canReview": "Your verified email lets you review {school}.",
     "writeReview": "Write a review",
-    "cannotReview": "Reviews can only be written from a verified school email. Your email ({domain}) isn't linked to a school on this site — sign in with your school email to review it.",
+    "cannotReview": "Your email ({domain}) isn't a school email on this site. You can still write reviews — they'll show as \"Not verified\". Sign in with your school email to get a Verified badge.",
     "editTitle": "Edit profile",
     "saved": "Profile saved.",
     "nameRequired": "Please enter a name.",
@@ -560,5 +579,119 @@
   "Incomplete": {
     "title": "Help us complete this profile",
     "body": "We don't have this information for the school yet. If you attend or work here, your review helps fill the gaps."
+  },
+  "Budget": {
+    "free": "Free only (public)",
+    "10m": "Up to ₮10M",
+    "25m": "Up to ₮25M",
+    "50m": "Up to ₮50M"
+  },
+  "NearMe": {
+    "button": "Schools near me",
+    "locating": "Finding your location…",
+    "active": "Sorted by distance from you",
+    "stop": "Stop using my location",
+    "denied": "Location is blocked. Allow it in your browser settings to sort by distance.",
+    "unavailable": "We couldn't find your location. Try again in a moment.",
+    "unsupported": "Your browser can't share its location."
+  },
+  "Match": {
+    "metaTitle": "Find the right school for your child",
+    "metaDescription": "Answer five quick questions and get schools ranked for your child, with the reasons for each match.",
+    "eyebrow": "Find my match",
+    "title": "Which school fits your child?",
+    "intro": "Five quick questions. We rank every school for your child and show you why.",
+    "progress": "Question {step} of {total}",
+    "q": {
+      "level": "What will your child study next year?",
+      "budget": "How much can your family pay per year?",
+      "goal": "What's the plan after school?",
+      "where": "Where should the school be?",
+      "priority": "What matters most to you?"
+    },
+    "qHint": {
+      "level": "We'll only show schools that teach this level.",
+      "budget": "Public schools are free and always included.",
+      "goal": "It's fine if you're not sure yet.",
+      "where": "Optional. Skip it to see schools everywhere.",
+      "priority": "Pick one. It counts double in the ranking."
+    },
+    "level": {
+      "ELEMENTARY": "Elementary school",
+      "MIDDLE": "Middle school",
+      "HIGH": "High school"
+    },
+    "levelHint": {
+      "ELEMENTARY": "Grades 1–5",
+      "MIDDLE": "Grades 6–9",
+      "HIGH": "Grades 10–12"
+    },
+    "budget": {
+      "free": "Free only (public school)",
+      "10m": "Up to ₮10M a year",
+      "25m": "Up to ₮25M a year",
+      "50m": "Up to ₮50M a year",
+      "any": "Budget isn't a limit"
+    },
+    "goal": {
+      "abroad": "University abroad (in English)",
+      "mongolia": "University in Mongolia",
+      "japan": "University in Japan",
+      "unsure": "Not sure yet"
+    },
+    "goalHint": {
+      "abroad": "USA, UK, Europe, Australia, Korea…",
+      "mongolia": "NUM, MUST and others",
+      "japan": "Japanese-language track",
+      "unsure": "We'll favour schools with more than one track"
+    },
+    "useLocation": "Use my location",
+    "locating": "Finding your location…",
+    "locationSet": "Using your location",
+    "locateError": {
+      "denied": "Location is blocked in your browser. Pick a district instead.",
+      "unavailable": "We couldn't find your location. Pick a district instead."
+    },
+    "locationPrivacy": "Your location is rounded to about 1 km and is never saved.",
+    "orDistrict": "Or choose a district",
+    "anyDistrict": "Any district",
+    "needDorm": "We need a dormitory",
+    "needDormHint": "Only show schools where students can live on campus.",
+    "priority": {
+      "reviews": "What other families say",
+      "cost": "Lowest cost",
+      "close": "Close to home",
+      "english": "Strong English"
+    },
+    "back": "Back",
+    "next": "Next",
+    "seeMatches": "See my matches",
+    "skipAndSee": "Skip and see matches",
+    "resultsTitle": "{count, plural, one {# school fits} other {# schools fit}} your answers",
+    "noneTitle": "No school fits all your answers yet",
+    "noneBody": "Try a higher budget, a different level, or turn off the dormitory option. We're adding more schools every week.",
+    "yourAnswers": "Your answers",
+    "summaryDorm": "Dormitory",
+    "summaryNear": "Near you",
+    "changeAnswers": "Change answers",
+    "seeAllInSearch": "See all {count} in search",
+    "percent": "{percent}% match",
+    "percentHint": "How well this school fits the answers you gave, compared with a perfect fit.",
+    "howItWorks": "Ranking uses only the facts we have: level, fees, curriculum, teaching language, location and published reviews. Graduate destinations aren't used, because they aren't verified."
+  },
+  "MatchReason": {
+    "internationalCurriculum": "Offers {curricula}, which universities abroad know well",
+    "teachesEnglish": "Teaches in English",
+    "nationalCurriculum": "Follows the Mongolian national curriculum, used for the university entrance exam (ЭЕШ)",
+    "teachesJapanese": "Teaches in Japanese",
+    "flexible": "More than one curriculum or language, so options stay open",
+    "near": "{km} km from you",
+    "inDistrict": "In the district you chose",
+    "rated": "Rated {rating}/5 by {count, plural, one {# family} other {# families}}",
+    "free": "Free public school",
+    "dorm": "Has a dormitory",
+    "noReviews": "No reviews yet, so visit the school before deciding",
+    "noPin": "Not on the map yet, so distance is unknown",
+    "feeUnknown": "Fees aren't listed. Ask the school"
   }
 }

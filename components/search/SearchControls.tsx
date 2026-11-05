@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Icon } from "@/components/common/Icon";
 import { useSearchNavigation } from "@/components/search/SearchNavigation";
 import { SORT_KEYS, type SortKey } from "@/lib/labels";
+import { requestNearParam } from "@/components/search/NearMeButton";
 
 /** Search box that updates results as you type (debounced) — no button press needed. */
 export function SearchInput() {
@@ -72,25 +73,48 @@ export function SearchInput() {
   );
 }
 
-export function SortSelect({ value }: { value: SortKey }) {
+export function SortSelect({ value, hasLocation }: { value: SortKey; hasLocation: boolean }) {
   const t = useTranslations("Search");
   const tSort = useTranslations("Sort");
+  const tNear = useTranslations("NearMe");
   const { update } = useSearchNavigation();
+  const [locateError, setLocateError] = useState<string | null>(null);
+
+  async function choose(next: SortKey) {
+    setLocateError(null);
+    if (next === "distance" && !hasLocation) {
+      // "Nearest" needs to know where the visitor is: ask the browser first.
+      try {
+        update({ near: await requestNearParam(), sort: "distance" });
+      } catch (error) {
+        setLocateError(String(error));
+      }
+      return;
+    }
+    update({ sort: next === "rating" ? null : next });
+  }
 
   return (
-    <label className="flex items-center gap-2 text-sm text-muted">
-      <span className="whitespace-nowrap">{t("sortBy")}</span>
-      <select
-        value={value}
-        onChange={(e) => update({ sort: e.target.value === "rating" ? null : e.target.value })}
-        className="field w-auto cursor-pointer py-2 pr-8 font-medium"
-      >
-        {SORT_KEYS.map((key) => (
-          <option key={key} value={key}>
-            {tSort(key)}
-          </option>
-        ))}
-      </select>
-    </label>
+    <div className="flex flex-col items-end gap-1">
+      <label className="flex items-center gap-2 text-sm text-muted">
+        <span className="whitespace-nowrap">{t("sortBy")}</span>
+        <select
+          value={value}
+          onChange={(e) => choose(e.target.value as SortKey)}
+          className="field w-auto cursor-pointer py-2 pr-8 font-medium"
+        >
+          {SORT_KEYS.map((key) => (
+            <option key={key} value={key}>
+              {tSort(key)}
+            </option>
+          ))}
+        </select>
+      </label>
+      {locateError && tNear.has(locateError) && (
+        <p role="alert" className="text-xs text-muted">
+          {tNear(locateError)}
+        </p>
+      )}
+    </div>
   );
 }

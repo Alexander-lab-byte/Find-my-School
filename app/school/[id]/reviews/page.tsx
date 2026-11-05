@@ -116,40 +116,47 @@ export default async function SchoolReviewsPage({
                     {t("yourRejectedNote")}
                   </p>
                 )}
+                {access.verified ? (
+                  <p className="mb-4 flex gap-2 rounded-xl border border-line bg-surface-muted px-3.5 py-3 text-sm leading-6 text-muted">
+                    <Icon name="shield" className="mt-1 size-4 shrink-0 text-accent" />
+                    {tAccess("verifiedNote")}
+                  </p>
+                ) : (
+                  <div className="mb-4 rounded-xl border border-line bg-surface-muted px-3.5 py-3 text-sm leading-6 text-muted">
+                    <p className="flex gap-2">
+                      <Icon name="info" className="mt-1 size-4 shrink-0 text-subtle" />
+                      <span>
+                        {access.schoolDomains.length > 0
+                          ? tAccess("unverifiedNoteWithDomains", { domains: domainList(access.schoolDomains) })
+                          : tAccess("unverifiedNote")}
+                      </span>
+                    </p>
+                    {access.ownSchool && (
+                      <Link
+                        href={`/school/${access.ownSchool.id}/reviews#write-review`}
+                        className="mt-2 inline-flex items-center gap-1 font-medium text-accent hover:underline hover:underline-offset-4"
+                      >
+                        {tAccess("reviewOwnSchool", { school: schoolNames(access.ownSchool, locale).primary })}
+                        <Icon name="arrow-right" className="size-4" />
+                      </Link>
+                    )}
+                  </div>
+                )}
                 <ReviewForm schoolId={id} hasDorm={hasDorm} />
               </>
-            ) : access.status === "signed-out" ? (
+            ) : (
               <AccessCard icon="mail" title={tAccess("signedOutTitle")}>
-                <p>{tAccess("signedOutBody", { domains: domainList(access.schoolDomains) })}</p>
+                <p>
+                  {access.schoolDomains.length > 0
+                    ? tAccess("signedOutBody", { domains: domainList(access.schoolDomains) })
+                    : tAccess("signedOutBodyNoDomain")}
+                </p>
                 <Link
                   href={loginHref}
                   className="mt-5 block rounded-full bg-accent px-4 py-2.5 text-center text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
                 >
                   {t("loginToWrite")}
                 </Link>
-              </AccessCard>
-            ) : access.status === "wrong-domain" ? (
-              <AccessCard icon="lock" title={tAccess("wrongDomainTitle")}>
-                <p>
-                  {tAccess.rich("wrongDomainBody", {
-                    domains: domainList(access.schoolDomains),
-                    email: access.email,
-                    b: (chunks) => <span className="font-medium text-foreground">{chunks}</span>,
-                  })}
-                </p>
-                {access.ownSchool && (
-                  <Link
-                    href={`/school/${access.ownSchool.id}/reviews#write-review`}
-                    className="mt-5 flex items-center justify-center gap-2 rounded-xl border border-line px-4 py-2.5 text-center text-sm font-medium text-foreground transition-colors hover:bg-surface-muted"
-                  >
-                    {tAccess("reviewOwnSchool", { school: schoolNames(access.ownSchool, locale).primary })}
-                    <Icon name="arrow-right" className="size-4" />
-                  </Link>
-                )}
-              </AccessCard>
-            ) : (
-              <AccessCard icon="lock" title={tAccess("closedTitle")}>
-                <p>{tAccess("closedBody")}</p>
               </AccessCard>
             )}
           </div>

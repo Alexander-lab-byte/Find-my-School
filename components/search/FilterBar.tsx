@@ -4,9 +4,9 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Icon } from "@/components/common/Icon";
 import { useSearchNavigation } from "@/components/search/SearchNavigation";
-import { CURRICULA, LEVELS, SCHOOL_TYPES } from "@/lib/labels";
+import { BUDGETS, CURRICULA, LEVELS, SCHOOL_TYPES } from "@/lib/labels";
 
-export const FILTER_KEYS = ["type", "level", "curriculum", "district", "dorm"] as const;
+export const FILTER_KEYS = ["type", "level", "budget", "curriculum", "lang", "district", "dorm"] as const;
 
 function Option({
   active,
@@ -55,8 +55,16 @@ function Group({ title, children }: { title: string; children: React.ReactNode }
   );
 }
 
-export function FilterBar({ districts }: { districts: { name: string; count: number }[] }) {
+export function FilterBar({
+  districts,
+  languages,
+}: {
+  districts: { name: string; count: number }[];
+  languages: { code: string; count: number }[];
+}) {
   const t = useTranslations("Filters");
+  const tBudget = useTranslations("Budget");
+  const tLanguage = useTranslations("Language");
   const tType = useTranslations("SchoolType");
   const tLevel = useTranslations("Level");
   const tCurriculum = useTranslations("Curriculum");
@@ -140,6 +148,19 @@ export function FilterBar({ districts }: { districts: { name: string; count: num
           ))}
         </Group>
 
+        <Group title={t("budget")}>
+          {BUDGETS.map((value) => (
+            <Option
+              key={value}
+              active={searchParams.get("budget") === value}
+              onClick={() => toggle("budget", value)}
+            >
+              {tBudget(value)}
+            </Option>
+          ))}
+          <p className="px-2 pt-1 text-xs leading-5 text-subtle">{t("budgetNote")}</p>
+        </Group>
+
         <Group title={t("curriculum")}>
           {CURRICULA.map((value) => (
             <Option
@@ -151,6 +172,21 @@ export function FilterBar({ districts }: { districts: { name: string; count: num
             </Option>
           ))}
         </Group>
+
+        {languages.length > 1 && (
+          <Group title={t("language")}>
+            {languages.map(({ code, count }) => (
+              <Option
+                key={code}
+                active={searchParams.get("lang") === code}
+                onClick={() => toggle("lang", code)}
+                count={count}
+              >
+                {tLanguage.has(code) ? tLanguage(code) : code}
+              </Option>
+            ))}
+          </Group>
+        )}
 
         {districts.length > 0 && (
           <Group title={t("district")}>

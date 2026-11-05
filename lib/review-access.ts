@@ -3,26 +3,30 @@ import { prisma } from "@/lib/prisma";
 import { getAuthSession, getAuthUser, provedInbox } from "@/lib/current-user";
 
 /**
- * Who may review a school: only people who proved (by email code) that they
- * own an address on one of the school's `emailDomains`. Everything here
- * runs on the server — the UI uses it to show or hide the form, and
- * submitReview calls it again so a hand-crafted request can't skip it.
+ * Who may review a school: anyone who is signed in. Every review still waits
+ * for an admin before it's public.
+ *
+ * A review gets the "Verified" badge only when the writer proved (by email
+ * code) that they own an address on one of the school's `emailDomains`.
+ * Everyone else — parents, students without a school email, schools with no
+ * domain on file — can still review; their review shows as not verified.
+ *
+ * Everything here runs on the server — the UI uses it to show the form, and
+ * submitReview calls it again so a hand-crafted request can't fake the badge.
  */
 
 export type ReviewAccess =
-  /** Nobody is signed in. `schoolDomains` lets the UI say which email to use. */
+  /** Nobody is signed in. `schoolDomains` lets the UI say which email earns the badge. */
   | { status: "signed-out"; schoolDomains: string[] }
-  /** The school has no verified email domain yet, so nobody can review it. */
-  | { status: "closed" }
-  /** Signed in with a verified email on one of the school's domains. */
-  | { status: "allowed"; email: string }
   /**
-   * Signed in, but the email doesn't belong to this school (or isn't
-   * verified). `ownSchool` is the school their domain does match, if any.
+   * Signed in, so they may review. `verified` is true when their proven email
+   * is on one of the school's domains. `ownSchool` is the school their email
+   * domain does match, if it's a different one.
    */
   | {
-      status: "wrong-domain";
+      status: "allowed";
       email: string;
+      verified: boolean;
       schoolDomains: string[];
       ownSchool: { id: string; nameEn: string; nameMn: string | null } | null;
     };
@@ -52,6 +56,14 @@ export async function getVerifiedEmail() {
   return session.user.email.toLowerCase();
 }
 
+/** True when the signed-in user proved an email on one of these domains. */
+export async function isVerifiedFor(schoolDomains: string[]) {
+  if (schoolDomains.length === 0) return false;
+  const email = await getVerifiedEmail();
+  const domain = email ? emailDomain(email) : null;
+  return Boolean(domain && domainMatches(domain, schoolDomains));
+}
+
 export async function findSchoolForDomain(domain: string) {
   // Few schools and few domains: filter in memory rather than build a
   // suffix-matching SQL query.
@@ -67,32 +79,23 @@ export async function getReviewAccess(
   school: { id: string; emailDomains: string[] },
   { isSignedIn }: { isSignedIn: boolean }
 ): Promise<ReviewAccess> {
+  const signedOut: ReviewAccess = { status: "signed-out", schoolDomains: school.emailDomains };
+
   // Skip the Supabase round trip entirely for logged-out visitors.
-  if (!isSignedIn) {
-    return school.emailDomains.length === 0
-      ? { status: "closed" }
-      : { status: "signed-out", schoolDomains: school.emailDomains };
-  }
+  if (!isSignedIn) return signedOut;
 
   const authUser = await getAuthUser();
-  if (!authUser) {
-    return school.emailDomains.length === 0
-      ? { status: "closed" }
-      : { status: "signed-out", schoolDomains: school.emailDomains };
-  }
+  if (!authUser) return signedOut;
 
   const email = await getVerifiedEmail();
   const domain = email ? emailDomain(email) : null;
+  const verified = Boolean(domain && domainMatches(domain, school.emailDomains));
 
-  if (email && domain && domainMatches(domain, school.emailDomains)) {
-    return { status: "allowed", email };
-  }
-  if (school.emailDomains.length === 0) return { status: "closed" };
-
-  const ownSchool = domain ? await findSchoolForDomain(domain) : null;
+  const ownSchool = !verified && domain ? await findSchoolForDomain(domain) : null;
   return {
-    status: "wrong-domain",
+    status: "allowed",
     email: email ?? authUser.email ?? "",
+    verified,
     schoolDomains: school.emailDomains,
     ownSchool: ownSchool && ownSchool.id !== school.id ? ownSchool : null,
   };

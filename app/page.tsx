@@ -97,6 +97,15 @@ export default async function Home() {
             ))}
           </div>
 
+          <Link
+            href="/match"
+            className="mt-6 inline-flex items-center gap-2 rounded-full bg-white/70 px-4 py-2 text-sm font-semibold text-[#16309f] shadow-sm backdrop-blur transition hover:bg-white dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
+          >
+            <Icon name="sparkles" className="size-4" />
+            {t("matchCta")}
+            <Icon name="arrow-right" className="size-4" />
+          </Link>
+
           {totalSchools > 0 && (
             <p className="mt-6 text-sm font-medium text-[#1e2a44]/80 dark:text-white/60">
               {tCommon("schoolCount", { count: totalSchools })}
