@@ -1,0 +1,3 @@
+nameEn,nameMn,schoolNumber,type,level,curriculum,teachingLanguages,aimagCity,district,khoroo,address,latitude,longitude,locationApproximate,phone,email,website,tuitionMinAnnual,tuitionMaxAnnual,foundedYear,studentTeacherRatio,hasDormitory,emailDomains,source
+Example Public School No. 999,999-р сургууль (жишээ),No. 999,PUBLIC,K12,MONGOLIAN_NATIONAL,mn,Ulaanbaatar,Баянзүрх,12,"Example street, building 5",47.9150,106.9600,no,+976 7000 0000,,,,,1975,~25:1,no,,Example row — delete before importing
+Example Private School,Жишээ хувийн сургууль,,PRIVATE,HIGH,MONGOLIAN_NATIONAL|CAMBRIDGE,mn|en,Ulaanbaatar,Khan-Uul,,,,,,,info@example.edu.mn,www.example.edu.mn,12M,18M,2005,,yes,example.edu.mn,Example row — delete before importing

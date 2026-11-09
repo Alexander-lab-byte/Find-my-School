@@ -19,7 +19,14 @@ const BANNER_CLASSES: Record<SchoolType, string> = {
 // Curricula families recognise at a glance get the accent colour.
 const HIGHLIGHT_CURRICULA = new Set(["IB", "CAMBRIDGE", "AP"]);
 
-export function SchoolCard({ school }: { school: SchoolCardData }) {
+export function SchoolCard({
+  school,
+  distanceKm,
+}: {
+  school: SchoolCardData;
+  /** Straight-line distance from the visitor, when they shared their location. */
+  distanceKm?: number | null;
+}) {
   const t = useTranslations("Card");
   const tType = useTranslations("SchoolType");
   const tLevel = useTranslations("Level");
@@ -72,6 +79,11 @@ export function SchoolCard({ school }: { school: SchoolCardData }) {
           <li className="flex items-center gap-2">
             <Icon name="map-pin" className="size-4 shrink-0 text-subtle" />
             <span className="truncate">{location}</span>
+            {distanceKm != null && (
+              <span className="ml-auto shrink-0 rounded-full bg-accent-soft px-2 py-0.5 text-xs font-semibold tabular-nums text-accent">
+                {t("distance", { km: distanceKm < 10 ? distanceKm.toFixed(1) : Math.round(distanceKm) })}
+              </span>
+            )}
           </li>
           {showTuition && (
             <li className="flex items-center gap-2">
@@ -113,21 +125,15 @@ export function SchoolCard({ school }: { school: SchoolCardData }) {
         )}
 
         {school.graduateDestinations.length > 0 && (
-          <div className="mt-4 rounded-2xl bg-gold-soft px-3.5 py-3">
-            <p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.08em] text-gold-foreground/80 dark:text-gold">
-              <Icon name="graduation" className="size-3.5" />
-              {t("graduatesGoTo")}
-            </p>
-            <p className="mt-1 line-clamp-2 text-sm text-foreground">
-              {school.graduateDestinations.slice(0, 3).join(", ")}
-              {school.graduateDestinations.length > 3 && (
-                <span className="whitespace-nowrap text-muted">
-                  {" "}
-                  {t("more", { count: school.graduateDestinations.length - 3 })}
-                </span>
-              )}
-            </p>
-          </div>
+          <p className="mt-4 line-clamp-2 text-xs leading-5 text-muted">
+            <Icon name="graduation" className="mr-1 inline size-3.5 align-[-2px] text-subtle" />
+            <span className="font-medium">{t("graduatesGoTo")}:</span>{" "}
+            {school.graduateDestinations.slice(0, 3).join(", ")}
+            {school.graduateDestinations.length > 3 && (
+              <span className="whitespace-nowrap"> {t("more", { count: school.graduateDestinations.length - 3 })}</span>
+            )}{" "}
+            <span className="whitespace-nowrap text-subtle">({t("notVerified")})</span>
+          </p>
         )}
 
         <div className="mt-auto pt-5">

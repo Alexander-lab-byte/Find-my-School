@@ -8,7 +8,6 @@ import { SchoolMonogram } from "@/components/common/SchoolMonogram";
 import { Stars } from "@/components/common/StarRating";
 import { SaveButton } from "@/components/school-profile/SaveButton";
 import { CompareButton } from "@/components/compare/CompareButton";
-import type { ReviewAccess } from "@/lib/review-access";
 import { displayUrl, externalUrl, formatLocation, schoolNames } from "@/lib/labels";
 import { SkyClouds } from "@/components/common/SkyClouds";
 
@@ -17,13 +16,10 @@ type School = NonNullable<Awaited<ReturnType<typeof getSchoolHeader>>>;
 export function SchoolHeader({
   school,
   isSaved,
-  reviewStatus,
 }: {
   school: School;
   isSaved: boolean;
-  reviewStatus: ReviewAccess["status"];
 }) {
-  const tAccess = useTranslations("ReviewAccess");
   const t = useTranslations("Profile");
   const tCommon = useTranslations("Common");
   const tType = useTranslations("SchoolType");
@@ -110,30 +106,13 @@ export function SchoolHeader({
                 <p className="mt-1 text-sm text-muted">{t("beFirst")}</p>
               </>
             )}
-            {reviewStatus === "allowed" || reviewStatus === "signed-out" ? (
-              <Link
-                href={`/school/${school.id}/reviews#write-review`}
-                className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-accent px-4 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
-              >
-                <Icon name="pencil" className="size-4" />
-                {tCommon("writeReview")}
-              </Link>
-            ) : (
-              // Signed in with another school's email, or reviews not open here:
-              // keep the button visible but inert, and say why.
-              <div className="mt-4">
-                <span
-                  aria-disabled
-                  className="flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-xl border border-line bg-surface-muted px-4 py-2.5 text-sm font-medium text-subtle"
-                >
-                  <Icon name="lock" className="size-4" />
-                  {tCommon("writeReview")}
-                </span>
-                <p className="mt-2 text-xs leading-5 text-muted">
-                  {reviewStatus === "closed" ? tAccess("closedShort") : tAccess("wrongDomainShort")}
-                </p>
-              </div>
-            )}
+            <Link
+              href={`/school/${school.id}/reviews#write-review`}
+              className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-accent px-4 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
+            >
+              <Icon name="pencil" className="size-4" />
+              {tCommon("writeReview")}
+            </Link>
           </div>
         </div>
       </div>

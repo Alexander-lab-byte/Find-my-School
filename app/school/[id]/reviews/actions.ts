@@ -10,7 +10,7 @@ import {
   REPORT_REASONS,
   type ReportReason,
 } from "@/lib/review-limits";
-import { domainMatches, emailDomain, getVerifiedEmail } from "@/lib/review-access";
+import { isVerifiedFor } from "@/lib/review-access";
 
 type SubmitReviewInput = {
   schoolId: string;
@@ -43,17 +43,15 @@ export async function submitReview(input: SubmitReviewInput): Promise<SubmitRevi
   const user = await getCurrentUser();
   if (!user) return { ok: false, error: "LOGIN_REQUIRED" };
 
-  // Only verified members of this school may review it: the email they
-  // proved with a one-time code must be on one of the school's domains.
-  // Checked here on the server; the UI hiding the form is only a courtesy.
-  const [email, school] = await Promise.all([
-    getVerifiedEmail(),
-    prisma.school.findUnique({ where: { id: input.schoolId }, select: { emailDomains: true } }),
-  ]);
-  const domain = email ? emailDomain(email) : null;
-  if (!school || !domain || !domainMatches(domain, school.emailDomains)) {
-    return { ok: false, error: "NOT_ALLOWED" };
-  }
+  // Anyone signed in may review. The "Verified" badge is decided here on the
+  // server: the email they proved with a one-time code must be on one of the
+  // school's domains.
+  const school = await prisma.school.findUnique({
+    where: { id: input.schoolId },
+    select: { emailDomains: true },
+  });
+  if (!school) return { ok: false, error: "NOT_ALLOWED" };
+  const verified = await isVerifiedFor(school.emailDomains);
 
   // Never trust the client's validation (Temuulen's limits, enforced again here).
   const bodyText = String(input.bodyText ?? "")
@@ -94,8 +92,8 @@ export async function submitReview(input: SubmitReviewInput): Promise<SubmitRevi
         userId: user.id,
         bodyText,
         tags,
-        // Every review now comes from a verified school email.
-        isVerified: true,
+        // Verified only when written from a proven school email.
+        isVerified: verified,
         // Not public, and not counted in the ratings, until an admin approves it.
         status: "PENDING",
       },

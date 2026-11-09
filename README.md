@@ -48,7 +48,18 @@ For real traffic, set up custom SMTP (Authentication → SMTP Settings): Supabas
 
 ### Who can write reviews
 
-Only people who verified an email on one of a school's domains can review it (`School.emailDomains`, subdomains included — `student.asu.edu.mn` counts for `asu.edu.mn`). A school with no domains can't receive reviews. Domains live in `prisma/data/schools.ts`; edit and run `npm run db:import`.
+Anyone who is signed in can review any school. Every review waits for an admin (`/admin/reviews`) before it's public.
+
+A review gets the **Verified** badge only when the writer signed in with a code sent to an email on one of the school's domains (`School.emailDomains`, subdomains included — `student.asu.edu.mn` counts for `asu.edu.mn`). Other reviews show as "Not verified". Domains live in `prisma/data/schools.ts`; edit and run `npm run db:import`.
+
+### Adding many schools at once (CSV)
+
+1. Copy `prisma/data/schools-template.csv` into Google Sheets (or open it in Excel). `schools-example.csv` shows two filled-in rows.
+2. One row per school. Required: `nameEn`, `type` (PUBLIC / PRIVATE / INTERNATIONAL), `level` (ELEMENTARY / MIDDLE / HIGH / K12).
+3. Lists use `|`: `MONGOLIAN_NATIONAL|CAMBRIDGE`, `mn|en`. Fees can be written as `12M`. Districts can be in English or Mongolian (`Хан-Уул` → `Khan-Uul`).
+4. Fill `source` with where each fact comes from. Leave a cell empty rather than guess — empty cells never erase existing data.
+5. Download as CSV, then check it: `npm run db:import-csv -- path/to/file.csv`. Fix every error it lists (with row numbers).
+6. Save it: `npm run db:import-csv -- path/to/file.csv --write`. Nothing is saved unless every row is valid. A row updates the school with the same English name, or creates a new one.
 
 ### Map locations
 

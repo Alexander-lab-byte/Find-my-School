@@ -34,6 +34,19 @@ function StatTile({
   );
 }
 
+/**
+ * Graduate destinations and achievements come from public sources and
+ * haven't been confirmed by the schools, so they always carry this note.
+ */
+function UnverifiedNote({ text }: { text: string }) {
+  return (
+    <p className="mt-1.5 flex items-center gap-1.5 text-xs text-subtle">
+      <Icon name="info" className="size-3.5 shrink-0" />
+      {text}
+    </p>
+  );
+}
+
 /** The "report card" at the top of a school's overview: key numbers, outcomes, honours. */
 export function SchoolHighlights({
   foundedYear,
@@ -94,6 +107,7 @@ export function SchoolHighlights({
               <Icon name="graduation" className="size-5 text-accent" />
               {t("graduates")}
             </h2>
+            <UnverifiedNote text={t("unverified")} />
             <ul className="mt-4 flex flex-wrap gap-2">
               {graduateDestinations.map((destination) => (
                 <li
@@ -114,6 +128,7 @@ export function SchoolHighlights({
             <Icon name="trophy" className="size-5 text-star" />
             {t("achievements")}
           </h2>
+          <UnverifiedNote text={t("unverified")} />
           <ul className="mt-4 space-y-3">
             {notableAchievements.map((achievement) => (
               <li key={achievement} className="flex items-start gap-3">

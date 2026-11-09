@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Icon } from "@/components/common/Icon";
-import { CURRICULA, LEVELS, SCHOOL_TYPES } from "@/lib/labels";
+import { BUDGETS, CURRICULA, LEVELS, SCHOOL_TYPES } from "@/lib/labels";
 import { FILTER_KEYS } from "@/components/search/FilterBar";
 import { useSearchNavigation } from "@/components/search/SearchNavigation";
 
@@ -13,6 +13,8 @@ export function ActiveFilters() {
   const tLevel = useTranslations("Level");
   const tCurriculum = useTranslations("Curriculum");
   const tPlace = useTranslations("Place");
+  const tBudget = useTranslations("Budget");
+  const tLanguage = useTranslations("Language");
   const { searchParams, update } = useSearchNavigation();
 
   // Values come straight from the URL, so only translate known keys: a
@@ -26,6 +28,10 @@ export function ActiveFilters() {
         return (LEVELS as string[]).includes(value) ? tLevel(value) : value;
       case "curriculum":
         return (CURRICULA as string[]).includes(value) ? tCurriculum(value) : value;
+      case "budget":
+        return (BUDGETS as readonly string[]).includes(value) ? tBudget(value) : value;
+      case "lang":
+        return /^[a-z]{2}$/.test(value) && tLanguage.has(value) ? tLanguage(value) : value;
       case "dorm":
         return t("hasDorm");
       default:
