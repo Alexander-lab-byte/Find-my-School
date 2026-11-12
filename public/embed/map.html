@@ -150,15 +150,29 @@
       if (layer.type === "symbol" && /road|highway|street/i.test(layer.id)) {
         map.setPaintProperty(layer.id, "text-color", "#8a93a6");
       }
-      // OpenStreetMap's main "name" often holds Cyrillic and traditional Mongolian
-      // script together. Use the single-script names instead: Cyrillic (name:mn)
-      // in Mongolian, Latin in English. Never fall back to the mixed "name".
+      // OpenStreetMap's "name" often holds Cyrillic and traditional Mongolian
+      // script together ("Улаанбаатар ᠤᠯᠠᠭᠠᠨ ᠪᠠᠭᠠᠲᠤᠷ"). Show only the Cyrillic
+      // part in Mongolian, and Latin names in English.
       if (layer.type === "symbol" && layer.layout && layer.layout["text-field"]) {
         map.setLayoutProperty(layer.id, "text-field", LANG === "mn"
-          ? ["coalesce", ["get", "name:mn"], ["get", "name_en"], ["get", "name:latin"], ""]
-          : ["coalesce", ["get", "name_en"], ["get", "name:en"], ["get", "name:latin"], ""]);
+          ? withoutMongolianScript(["get", "name"])
+          : ["coalesce", ["get", "name_en"], ["get", "name:en"], ["get", "name:latin"], withoutMongolianScript(["get", "name"])]);
       }
     });
+  }
+
+  // Cuts a name off where the first traditional Mongolian letter appears
+  // (Unicode U+1820–U+18AA). Map styles have no regex, so this finds the
+  // earliest position of any of those letters with index-of.
+  var MONGOLIAN_LETTERS = [];
+  for (var cp = 0x1820; cp <= 0x18aa; cp++) MONGOLIAN_LETTERS.push(String.fromCharCode(cp));
+  function withoutMongolianScript(text) {
+    var NONE = 100000;
+    var t = ["to-string", ["coalesce", text, ""]];
+    var first = ["min"].concat(MONGOLIAN_LETTERS.map(function (ch) {
+      return ["case", [">=", ["index-of", ch, t], 0], ["index-of", ch, t], NONE];
+    }));
+    return ["let", "cut", first, ["case", ["<", ["var", "cut"], NONE], ["slice", t, 0, ["var", "cut"]], t]];
   }
 
   function popupHtml(p) {
