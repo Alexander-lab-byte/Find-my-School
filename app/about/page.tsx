@@ -14,6 +14,7 @@ const SECTIONS: [IconName, string, string][] = [
   ["shield", "verifiedTitle", "verifiedBody"],
   ["trophy", "ratingsTitle", "ratingsBody"],
   ["message", "moderationTitle", "moderationBody"],
+  ["info", "dataTitle", "dataBody"],
 ];
 
 function inlineLink(href: string) {
@@ -51,6 +52,16 @@ export default async function AboutPage() {
                   map: inlineLink("/map"),
                   compare: inlineLink("/compare"),
                   myReviews: inlineLink("/my-reviews"),
+                  osm: (chunks) => (
+                    <a
+                      href="https://www.openstreetmap.org/copyright"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="font-medium text-accent hover:underline"
+                    >
+                      {chunks}
+                    </a>
+                  ),
                 })}
               </p>
             </div>

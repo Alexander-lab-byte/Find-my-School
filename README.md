@@ -61,6 +61,16 @@ A review gets the **Verified** badge only when the writer signed in with a code 
 5. Download as CSV, then check it: `npm run db:import-csv -- path/to/file.csv`. Fix every error it lists (with row numbers).
 6. Save it: `npm run db:import-csv -- path/to/file.csv --write`. Nothing is saved unless every row is valid. A row updates the school with the same English name, or creates a new one.
 
+### School data sources (Nov 2026 import)
+
+`prisma/data/ub-schools-2026-11.csv` added 120 Ulaanbaatar schools and filled fees for existing ones. Already loaded into the live database.
+
+- Locations and districts: © OpenStreetMap contributors (ODbL). Credit OpenStreetMap on the site (map or About page).
+- Fees: ISU 2026–27 and ASU 2024–25 from the schools' own fee PDFs (ISU converted at Mongolbank ₮3,600.44/$, 8 Nov 2026); others from dated news reports (ergelt.mn, time.mn). The `source` column says which one.
+- Guesses are not hidden: most schools show grades 1–12 (K12) because that's the usual case, not because it was checked.
+
+`prisma/data/schools-to-complete.csv` is the to-find list: one row per school, with what's missing and a priority. Fill the empty cells in Google Sheets, download as CSV, then run `npm run db:import-csv -- file.csv` to check and `--write` to save. The `priority` and `whatToFind` columns are ignored by the importer.
+
 ### Map locations
 
 Pins come from `latitude`/`longitude` in `prisma/data/schools.ts`. Schools without coordinates are listed under "Not on the map yet" on `/map`. To add one: right-click the building in Google Maps or openstreetmap.org, copy the coordinates into the data file, run `npm run db:import`. Set `locationApproximate: true` if the pin isn't on the school's own building.

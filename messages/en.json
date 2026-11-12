@@ -555,7 +555,9 @@
     "ratingsTitle": "How ratings work",
     "ratingsBody": "Reviewers score academics, facilities, teachers, and campus environment from 1 to 5; library and dormitory scores are optional. A school's overall rating is the average of the four main categories. Each person reviews a school once and can delete their review from <myReviews>My reviews</myReviews>.",
     "moderationTitle": "Reviews and moderation",
-    "moderationBody": "An admin reads every new review before it's published, and only approved reviews count toward a school's rating. Reviews reflect the views of individual community members, not this site. If a published review is spam, abusive, or about a different school, use the Report link on it and a moderator will take a look."
+    "moderationBody": "An admin reads every new review before it's published, and only approved reviews count toward a school's rating. Reviews reflect the views of individual community members, not this site. If a published review is spam, abusive, or about a different school, use the Report link on it and a moderator will take a look.",
+    "dataTitle": "Where our information comes from",
+    "dataBody": "School locations and districts come from <osm>© OpenStreetMap contributors</osm>. Fees come from schools' own fee pages or from dated news reports, so check the latest fee with the school before you decide. Some details, like grade ranges, are still being confirmed. If something is wrong, tell us and we'll fix it."
   },
   "Account": {
     "eyebrow": "Your account",
