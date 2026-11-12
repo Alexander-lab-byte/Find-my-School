@@ -150,6 +150,14 @@
       if (layer.type === "symbol" && /road|highway|street/i.test(layer.id)) {
         map.setPaintProperty(layer.id, "text-color", "#8a93a6");
       }
+      // OpenStreetMap's main "name" often holds Cyrillic and traditional Mongolian
+      // script together. Use the single-script names instead: Cyrillic (name:mn)
+      // in Mongolian, Latin in English. Never fall back to the mixed "name".
+      if (layer.type === "symbol" && layer.layout && layer.layout["text-field"]) {
+        map.setLayoutProperty(layer.id, "text-field", LANG === "mn"
+          ? ["coalesce", ["get", "name:mn"], ["get", "name_en"], ["get", "name:latin"], ""]
+          : ["coalesce", ["get", "name_en"], ["get", "name:en"], ["get", "name:latin"], ""]);
+      }
     });
   }
 
