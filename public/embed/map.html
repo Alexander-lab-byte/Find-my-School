@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Schools of Ulaanbaatar · Find My School Mongolia</title>
+<meta name="description" content="Map of schools in Ulaanbaatar from Find My School Mongolia.">
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+<style>
+  /*
+   * Find My School map — one self-contained page.
+   * Embed it anywhere:  <iframe src="https://find-my-school-rho.vercel.app/embed/map.html" ...></iframe>
+   * Options (URL ?params): lang=mn | type=PUBLIC,PRIVATE | school=<id> | lat=..&lng=..&zoom=..
+   */
+  :root {
+    --public: #2448e8;
+    --private: #6d28d9;
+    --intl: #9a5806;
+    --ink: #0b1220;
+    --muted: #5b6475;
+    --line: #dfe4ee;
+    --card: #ffffff;
+    --bg: #f4f6fa;
+    --font: "Manrope", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  html, body { height: 100%; margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.4 var(--font); }
+  #map { position: absolute; inset: 0; }
+
+  /* Filter bar */
+  .bar {
+    position: absolute; z-index: 2;
+    top: calc(10px + env(safe-area-inset-top, 0px));
+    left: max(10px, env(safe-area-inset-left, 0px));
+    right: 56px;
+    display: flex; flex-wrap: wrap; gap: 6px; align-items: center; pointer-events: none;
+  }
+  .bar > * { pointer-events: auto; }
+  .brand {
+    display: flex; align-items: center; gap: 8px; padding: 6px 12px 6px 8px;
+    background: var(--card); border: 1px solid var(--line); border-radius: 999px;
+    font-weight: 700; text-decoration: none; color: var(--ink); box-shadow: 0 2px 8px rgba(11,18,32,.08);
+  }
+  .brand i { width: 18px; height: 18px; border-radius: 6px; background: var(--public); display: block; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px;
+    background: var(--card); border: 1px solid var(--line); border-radius: 999px;
+    font: 600 13px var(--font); color: var(--muted); cursor: pointer; box-shadow: 0 2px 8px rgba(11,18,32,.06);
+  }
+  .chip .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .chip[aria-pressed="true"] { color: var(--ink); border-color: currentColor; }
+  .chip[aria-pressed="false"] .dot { opacity: .3; }
+  .chip:focus-visible, .brand:focus-visible { outline: 2px solid var(--public); outline-offset: 2px; }
+  .count { font: 600 12px var(--font); color: var(--muted); background: rgba(255,255,255,.85); padding: 4px 10px; border-radius: 999px; }
+
+  /* Popup card */
+  .maplibregl-popup-content { padding: 0; border-radius: 14px; overflow: hidden; box-shadow: 0 10px 30px rgba(11,18,32,.18); font-family: var(--font); }
+  .maplibregl-popup-close-button { font-size: 20px; width: 28px; height: 28px; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.6); }
+  .card { width: 260px; }
+  .card.nophoto .maplibregl-popup-close-button { color: var(--muted); }
+  .photo { position: relative; aspect-ratio: 16 / 10; background: #e9edf5; }
+  .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .credit { position: absolute; right: 0; bottom: 0; max-width: 100%; padding: 2px 6px; font-size: 10px; color: #fff; background: rgba(0,0,0,.55); text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .body { padding: 12px 14px 14px; display: grid; gap: 6px; }
+  .type { justify-self: start; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; color: #fff; }
+  .name { margin: 0; font-size: 16px; font-weight: 800; line-height: 1.25; }
+  .alt { margin: 0; color: var(--muted); font-size: 13px; }
+  .facts { margin: 2px 0 0; padding: 0; list-style: none; display: grid; gap: 2px; color: var(--muted); font-size: 13px; }
+  .facts b { color: var(--ink); font-weight: 600; }
+  .open { margin-top: 4px; justify-self: start; display: inline-flex; gap: 4px; padding: 7px 12px; border-radius: 999px; background: var(--public); color: #fff; font-weight: 700; font-size: 13px; text-decoration: none; }
+  .open:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .approx { font-size: 12px; color: #9a5806; }
+
+  .status { position: absolute; inset: 0; display: grid; place-items: center; z-index: 3; color: var(--muted); font-weight: 600; pointer-events: none; }
+  @media (max-width: 480px) { .brand span { display: none; } .card { width: 230px; } }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div id="map" role="region" aria-label="Map of schools"></div>
+<div class="bar" id="bar">
+  <a class="brand" id="brand" href="https://find-my-school-rho.vercel.app/" target="_blank" rel="noopener"><i></i><span>Find My School</span></a>
+</div>
+<div class="status" id="status">Loading schools…</div>
+
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var params = new URLSearchParams(location.search);
+  var LANG = params.get("lang") === "mn" ? "mn" : "en";
+  // Our site serves the data. When this file is copied to another website, it still reads from here.
+  var SITE = /find-my-school/.test(location.hostname) || location.hostname === "localhost"
+    ? location.origin : "https://find-my-school-rho.vercel.app";
+  var DATA_URL = params.get("data") || SITE + "/api/map/schools";
+
+  var TEXT = {
+    en: { PUBLIC: "Public", PRIVATE: "Private", INTERNATIONAL: "International", free: "Free (public)", notListed: "Fee not listed",
+          perYear: "/ year", open: "Open school page →", rated: "Rated", reviews: "reviews", noReviews: "No reviews yet",
+          approx: "Location is approximate", loading: "Loading schools…", failed: "Couldn't load schools. Try again later.",
+          schools: "schools", photo: "Photo" },
+    mn: { PUBLIC: "Төрийн", PRIVATE: "Хувийн", INTERNATIONAL: "Олон улсын", free: "Үнэгүй (төрийн)", notListed: "Төлбөр зарлаагүй",
+          perYear: "/ жил", open: "Сургуулийн хуудас →", rated: "Үнэлгээ", reviews: "сэтгэгдэл", noReviews: "Сэтгэгдэл алга",
+          approx: "Байршил ойролцоо", loading: "Сургуулиудыг ачаалж байна…", failed: "Сургуулиудыг ачаалж чадсангүй.",
+          schools: "сургууль", photo: "Зураг" }
+  }[LANG];
+  var DISTRICT_MN = { "Baganuur": "Багануур", "Bagakhangai": "Багахангай", "Bayangol": "Баянгол", "Bayanzurkh": "Баянзүрх",
+    "Chingeltei": "Чингэлтэй", "Khan-Uul": "Хан-Уул", "Nalaikh": "Налайх", "Songinokhairkhan": "Сонгинохайрхан", "Sukhbaatar": "Сүхбаатар" };
+  var COLOR = { PUBLIC: "#2448e8", PRIVATE: "#6d28d9", INTERNATIONAL: "#9a5806" };
+  var TYPES = ["PUBLIC", "PRIVATE", "INTERNATIONAL"];
+  var active = new Set((params.get("type") || TYPES.join(",")).toUpperCase().split(",").filter(function (t) { return TYPES.indexOf(t) > -1; }));
+  if (!active.size) TYPES.forEach(function (t) { active.add(t); });
+
+  document.documentElement.lang = LANG;
+  document.getElementById("status").textContent = TEXT.loading;
+  document.getElementById("brand").href = SITE + "/";
+
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function money(n) { return "₮" + (n >= 1e6 ? (Math.round(n / 1e5) / 10) + "M" : Number(n).toLocaleString("en-US")); }
+  function fee(p) {
+    if (p.type === "PUBLIC") return TEXT.free;
+    if (!p.tuitionMinAnnual && !p.tuitionMaxAnnual) return TEXT.notListed;
+    var lo = p.tuitionMinAnnual, hi = p.tuitionMaxAnnual;
+    return (lo && hi && lo !== hi ? money(lo) + "–" + money(hi) : money(lo || hi)) + " " + TEXT.perYear;
+  }
+
+  var map = new maplibregl.Map({
+    container: "map",
+    // Free OpenStreetMap-based vector map, no API key: https://openfreemap.org
+    style: "https://tiles.openfreemap.org/styles/positron",
+    center: [Number(params.get("lng")) || 106.917, Number(params.get("lat")) || 47.918],
+    zoom: Number(params.get("zoom")) || 11.2,
+    minZoom: 9,
+    maxBounds: [[106.3, 47.6], [107.6, 48.25]],
+    attributionControl: { compact: true, customAttribution: "Schools: <a href=\"" + SITE + "\" target=\"_blank\">Find My School</a>" }
+  });
+  map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+  map.addControl(new maplibregl.GeolocateControl({ positionOptions: { enableHighAccuracy: false } }), "top-right");
+
+  // Focus on schools: hide buildings, shops and other points of interest; keep roads, water and districts for orientation.
+  function quietBaseMap() {
+    map.getStyle().layers.forEach(function (layer) {
+      if (/building|poi|housenumber|aeroway|transit|landuse_(commercial|industrial|retail)/i.test(layer.id)) {
+        map.setLayoutProperty(layer.id, "visibility", "none");
+      }
+      if (layer.type === "symbol" && /road|highway|street/i.test(layer.id)) {
+        map.setPaintProperty(layer.id, "text-color", "#8a93a6");
+      }
+    });
+  }
+
+  function popupHtml(p) {
+    var name = LANG === "mn" && p.nameMn ? p.nameMn : p.nameEn;
+    var alt = LANG === "mn" ? p.nameEn : p.nameMn;
+    var district = p.district ? (LANG === "mn" && DISTRICT_MN[p.district] ? DISTRICT_MN[p.district] : p.district) : "";
+    var place = [p.khoroo ? (LANG === "mn" ? p.khoroo + "-р хороо" : "Khoroo " + p.khoroo) : "", district].filter(Boolean).join(", ");
+    var rating = p.rating ? TEXT.rated + " <b>" + Number(p.rating).toFixed(1) + "</b>/5 · " + p.reviewCount + " " + TEXT.reviews : TEXT.noReviews;
+    var photo = p.photoUrl
+      ? '<div class="photo"><img src="' + esc(p.photoUrl) + '" alt="' + esc(TEXT.photo + ": " + name) + '" loading="lazy">' +
+        '<a class="credit" href="' + esc(p.photoSource) + '" target="_blank" rel="noopener">' + esc(p.photoCredit) + "</a></div>"
+      : "";
+    return '<div class="card' + (p.photoUrl ? "" : " nophoto") + '">' + photo +
+      '<div class="body">' +
+        '<span class="type" style="background:' + COLOR[p.type] + '">' + esc(TEXT[p.type]) + "</span>" +
+        '<h2 class="name">' + esc(name) + "</h2>" +
+        (alt && alt !== name ? '<p class="alt">' + esc(alt) + "</p>" : "") +
+        '<ul class="facts">' +
+          (place ? "<li>" + esc(place) + "</li>" : "") +
+          "<li><b>" + esc(fee(p)) + "</b></li>" +
+          "<li>" + rating + "</li>" +
+        "</ul>" +
+        (p.locationApproximate ? '<span class="approx">' + esc(TEXT.approx) + "</span>" : "") +
+        '<a class="open" href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(TEXT.open) + "</a>" +
+      "</div></div>";
+  }
+
+  var all = null;
+  function filtered() {
+    return { type: "FeatureCollection", features: all.features.filter(function (f) { return active.has(f.properties.type); }) };
+  }
+  function renderChips() {
+    var bar = document.getElementById("bar");
+    TYPES.forEach(function (t) {
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "chip"; b.setAttribute("aria-pressed", active.has(t));
+      b.innerHTML = '<span class="dot" style="background:' + COLOR[t] + '"></span>' + esc(TEXT[t]);
+      b.addEventListener("click", function () {
+        if (active.has(t) && active.size === 1) return; // keep at least one type
+        active.has(t) ? active.delete(t) : active.add(t);
+        b.setAttribute("aria-pressed", active.has(t));
+        map.getSource("schools").setData(filtered());
+        updateCount();
+      });
+      bar.appendChild(b);
+    });
+    var c = document.createElement("span"); c.className = "count"; c.id = "count"; bar.appendChild(c);
+  }
+  function updateCount() { document.getElementById("count").textContent = filtered().features.length + " " + TEXT.schools; }
+
+  map.on("load", function () {
+    quietBaseMap();
+    fetch(DATA_URL).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(function (data) {
+      all = data;
+      document.getElementById("status").remove();
+      map.addSource("schools", { type: "geojson", data: filtered(), cluster: true, clusterRadius: 42, clusterMaxZoom: 13, promoteId: "id" });
+
+      map.addLayer({ id: "clusters", type: "circle", source: "schools", filter: ["has", "point_count"],
+        paint: { "circle-color": "#0b1220", "circle-opacity": 0.82, "circle-stroke-color": "#fff", "circle-stroke-width": 2,
+                 "circle-radius": ["step", ["get", "point_count"], 15, 10, 19, 30, 24] } });
+      map.addLayer({ id: "cluster-count", type: "symbol", source: "schools", filter: ["has", "point_count"],
+        layout: { "text-field": ["get", "point_count_abbreviated"], "text-font": ["Noto Sans Bold"], "text-size": 12 },
+        paint: { "text-color": "#fff" } });
+      map.addLayer({ id: "school", type: "circle", source: "schools", filter: ["!", ["has", "point_count"]],
+        paint: {
+          "circle-color": ["match", ["get", "type"], "PUBLIC", COLOR.PUBLIC, "PRIVATE", COLOR.PRIVATE, COLOR.INTERNATIONAL],
+          "circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 5, 15, 9],
+          "circle-stroke-color": "#fff", "circle-stroke-width": 2,
+          "circle-opacity": ["case", ["get", "locationApproximate"], 0.55, 1]
+        } });
+      map.addLayer({ id: "school-label", type: "symbol", source: "schools", filter: ["!", ["has", "point_count"]], minzoom: 13.5,
+        layout: { "text-field": LANG === "mn" ? ["coalesce", ["get", "nameMn"], ["get", "nameEn"]] : ["get", "nameEn"],
+                  "text-font": ["Noto Sans Bold"], "text-size": 12, "text-offset": [0, 1.1], "text-anchor": "top", "text-max-width": 10 },
+        paint: { "text-color": "#0b1220", "text-halo-color": "#fff", "text-halo-width": 1.5 } });
+
+      map.on("click", "clusters", function (e) {
+        var f = e.features[0];
+        map.getSource("schools").getClusterExpansionZoom(f.properties.cluster_id).then(function (z) {
+          map.easeTo({ center: f.geometry.coordinates, zoom: z });
+        });
+      });
+      function openPopup(f) {
+        new maplibregl.Popup({ offset: 12, maxWidth: "300px" }).setLngLat(f.geometry.coordinates).setHTML(popupHtml(f.properties)).addTo(map);
+      }
+      map.on("click", "school", function (e) { openPopup(e.features[0]); });
+      ["clusters", "school"].forEach(function (id) {
+        map.on("mouseenter", id, function () { map.getCanvas().style.cursor = "pointer"; });
+        map.on("mouseleave", id, function () { map.getCanvas().style.cursor = ""; });
+      });
+
+      renderChips(); updateCount();
+
+      // ?school=<id> opens one school (handy for a school's own page on another website)
+      var focus = params.get("school");
+      if (focus) {
+        var f = all.features.find(function (x) { return x.properties.id === focus; });
+        if (f) { map.jumpTo({ center: f.geometry.coordinates, zoom: 15.5 }); openPopup(f); }
+      }
+    }).catch(function () { document.getElementById("status").textContent = TEXT.failed; });
+  });
+})();
+</script>
+</body>
+</html>

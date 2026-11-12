@@ -71,6 +71,24 @@ A review gets the **Verified** badge only when the writer signed in with a code 
 
 `prisma/data/schools-to-complete.csv` is the to-find list: one row per school, with what's missing and a priority. Fill the empty cells in Google Sheets, download as CSV, then run `npm run db:import-csv -- file.csv` to check and `--write` to save. The `priority` and `whatToFind` columns are ignored by the importer.
 
+### Our schools map (reuse it on any website)
+
+**Embed the map** — paste this into any web page:
+
+```html
+<iframe src="https://find-my-school-rho.vercel.app/embed/map.html"
+        width="100%" height="520" style="border:0;border-radius:12px"
+        loading="lazy" title="Schools of Ulaanbaatar"></iframe>
+```
+
+Options (add to the URL): `?lang=mn` (Mongolian) · `?type=PUBLIC` or `?type=PRIVATE,INTERNATIONAL` · `?school=<school id>` (opens one school) · `?lat=47.92&lng=106.91&zoom=14`.
+
+**Use the data in your own map** — `GET https://find-my-school-rho.vercel.app/api/map/schools` returns every pinned school as GeoJSON (open CORS, cached 1 hour). Add `?type=PUBLIC` to filter. MapLibre, Leaflet, Mapbox and Google Maps can all load GeoJSON directly.
+
+The page is one file, `public/embed/map.html` (MapLibre GL + the free [OpenFreeMap](https://openfreemap.org) "positron" base map, no API key). Buildings, shops and other places are hidden so only schools stand out. You can copy the file to another site; it keeps reading data from our API.
+
+**Photos** come only from Wikimedia Commons, under free licenses, and each one shows its author and license. They're listed in `lib/school-photos.ts`. Don't add photos copied from school websites, Facebook or Google: those are copyrighted. To add one, upload it to Commons first (or get the school's written permission).
+
 ### Map locations
 
 Pins come from `latitude`/`longitude` in `prisma/data/schools.ts`. Schools without coordinates are listed under "Not on the map yet" on `/map`. To add one: right-click the building in Google Maps or openstreetmap.org, copy the coordinates into the data file, run `npm run db:import`. Set `locationApproximate: true` if the pin isn't on the school's own building.
