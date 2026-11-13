@@ -155,7 +155,7 @@ export default function LeafletMap({
                 {!single && (
                   <Link
                     href={`/school/${school.id}`}
-                    className="inline-block pt-1 text-sm font-medium text-accent hover:underline"
+                    className="inline-block pt-1 text-sm link"
                   >
                     {t("viewProfile")} →
                   </Link>

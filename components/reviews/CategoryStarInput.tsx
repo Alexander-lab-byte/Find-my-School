@@ -44,9 +44,9 @@ export function CategoryStarInput({ label, value, onChange, required }: Category
             aria-label={t("starLabel", { count: n, word: t(RATING_WORDS[n - 1]) })}
             aria-pressed={n === value}
             title={t(RATING_WORDS[n - 1])}
-            className={`rounded p-0.5 transition-colors ${n <= shown ? "text-star" : "text-star-empty"}`}
+            className={`rounded-md p-1.5 transition-colors ${n <= shown ? "text-star" : "text-star-empty"}`}
           >
-            <svg viewBox="0 0 24 24" fill="currentColor" className="size-5.5" aria-hidden>
+            <svg viewBox="0 0 24 24" fill="currentColor" className="size-6" aria-hidden>
               <path d="M12 2.5l2.92 5.92 6.53.95-4.72 4.6 1.11 6.5L12 17.4l-5.84 3.07 1.11-6.5-4.72-4.6 6.53-.95z" />
             </svg>
           </button>

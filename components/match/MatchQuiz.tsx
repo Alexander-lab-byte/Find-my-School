@@ -42,21 +42,21 @@ function Choice({
       role="radio"
       aria-checked={selected}
       onClick={onClick}
-      className={`flex w-full items-start gap-3 rounded-2xl border px-4 py-3.5 text-left transition-colors ${
+      className={`flex min-h-14 w-full items-start gap-3 rounded-xl border px-4 py-3.5 text-left transition-colors ${
         selected
-          ? "border-accent bg-accent-soft"
-          : "border-line bg-surface hover:border-line-strong hover:bg-surface-muted"
+          ? "border-gold-foreground/50 bg-gold-soft"
+          : "border-line-strong bg-surface hover:border-foreground"
       }`}
     >
       <span
-        className={`mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full border ${
-          selected ? "border-accent bg-accent text-accent-foreground" : "border-line-strong"
+        className={`mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full border-[1.5px] ${
+          selected ? "border-foreground bg-foreground text-surface" : "border-subtle"
         }`}
       >
         {selected && <Icon name="check" className="size-3" strokeWidth={3.5} />}
       </span>
       <span>
-        <span className={`block font-medium ${selected ? "text-accent" : "text-foreground"}`}>{title}</span>
+        <span className="block font-semibold text-foreground">{title}</span>
         {hint && <span className="mt-0.5 block text-sm text-muted">{hint}</span>}
       </span>
     </button>
@@ -129,127 +129,141 @@ export function MatchQuiz({ districts }: { districts: { name: string; count: num
     step === "priority";
 
   return (
-    <div className="mx-auto max-w-xl">
-      {/* Progress */}
-      <div className="flex items-center gap-3">
-        <div
-          className="h-1.5 flex-1 overflow-hidden rounded-full bg-surface-muted"
-          role="progressbar"
-          aria-valuemin={1}
-          aria-valuemax={STEPS.length}
-          aria-valuenow={stepIndex + 1}
-          aria-label={t("progress", { step: stepIndex + 1, total: STEPS.length })}
-        >
-          <div
-            className="h-full rounded-full bg-accent transition-[width] duration-300"
-            style={{ width: `${((stepIndex + 1) / STEPS.length) * 100}%` }}
-          />
-        </div>
-        <span className="text-xs font-medium tabular-nums text-subtle">
-          {stepIndex + 1}/{STEPS.length}
-        </span>
-      </div>
-
-      <h2 className="mt-6 font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-        {t(`q.${step}`)}
-      </h2>
-      <p className="mt-1.5 text-muted">{t(`qHint.${step}`)}</p>
-
-      <div role="radiogroup" aria-label={t(`q.${step}`)} className="mt-6 space-y-2.5">
-        {step === "level" &&
-          MATCH_LEVELS.map((value) => (
-            <Choice
-              key={value}
-              selected={answers.level === value}
-              onClick={() => choose({ level: value })}
-              title={t(`level.${value}`)}
-              hint={t(`levelHint.${value}`)}
-            />
-          ))}
-
-        {step === "budget" &&
-          MATCH_BUDGETS.map((value) => (
-            <Choice
-              key={value}
-              selected={answers.budget === value}
-              onClick={() => choose({ budget: value })}
-              title={t(`budget.${value}`)}
-            />
-          ))}
-
-        {step === "goal" &&
-          MATCH_GOALS.map((value) => (
-            <Choice
-              key={value}
-              selected={answers.goal === value}
-              onClick={() => choose({ goal: value })}
-              title={t(`goal.${value}`)}
-              hint={t(`goalHint.${value}`)}
-            />
-          ))}
-
-        {step === "where" && (
-          <div className="space-y-4">
-            <div className="rounded-2xl border border-line bg-surface p-4">
+    <div>
+      {/* Progress as a route: one stop per question. Stops already passed can be clicked to go back. */}
+      <ol className="flex items-center" aria-label={t("progress", { step: stepIndex + 1, total: STEPS.length })}>
+        {STEPS.map((name, i) => {
+          const done = i < stepIndex;
+          const current = i === stepIndex;
+          return (
+            <li key={name} className="flex flex-1 items-center last:flex-none">
               <button
                 type="button"
-                onClick={useMyLocation}
-                disabled={locating}
-                className={`chip ${answers.near ? "is-on" : ""}`}
+                disabled={!done}
+                onClick={() => setStepIndex(i)}
+                aria-current={current ? "step" : undefined}
+                aria-label={t("progress", { step: i + 1, total: STEPS.length })}
+                className={`flex size-9 shrink-0 items-center justify-center rounded-full border-2 font-display text-sm font-bold tabular-nums transition-colors ${
+                  current
+                    ? "border-gold-foreground/60 bg-gold text-gold-foreground"
+                    : done
+                      ? "border-accent bg-accent text-accent-foreground hover:bg-accent-hover"
+                      : "border-line-strong bg-surface text-subtle"
+                }`}
               >
-                <Icon name="map-pin" className="size-4" />
-                {answers.near ? t("locationSet") : locating ? t("locating") : t("useLocation")}
+                {done ? <Icon name="check" className="size-4" strokeWidth={3} /> : i + 1}
               </button>
-              {locateError && (
-                <p role="alert" className="mt-2 text-xs text-muted">
-                  {t(`locateError.${locateError === "denied" ? "denied" : "unavailable"}`)}
-                </p>
+              {i < STEPS.length - 1 && (
+                <span aria-hidden className={`h-1.5 flex-1 ${done ? "bg-accent" : "bg-surface-muted"}`} />
               )}
-              <p className="mt-3 text-xs text-subtle">{t("locationPrivacy")}</p>
+            </li>
+          );
+        })}
+      </ol>
 
-              {districts.length > 0 && (
-                <label className="mt-4 block text-sm">
-                  <span className="font-medium text-foreground">{t("orDistrict")}</span>
-                  <select
-                    value={answers.district ?? ""}
-                    onChange={(e) => choose({ district: e.target.value || undefined, near: undefined }, false)}
-                    className="field mt-1.5 cursor-pointer"
-                  >
-                    <option value="">{t("anyDistrict")}</option>
-                    {districts.map(({ name }) => (
-                      <option key={name} value={name}>
-                        {tPlace.has(name) ? tPlace(name) : name}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              )}
-            </div>
+      {/* Keyed by step, so each new question slides in. */}
+      <div key={step} className="pop-in">
+        <h2 className="mt-7 font-display text-2xl font-bold tracking-[-0.02em] text-foreground sm:text-[1.75rem]">
+          {t(`q.${step}`)}
+        </h2>
+        <p className="mt-1.5 text-muted">{t(`qHint.${step}`)}</p>
 
-            <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-line bg-surface px-4 py-3.5">
-              <input
-                type="checkbox"
-                checked={answers.dorm}
-                onChange={(e) => choose({ dorm: e.target.checked }, false)}
-                className="mt-1 size-4 accent-accent"
+        <div role="radiogroup" aria-label={t(`q.${step}`)} className="mt-5 space-y-2.5">
+          {step === "level" &&
+            MATCH_LEVELS.map((value) => (
+              <Choice
+                key={value}
+                selected={answers.level === value}
+                onClick={() => choose({ level: value })}
+                title={t(`level.${value}`)}
+                hint={t(`levelHint.${value}`)}
               />
-              <span>
-                <span className="block font-medium text-foreground">{t("needDorm")}</span>
-                <span className="mt-0.5 block text-sm text-muted">{t("needDormHint")}</span>
-              </span>
-            </label>
-          </div>
-        )}
+            ))}
 
-        {step === "priority" &&
-          MATCH_PRIORITIES.map((value) => (
-            <Choice
-              key={value}
-              selected={answers.priority === value}
-              onClick={() => choose({ priority: value })}
-              title={t(`priority.${value}`)}
-            />
-          ))}
+          {step === "budget" &&
+            MATCH_BUDGETS.map((value) => (
+              <Choice
+                key={value}
+                selected={answers.budget === value}
+                onClick={() => choose({ budget: value })}
+                title={t(`budget.${value}`)}
+              />
+            ))}
+
+          {step === "goal" &&
+            MATCH_GOALS.map((value) => (
+              <Choice
+                key={value}
+                selected={answers.goal === value}
+                onClick={() => choose({ goal: value })}
+                title={t(`goal.${value}`)}
+                hint={t(`goalHint.${value}`)}
+              />
+            ))}
+
+          {step === "where" && (
+            <div className="space-y-4">
+              <div className="rounded-xl border border-line-strong bg-surface p-4">
+                <button
+                  type="button"
+                  onClick={useMyLocation}
+                  disabled={locating}
+                  className={`chip ${answers.near ? "is-on" : ""}`}
+                >
+                  <Icon name="map-pin" className="size-4" />
+                  {answers.near ? t("locationSet") : locating ? t("locating") : t("useLocation")}
+                </button>
+                {locateError && (
+                  <p role="alert" className="mt-2 text-xs text-muted">
+                    {t(`locateError.${locateError === "denied" ? "denied" : "unavailable"}`)}
+                  </p>
+                )}
+                <p className="mt-3 text-xs text-subtle">{t("locationPrivacy")}</p>
+
+                {districts.length > 0 && (
+                  <label className="mt-4 block text-sm">
+                    <span className="font-semibold text-foreground">{t("orDistrict")}</span>
+                    <select
+                      value={answers.district ?? ""}
+                      onChange={(e) => choose({ district: e.target.value || undefined, near: undefined }, false)}
+                      className="field mt-1.5 cursor-pointer"
+                    >
+                      <option value="">{t("anyDistrict")}</option>
+                      {districts.map(({ name }) => (
+                        <option key={name} value={name}>
+                          {tPlace.has(name) ? tPlace(name) : name}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                )}
+              </div>
+
+              <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-line-strong bg-surface px-4 py-3.5 transition-colors hover:border-foreground has-checked:border-gold-foreground/50 has-checked:bg-gold-soft">
+                <input
+                  type="checkbox"
+                  checked={answers.dorm}
+                  onChange={(e) => choose({ dorm: e.target.checked }, false)}
+                  className="mt-1 size-4 accent-[var(--foreground)]"
+                />
+                <span>
+                  <span className="block font-semibold text-foreground">{t("needDorm")}</span>
+                  <span className="mt-0.5 block text-sm text-muted">{t("needDormHint")}</span>
+                </span>
+              </label>
+            </div>
+          )}
+
+          {step === "priority" &&
+            MATCH_PRIORITIES.map((value) => (
+              <Choice
+                key={value}
+                selected={answers.priority === value}
+                onClick={() => choose({ priority: value })}
+                title={t(`priority.${value}`)}
+              />
+            ))}
+        </div>
       </div>
 
       <div className="mt-8 flex items-center justify-between gap-3">

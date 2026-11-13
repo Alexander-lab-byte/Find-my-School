@@ -17,11 +17,7 @@ export function CompareButton({ schoolId }: { schoolId: string }) {
       disabled={blocked}
       aria-pressed={selected}
       title={blocked ? t("full", { max: MAX_COMPARE }) : undefined}
-      className={`inline-flex min-h-10 items-center gap-1.5 rounded-xl border px-3.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
-        selected
-          ? "border-accent/40 bg-accent-soft text-accent"
-          : "border-line bg-surface text-muted hover:border-line-strong hover:text-foreground"
-      }`}
+      className={`btn-sm ${selected ? "btn-gold" : "btn-secondary"}`}
     >
       <Icon name="columns" className="size-3.5" strokeWidth={2} />
       {selected ? t("added") : t("add")}

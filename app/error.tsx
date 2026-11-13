@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { EmptyState } from "@/components/common/EmptyState";
 
 export default function ErrorPage({
   error,
@@ -25,28 +26,15 @@ export default function ErrorPage({
   }, [error]);
 
   return (
-    <main className="mx-auto max-w-xl px-4 py-24 text-center sm:px-6">
-      <h1 className="font-display text-3xl font-bold text-foreground">
-        {t("title")}
-      </h1>
-      <p className="mt-2 text-muted">
-        {t("body")}
-      </p>
-      <div className="mt-8 flex justify-center gap-3">
-        <button
-          type="button"
-          onClick={() => tryAgain?.()}
-          className="rounded-full bg-accent px-4 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
-        >
+    <main className="mx-auto w-full max-w-xl px-4 py-16 sm:px-6">
+      <EmptyState as="h1" icon="info" title={t("title")} body={t("body")}>
+        <button type="button" onClick={() => tryAgain?.()} className="btn-primary">
           {tCommon("tryAgain")}
         </button>
-        <Link
-          href="/"
-          className="rounded-xl border border-line px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-surface-muted"
-        >
+        <Link href="/" className="btn-secondary">
           {tCommon("goHome")}
         </Link>
-      </div>
+      </EmptyState>
     </main>
   );
 }

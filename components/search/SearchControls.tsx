@@ -57,14 +57,14 @@ export function SearchInput() {
         placeholder={t("inputPlaceholder")}
         aria-label={t("inputLabel")}
         autoComplete="off"
-        className="field h-12 rounded-[1.25rem] pl-12 pr-11 text-base [&::-webkit-search-cancel-button]:hidden"
+        className="field h-12 pl-12 pr-12 text-base [&::-webkit-search-cancel-button]:hidden"
       />
       {value && (
         <button
           type="button"
           onClick={() => setValue("")}
           aria-label={t("clear")}
-          className="absolute right-3 top-1/2 flex size-9 -translate-y-1/2 items-center justify-center rounded-lg text-subtle transition-colors hover:bg-surface-muted hover:text-foreground"
+          className="absolute right-1.5 top-1/2 flex size-10 -translate-y-1/2 items-center justify-center rounded-lg text-muted transition-colors hover:bg-surface-muted hover:text-foreground"
         >
           <Icon name="x" className="size-4" />
         </button>
@@ -101,7 +101,7 @@ export function SortSelect({ value, hasLocation }: { value: SortKey; hasLocation
         <select
           value={value}
           onChange={(e) => choose(e.target.value as SortKey)}
-          className="field w-auto cursor-pointer py-2 pr-8 font-medium"
+          className="field w-auto cursor-pointer py-1.5 pr-8 font-semibold"
         >
           {SORT_KEYS.map((key) => (
             <option key={key} value={key}>

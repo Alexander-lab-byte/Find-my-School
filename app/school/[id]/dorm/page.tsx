@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { getSchoolDormitory } from "@/lib/schools";
-import { Icon } from "@/components/common/Icon";
+import { EmptyState } from "@/components/common/EmptyState";
 import { StarRating } from "@/components/common/StarRating";
 import {
   Fact,
@@ -26,17 +26,7 @@ export default async function SchoolDormitoryPage({
 
   if (!school.dormitory) {
     return (
-      <div className="rounded-[1.25rem] border border-dashed border-line-strong bg-surface px-6 py-14 text-center">
-        <span className="mx-auto flex size-12 items-center justify-center rounded-full bg-surface-muted text-subtle">
-          <Icon name="bed" className="size-5" />
-        </span>
-        <h2 className="mt-4 font-display text-xl font-bold text-foreground">
-          {t("noneTitle")}
-        </h2>
-        <p className="mx-auto mt-2 max-w-md text-sm text-muted">
-          {t("noneBody")}
-        </p>
-      </div>
+      <EmptyState icon="bed" title={t("noneTitle")} body={t("noneBody")} />
     );
   }
 

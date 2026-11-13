@@ -325,6 +325,11 @@ export const getSchoolHeader = cache((id: string) =>
       avgOverall: true,
       reviewCount: true,
       emailDomains: true,
+      // Enough to know which profile tabs have something to show.
+      avgFacilities: true,
+      avgLibrary: true,
+      dormitory: { select: { id: true } },
+      _count: { select: { facilities: true } },
     },
   })
 );

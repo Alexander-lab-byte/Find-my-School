@@ -20,7 +20,7 @@ const SECTIONS: [IconName, string, string][] = [
 function inlineLink(href: string) {
   return function InlineLink(chunks: React.ReactNode) {
     return (
-      <Link href={href} className="font-medium text-accent hover:underline">
+      <Link href={href} className="link">
         {chunks}
       </Link>
     );
@@ -31,22 +31,19 @@ export default async function AboutPage() {
   const t = await getTranslations("About");
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-4 py-12 sm:px-6">
-      <p className="eyebrow">{t("eyebrow")}</p>
-      <h1 className="mt-2 text-balance font-display text-3xl font-bold tracking-tight sm:text-4xl text-foreground">
-        {t("title")}
-      </h1>
-      <p className="mt-4 text-pretty text-lg leading-8 text-muted">{t("intro")}</p>
+    <main className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
+      <h1 className="page-title">{t("title")}</h1>
+      <p className="mt-4 max-w-[65ch] text-pretty text-lg leading-8 text-muted">{t("intro")}</p>
 
-      <div className="mt-10 grid gap-4">
+      <div className="plate mt-8 divide-y divide-line">
         {SECTIONS.map(([icon, title, body]) => (
-          <section key={title} className="flex gap-4 reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)] p-6">
+          <section key={title} className="flex gap-4 p-5 sm:p-6">
             <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent">
               <Icon name={icon} className="size-5" />
             </span>
             <div>
-              <h2 className="font-display text-xl font-bold text-foreground">{t(title)}</h2>
-              <p className="mt-2 leading-7 text-muted">
+              <h2 className="section-title">{t(title)}</h2>
+              <p className="mt-2 max-w-[65ch] leading-7 text-muted">
                 {t.rich(body, {
                   search: inlineLink("/search"),
                   map: inlineLink("/map"),
@@ -57,7 +54,7 @@ export default async function AboutPage() {
                       href="https://www.openstreetmap.org/copyright"
                       target="_blank"
                       rel="noreferrer"
-                      className="font-medium text-accent hover:underline"
+                      className="link"
                     >
                       {chunks}
                     </a>

@@ -35,7 +35,9 @@
     "profile": "Profile",
     "moderation": "Moderation",
     "about": "About",
-    "findMatch": "Find my match"
+    "findMatch": "Find my match",
+    "mainNav": "Main",
+    "skipToContent": "Skip to content"
   },
   "Footer": {
     "description": "An independent guide to schools in Mongolia — curriculum, fees, dormitories, and reviews from parents, students, alumni, and educators.",
@@ -43,43 +45,35 @@
     "explore": "Explore",
     "contribute": "Contribute",
     "allSchools": "All schools",
-    "publicSchools": "Public schools",
-    "privateSchools": "Private schools",
-    "internationalSchools": "International schools",
-    "dormSchools": "Schools with dormitories",
     "reviewYourSchool": "Review your school",
     "createAccount": "Create an account",
     "copyright": "© {year} Find My School Mongolia",
     "disclaimer": "Reviews reflect the views of individual community members.",
     "logIn": "Log in",
-    "schoolMap": "School map"
+    "schoolMap": "School map",
+    "findMatch": "Find my match",
+    "compare": "Compare schools",
+    "savedSchools": "Saved schools",
+    "myReviews": "My reviews"
   },
   "Home": {
-    "eyebrow": "Schools across Mongolia",
-    "title": "Choose a school with confidence",
+    "title": "Choose a school <hl>with confidence</hl>",
     "subtitle": "Compare curricula, fees, and dormitories, and read honest reviews from parents, students, alumni, and educators.",
-    "browseLabel": "Browse:",
-    "quickPublic": "Public",
-    "quickPrivate": "Private",
-    "quickInternational": "International",
-    "quickHigh": "High school",
-    "quickDorm": "With dormitory",
-    "directoryEyebrow": "Directory",
     "directoryTitle": "Schools on Find My School",
     "directoryDescription": "Sorted by community rating. Open any school for its full profile, fees, and reviews.",
     "viewAll": "View all {count, plural, one {# school} other {# schools}}",
     "noSchools": "No schools have been added yet.",
-    "browseEyebrow": "Browse",
-    "browseTitle": "Find the right kind of school",
-    "browseDescription": "Start broad, then narrow down by level, curriculum, and features.",
     "byDistrict": "By district",
-    "communityEyebrow": "Community",
     "recentlyReviewed": "Recently reviewed",
     "ctaTitle": "Know a school well?",
     "ctaBody": "Your review helps another family make one of the most important decisions they face. It takes about three minutes.",
     "ctaFind": "Find your school to review",
-    "ctaRegister": "Create a free account",
-    "matchCta": "Not sure where to start? Answer 5 questions"
+    "pathTitle": "Start from a stage or a kind of school",
+    "pathStages": "Stages of school",
+    "pathLines": "Kinds of school",
+    "pathGoal": "University",
+    "listedSoFar": "<b>{count}</b> {count, plural, one {school} other {schools}} listed so far, mostly in Ulaanbaatar.",
+    "matchStart": "Answer 5 questions"
   },
   "HeroSearch": {
     "placeholder": "Name, number, or district…",
@@ -90,7 +84,6 @@
     "seeAll": "See all results for “{query}”"
   },
   "Search": {
-    "eyebrow": "Directory",
     "title": "Browse schools",
     "resultsFor": "Results for “{query}”",
     "intro": "Narrow the list by type, level, curriculum, or district. Results update as you go.",
@@ -220,7 +213,6 @@
   },
   "Card": {
     "dormitory": "Dormitory",
-    "established": "Est. {year}",
     "ratio": "{ratio} ratio",
     "graduatesGoTo": "Graduates go to",
     "more": "+{count} more",
@@ -245,19 +237,13 @@
   },
   "Highlights": {
     "founded": "Founded",
-    "yearsTeaching": "{years, plural, one {# year} other {# years}} of teaching",
     "ratio": "Student–teacher",
-    "perTeacher": "students per teacher",
-    "programme": "Programme",
-    "tracks": "{count} tracks",
     "graduates": "Where graduates go",
     "achievements": "Notable achievements",
     "unverified": "Not verified: collected from public information, not confirmed by the school."
   },
   "Overview": {
     "atAGlance": "At a glance",
-    "schoolType": "School type",
-    "gradeLevels": "Grade levels",
     "tuition": "Annual tuition",
     "languages": "Teaching languages",
     "accreditation": "Accreditation",
@@ -267,13 +253,14 @@
     "curriculum": "Curriculum",
     "ratings": "Community ratings",
     "readAll": "Read all reviews",
-    "writeFirst": "Write the first review",
     "contact": "Contact",
     "address": "Address",
     "phone": "Phone",
     "email": "Email",
     "website": "Website",
-    "noContact": "No contact details have been added yet."
+    "noContact": "No contact details have been added yet.",
+    "photoAlt": "The {name} building",
+    "photoBy": "Photo:"
   },
   "Ratings": {
     "academics": "Academics",
@@ -307,18 +294,13 @@
   "Admissions": {
     "tuition": "Annual tuition",
     "deadline": "Application deadline",
-    "rolling": "Rolling / not specified",
     "entrance": "Entrance requirements",
-    "entranceNone": "No entrance exam information has been added yet.",
-    "catchment": "Catchment area",
-    "catchmentNone": "No catchment area information has been added yet."
+    "catchment": "Catchment area"
   },
   "Reviews": {
     "heading": "Reviews",
     "none": "No one has reviewed this school yet. Your review will be the first families see.",
     "write": "Write a review",
-    "shareTitle": "Share your experience",
-    "shareBody": "Log in or create a free account to rate this school. Reviews show whether you're a parent, student, alumnus, or educator.",
     "loginToWrite": "Log in to write a review",
     "createAccount": "Create an account",
     "verified": "Verified",
@@ -342,7 +324,6 @@
     "yourReview": "Your review",
     "placeholder": "What stood out — teaching, atmosphere, facilities, communication with families?",
     "moreChars": "{count} more characters needed",
-    "charCount": "{count} characters",
     "errorRatings": "Please rate academics, facilities, teachers, and campus environment.",
     "errorLength": "Please write at least a couple of sentences.",
     "loginRequired": "Please log in to leave a review.",
@@ -393,7 +374,6 @@
     "role": "I am a…"
   },
   "Saved": {
-    "eyebrow": "Your list",
     "title": "Saved schools",
     "loginTitle": "Log in to see your saved schools",
     "loginBody": "Save schools from their profile pages to compare them later.",
@@ -412,7 +392,6 @@
     "body": "We couldn't load this page. This is usually temporary — please try again."
   },
   "Map": {
-    "eyebrow": "Map",
     "title": "Schools on the map",
     "intro": "Every school we have a confirmed location for. Tap a pin for details.",
     "homeTitle": "Explore schools on the map",
@@ -427,7 +406,6 @@
     "listTitle": "{count, plural, one {# school} other {# schools}}"
   },
   "Compare": {
-    "eyebrow": "Compare",
     "title": "Compare schools",
     "emptyTitle": "No schools selected yet",
     "emptyBody": "Tap Compare on up to {max} school pages to see them side by side.",
@@ -439,7 +417,6 @@
     "added": "Comparing",
     "full": "You can compare up to {max} schools",
     "bubble": "Compare",
-    "bubbleLabel": "Compare {count, plural, one {# selected school} other {# selected schools}}",
     "basics": "Basics",
     "admissions": "Admissions & cost",
     "ratings": "Ratings",
@@ -457,7 +434,9 @@
     "available": "Available",
     "none": "None listed",
     "overall": "Overall",
-    "reviews": "Reviews"
+    "reviews": "Reviews",
+    "trayCount": "{count} of {max} picked",
+    "clear": "Clear the compare list"
   },
   "ReviewAccess": {
     "signedOutTitle": "Sign in to write a review",
@@ -491,7 +470,6 @@
     "OTHER": "Other"
   },
   "MyReviews": {
-    "eyebrow": "Your account",
     "title": "My reviews",
     "loginMessage": "Log in to see the reviews you've written.",
     "emptyTitle": "You haven't reviewed any schools yet",
@@ -510,7 +488,6 @@
     "writeAgain": "Write a new one"
   },
   "Admin": {
-    "eyebrow": "Admin",
     "title": "Moderation",
     "intro": "New reviews stay hidden until an admin approves them. Only published reviews count toward a school's rating.",
     "sections": "Moderation sections",
@@ -545,7 +522,6 @@
     "dismiss": "Dismiss report"
   },
   "About": {
-    "eyebrow": "About",
     "title": "About Find My School Mongolia",
     "intro": "Choosing or changing schools is a big decision, and the information is scattered. This site puts the basics in one place — curriculum, languages, fees, dormitories — next to reviews from the people who actually attend the schools.",
     "useTitle": "How to use it",
@@ -560,7 +536,6 @@
     "dataBody": "School locations and districts come from <osm>© OpenStreetMap contributors</osm>. Fees come from schools' own fee pages or from dated news reports, so check the latest fee with the school before you decide. Some details, like grade ranges, are still being confirmed. If something is wrong, tell us and we'll fix it."
   },
   "Account": {
-    "eyebrow": "Your account",
     "title": "Your profile",
     "loginMessage": "Log in to see and edit your profile.",
     "email": "Email",
@@ -600,7 +575,6 @@
   "Match": {
     "metaTitle": "Find the right school for your child",
     "metaDescription": "Answer five quick questions and get schools ranked for your child, with the reasons for each match.",
-    "eyebrow": "Find my match",
     "title": "Which school fits your child?",
     "intro": "Five quick questions. We rank every school for your child and show you why.",
     "progress": "Question {step} of {total}",

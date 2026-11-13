@@ -21,16 +21,16 @@ export default async function SchoolFacilitiesPage({
       {/* Rating tiles only once someone has rated; empty stars look broken. */}
       {(school.avgFacilities || school.avgLibrary) ? (
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)] p-5">
-          <p className="text-xs font-medium uppercase tracking-[0.08em] text-subtle">
+        <div className="plate p-5">
+          <p className="label">
             {t("overall")}
           </p>
           <div className="mt-2">
             <StarRating value={school.avgFacilities} />
           </div>
         </div>
-        <div className="reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)] p-5">
-          <p className="text-xs font-medium uppercase tracking-[0.08em] text-subtle">{t("library")}</p>
+        <div className="plate p-5">
+          <p className="label">{t("library")}</p>
           <div className="mt-2">
             <StarRating value={school.avgLibrary} />
           </div>
@@ -44,7 +44,7 @@ export default async function SchoolFacilitiesPage({
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {school.facilities.map((facility) => (
-              <div key={facility.id} className="reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)] p-5">
+              <div key={facility.id} className="plate p-5">
                 <p className="text-xs font-medium uppercase tracking-[0.08em] text-accent">
                   {facility.category}
                 </p>

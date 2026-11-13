@@ -4,7 +4,6 @@ import { getTranslations } from "next-intl/server";
 import { getSchoolOverview } from "@/lib/schools";
 import { ratingCategories } from "@/lib/ratings";
 import { displayUrl, externalUrl, formatLocation, tuitionSummary } from "@/lib/labels";
-import { Badge } from "@/components/common/Badge";
 import { Icon, type IconName } from "@/components/common/Icon";
 import { RatingSummary } from "@/components/reviews/RatingSummary";
 import {
@@ -16,6 +15,7 @@ import {
 } from "@/components/school-profile/ProfileSection";
 import { SchoolHighlights } from "@/components/school-profile/SchoolHighlights";
 import { SchoolMap } from "@/components/map/SchoolMap";
+import { SCHOOL_PHOTOS } from "@/lib/school-photos";
 
 type Contact = {
   icon: IconName;
@@ -37,8 +37,7 @@ export default async function SchoolOverviewPage({
   if (!school) notFound();
 
   const t = await getTranslations("Overview");
-  const tType = await getTranslations("SchoolType");
-  const tLevel = await getTranslations("Level");
+  const tHighlights = await getTranslations("Highlights");
   const tCurriculum = await getTranslations("Curriculum");
   const tLanguage = await getTranslations("Language");
   const tTuition = await getTranslations("Tuition");
@@ -46,15 +45,14 @@ export default async function SchoolOverviewPage({
   const tPlace = await getTranslations("Place");
 
   const tIncomplete = await getTranslations("Incomplete");
+  // Free-licensed photo of the building, when we have one (credit is required).
+  const photo = SCHOOL_PHOTOS[school.nameEn];
 
   // Only facts we actually know; the unknown ones are listed once, below.
   const hasTuition = school.type === "PUBLIC" || school.tuitionMinAnnual || school.tuitionMaxAnnual;
   const languages = school.teachingLanguages.map((l) => (tLanguage.has(l) ? tLanguage(l) : l)).join(", ");
-  const facts: { label: string; value: string }[] = [
-    { label: t("schoolType"), value: tType(school.type) },
-    { label: t("gradeLevels"), value: tLevel(school.level) },
-    { label: t("dormitory"), value: school.dormitory ? t("available") : t("notOffered") },
-  ];
+  // School type and level are already in the header above; these are the rest.
+  const facts: { label: string; value: string }[] = [];
   if (hasTuition) {
     facts.push({
       label: t("tuition"),
@@ -62,6 +60,14 @@ export default async function SchoolOverviewPage({
     });
   }
   if (languages) facts.push({ label: t("languages"), value: languages });
+  if (school.curriculum.length > 0) {
+    facts.push({ label: t("curriculum"), value: school.curriculum.map((c) => tCurriculum(c)).join(", ") });
+  }
+  facts.push({ label: t("dormitory"), value: school.dormitory ? t("available") : t("notOffered") });
+  if (school.foundedYear) facts.push({ label: tHighlights("founded"), value: String(school.foundedYear) });
+  if (school.studentTeacherRatio) {
+    facts.push({ label: tHighlights("ratio"), value: school.studentTeacherRatio });
+  }
   if (school.accreditation) facts.push({ label: t("accreditation"), value: school.accreditation });
 
   const missing = [
@@ -99,14 +105,6 @@ export default async function SchoolOverviewPage({
   return (
     <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_280px]">
       <div className="space-y-10">
-        <SchoolHighlights
-          foundedYear={school.foundedYear}
-          studentTeacherRatio={school.studentTeacherRatio}
-          curriculum={school.curriculum}
-          graduateDestinations={school.graduateDestinations}
-          notableAchievements={school.notableAchievements}
-        />
-
         <ProfileSection title={t("atAGlance")}>
           <FactGrid columns={factColumns(facts.length)}>
             {facts.map((fact) => (
@@ -117,28 +115,21 @@ export default async function SchoolOverviewPage({
           </FactGrid>
         </ProfileSection>
 
-        {school.curriculum.length > 0 && (
-          <ProfileSection title={t("curriculum")}>
-            <div className="flex flex-wrap gap-2">
-              {school.curriculum.map((c) => (
-                <Badge key={c} tone="accent">
-                  {tCurriculum(c)}
-                </Badge>
-              ))}
-            </div>
-          </ProfileSection>
-        )}
+        <SchoolHighlights
+          graduateDestinations={school.graduateDestinations}
+          notableAchievements={school.notableAchievements}
+        />
 
         <ProfileSection
           title={t("ratings")}
+          // With no reviews yet, the empty state below already carries the one "write" button.
           action={
-            <Link
-              href={`/school/${id}/reviews`}
-              className="inline-flex items-center gap-1 text-sm font-medium text-accent hover:underline hover:underline-offset-4"
-            >
-              {school.reviewCount > 0 ? t("readAll") : t("writeFirst")}
-              <Icon name="arrow-right" className="size-4" />
-            </Link>
+            school.reviewCount > 0 && (
+              <Link href={`/school/${id}/reviews`} className="link inline-flex items-center gap-1 text-sm">
+                {t("readAll")}
+                <Icon name="arrow-right" className="size-4" />
+              </Link>
+            )
           }
         >
           <RatingSummary
@@ -157,6 +148,24 @@ export default async function SchoolOverviewPage({
       </div>
 
       <aside className="space-y-4">
+        {photo && (
+          <figure className="plate overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element -- hosted by Wikimedia Commons */}
+            <img
+              src={photo.url}
+              alt={t("photoAlt", { name: school.nameEn })}
+              loading="lazy"
+              decoding="async"
+              className="aspect-[4/3] w-full bg-surface-muted object-cover"
+            />
+            <figcaption className="px-3 py-2 text-xs text-subtle">
+              {t("photoBy")}{" "}
+              <a href={photo.page} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground">
+                {photo.author} · {photo.license}
+              </a>
+            </figcaption>
+          </figure>
+        )}
         {school.latitude != null && school.longitude != null && (
           <div>
             <SchoolMap
@@ -175,21 +184,21 @@ export default async function SchoolOverviewPage({
             )}
           </div>
         )}
-        <div className="reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)] p-5">
-          <h2 className="text-sm font-semibold text-foreground">{t("contact")}</h2>
+        <div className="plate p-5">
+          <h2 className="font-display text-base font-semibold text-foreground">{t("contact")}</h2>
           {contacts.length > 0 ? (
             <ul className="mt-4 space-y-4 text-sm">
               {contacts.map((contact) => (
                 <li key={contact.label} className="flex gap-3">
                   <Icon name={contact.icon} className="mt-0.5 size-4 shrink-0 text-subtle" />
                   <div className="min-w-0">
-                    <p className="text-xs text-subtle">{t(contact.label)}</p>
+                    <p className="label">{t(contact.label)}</p>
                     {contact.href ? (
                       <a
                         href={contact.href}
                         target={contact.external ? "_blank" : undefined}
                         rel={contact.external ? "noopener noreferrer" : undefined}
-                        className="wrap-break-word text-accent hover:underline hover:underline-offset-4"
+                        className="link wrap-break-word"
                       >
                         {contact.value}
                       </a>

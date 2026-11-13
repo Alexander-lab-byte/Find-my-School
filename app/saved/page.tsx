@@ -4,30 +4,12 @@ import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { getCurrentUser } from "@/lib/current-user";
 import { getSavedSchoolsForUser } from "@/lib/schools";
-import { Icon } from "@/components/common/Icon";
+import { EmptyState } from "@/components/common/EmptyState";
 import { SchoolCard } from "@/components/search/SchoolCard";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Metadata");
   return { title: t("saved") };
-}
-
-function EmptyState({ title, body, href, cta }: { title: string; body: string; href: string; cta: string }) {
-  return (
-    <div className="rounded-[1.25rem] border border-dashed border-line-strong bg-surface px-6 py-14 text-center">
-      <span className="mx-auto flex size-12 items-center justify-center rounded-full bg-surface-muted text-subtle">
-        <Icon name="search" className="size-5" />
-      </span>
-      <h2 className="mt-4 font-display text-xl font-bold text-foreground">{title}</h2>
-      <p className="mx-auto mt-2 max-w-md text-sm text-muted">{body}</p>
-      <Link
-        href={href}
-        className="mt-6 inline-flex items-center rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
-      >
-        {cta}
-      </Link>
-    </div>
-  );
 }
 
 export default async function SavedSchoolsPage() {
@@ -38,33 +20,32 @@ export default async function SavedSchoolsPage() {
   const tCommon = await getTranslations("Common");
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6">
-      <p className="eyebrow">{t("eyebrow")}</p>
-      <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+    <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
+      <h1 className="page-title">
         {t("title")}
       </h1>
 
       <div className="mt-8">
         {!user ? (
-          <EmptyState
-            title={t("loginTitle")}
-            body={t("loginBody")}
-            href="/login?next=%2Fsaved"
-            cta={tCommon("logIn")}
-          />
+          <EmptyState icon="lock" title={t("loginTitle")} body={t("loginBody")}>
+            <Link href="/login?next=%2Fsaved" className="btn-primary">
+              {tCommon("logIn")}
+            </Link>
+          </EmptyState>
         ) : saved.length === 0 ? (
-          <EmptyState
-            title={t("emptyTitle")}
-            body={t("emptyBody")}
-            href="/search"
-            cta={tCommon("browseSchools")}
-          />
+          <EmptyState icon="bookmark" title={t("emptyTitle")} body={t("emptyBody")}>
+            <Link href="/search" className="btn-primary">
+              {tCommon("browseSchools")}
+            </Link>
+          </EmptyState>
         ) : (
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="space-y-3">
             {saved.map(({ school }) => (
-              <SchoolCard key={school.id} school={school} />
+              <li key={school.id}>
+                <SchoolCard school={school} heading="h2" />
+              </li>
             ))}
-          </div>
+          </ul>
         )}
       </div>
     </main>

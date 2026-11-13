@@ -7,6 +7,9 @@ import { formatLocation, schoolNames, tuitionSummary } from "@/lib/labels";
 import { MAX_COMPARE } from "@/lib/compare";
 import { RemoveFromCompare } from "@/components/compare/RemoveFromCompare";
 import { Icon } from "@/components/common/Icon";
+import { EmptyState } from "@/components/common/EmptyState";
+import { SchoolMonogram } from "@/components/common/SchoolMonogram";
+import { TYPE_FILL } from "@/components/common/Badge";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Compare");
@@ -87,9 +90,13 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
       if (!value) return dash;
       const best = schools.length > 1 && value === Math.max(...schools.map((x) => pick(x) ?? 0));
       return (
-        <span className={`inline-flex items-center gap-1 ${best ? "font-semibold text-accent" : ""}`}>
+        <span
+          className={`inline-flex items-center gap-1 tabular-nums ${
+            best ? "rounded-md bg-gold px-1.5 py-0.5 font-bold text-gold-foreground" : ""
+          }`}
+        >
           {value.toFixed(1)}
-          <span className="text-star" aria-hidden>
+          <span className={best ? "" : "text-star"} aria-hidden>
             ★
           </span>
         </span>
@@ -153,25 +160,18 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
   ];
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6">
-      <p className="eyebrow">{t("eyebrow")}</p>
-      <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+    <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
+      <h1 className="page-title">
         {t("title")}
       </h1>
 
       {schools.length === 0 ? (
-        <div className="mt-8 rounded-[1.25rem] border border-dashed border-line-strong bg-surface px-6 py-14 text-center">
-          <span className="mx-auto flex size-12 items-center justify-center rounded-full bg-surface-muted text-subtle">
-            <Icon name="columns" className="size-5" />
-          </span>
-          <h2 className="mt-4 font-display text-xl font-bold text-foreground">{t("emptyTitle")}</h2>
-          <p className="mx-auto mt-2 max-w-md text-sm text-muted">{t("emptyBody", { max: MAX_COMPARE })}</p>
-          <Link
-            href="/search"
-            className="mt-6 inline-flex items-center rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
-          >
-            {tCommon("browseSchools")}
-          </Link>
+        <div className="mt-8">
+          <EmptyState icon="columns" title={t("emptyTitle")} body={t("emptyBody", { max: MAX_COMPARE })}>
+            <Link href="/search" className="btn-primary">
+              {tCommon("browseSchools")}
+            </Link>
+          </EmptyState>
         </div>
       ) : (
         <>
@@ -179,18 +179,22 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
             {schools.length === 1 ? t("addOneMore") : t("bestHighlighted")}
           </p>
 
-          <div className="mt-6 overflow-x-auto reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)]">
-            <table className="w-full min-w-[40rem] border-collapse text-left text-sm">
+          <div className="plate mt-6 overflow-x-auto">
+            {/* Fixed layout: every school gets a column of the same width, so rows are easy to read across. */}
+            <table className="w-full min-w-[40rem] table-fixed border-collapse text-left text-sm">
               <thead>
                 <tr>
-                  <td className="sticky left-0 w-44 bg-surface p-4" />
+                  <td className="sticky left-0 z-10 w-36 bg-surface p-4 sm:w-44" />
                   {schools.map((s) => {
                     const { primary, secondary } = schoolNames(s, locale);
                     return (
                       <th key={s.id} scope="col" className="p-4 align-top font-normal">
+                        {/* The school's line colour heads its column. */}
+                        <span aria-hidden className={`mb-4 block h-1.5 rounded-full ${TYPE_FILL[s.type]}`} />
+                        <SchoolMonogram name={s.nameEn} type={s.type} />
                         <Link
                           href={`/school/${s.id}`}
-                          className="font-display text-base font-bold text-foreground hover:text-accent"
+                          className="mt-3 block font-display text-base font-semibold leading-snug text-foreground underline-offset-4 hover:underline"
                         >
                           {primary}
                         </Link>
@@ -208,7 +212,7 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
                       <th
                         colSpan={schools.length + 1}
                         scope="colgroup"
-                        className="bg-surface-muted px-4 py-2 text-left text-xs font-semibold uppercase tracking-[0.12em] text-subtle"
+                        className="label bg-background px-4 py-2 text-left"
                       >
                         {section.title}
                       </th>
@@ -217,7 +221,7 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
                       <tr key={row.label} className="border-t border-line">
                         <th
                           scope="row"
-                          className="sticky left-0 bg-surface p-4 text-left font-medium text-muted"
+                          className="sticky left-0 z-10 bg-surface p-4 text-left font-medium text-muted"
                         >
                           {row.label}
                         </th>
@@ -237,7 +241,7 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
           {schools.length < MAX_COMPARE && (
             <Link
               href="/search"
-              className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:underline hover:underline-offset-4"
+              className="btn-secondary mt-5"
             >
               {t("addAnother", { max: MAX_COMPARE })}
               <Icon name="arrow-right" className="size-4" />

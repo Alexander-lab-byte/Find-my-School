@@ -13,10 +13,10 @@
    * Options (URL ?params): lang=mn | type=PUBLIC,PRIVATE | school=<id> | lat=..&lng=..&zoom=..
    */
   :root {
-    --public: #2448e8;
-    --private: #6d28d9;
-    --intl: #9a5806;
-    --ink: #0b1220;
+    --public: #1b45d6;
+    --private: #b4246f;
+    --intl: #0a7c66;
+    --ink: #131c45;
     --muted: #5b6475;
     --line: #dfe4ee;
     --card: #ffffff;
@@ -68,7 +68,7 @@
   .facts b { color: var(--ink); font-weight: 600; }
   .open { margin-top: 4px; justify-self: start; display: inline-flex; gap: 4px; padding: 7px 12px; border-radius: 999px; background: var(--public); color: #fff; font-weight: 700; font-size: 13px; text-decoration: none; }
   .open:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-  .approx { font-size: 12px; color: #9a5806; }
+  .approx { font-size: 12px; color: #8a5a00; }
 
   .status { position: absolute; inset: 0; display: grid; place-items: center; z-index: 3; color: var(--muted); font-weight: 600; pointer-events: none; }
   @media (max-width: 480px) { .brand span { display: none; } .card { width: 230px; } }
@@ -106,7 +106,8 @@
   }[LANG];
   var DISTRICT_MN = { "Baganuur": "Багануур", "Bagakhangai": "Багахангай", "Bayangol": "Баянгол", "Bayanzurkh": "Баянзүрх",
     "Chingeltei": "Чингэлтэй", "Khan-Uul": "Хан-Уул", "Nalaikh": "Налайх", "Songinokhairkhan": "Сонгинохайрхан", "Sukhbaatar": "Сүхбаатар" };
-  var COLOR = { PUBLIC: "#2448e8", PRIVATE: "#6d28d9", INTERNATIONAL: "#9a5806" };
+  // Same three line colours as the main site (app/globals.css).
+  var COLOR = { PUBLIC: "#1b45d6", PRIVATE: "#b4246f", INTERNATIONAL: "#0a7c66" };
   var TYPES = ["PUBLIC", "PRIVATE", "INTERNATIONAL"];
   var active = new Set((params.get("type") || TYPES.join(",")).toUpperCase().split(",").filter(function (t) { return TYPES.indexOf(t) > -1; }));
   if (!active.size) TYPES.forEach(function (t) { active.add(t); });
@@ -231,7 +232,7 @@
       map.addSource("schools", { type: "geojson", data: filtered(), cluster: true, clusterRadius: 42, clusterMaxZoom: 13, promoteId: "id" });
 
       map.addLayer({ id: "clusters", type: "circle", source: "schools", filter: ["has", "point_count"],
-        paint: { "circle-color": "#0b1220", "circle-opacity": 0.82, "circle-stroke-color": "#fff", "circle-stroke-width": 2,
+        paint: { "circle-color": "#131c45", "circle-opacity": 0.82, "circle-stroke-color": "#fff", "circle-stroke-width": 2,
                  "circle-radius": ["step", ["get", "point_count"], 15, 10, 19, 30, 24] } });
       map.addLayer({ id: "cluster-count", type: "symbol", source: "schools", filter: ["has", "point_count"],
         layout: { "text-field": ["get", "point_count_abbreviated"], "text-font": ["Noto Sans Bold"], "text-size": 12 },
@@ -246,7 +247,7 @@
       map.addLayer({ id: "school-label", type: "symbol", source: "schools", filter: ["!", ["has", "point_count"]], minzoom: 13.5,
         layout: { "text-field": LANG === "mn" ? ["coalesce", ["get", "nameMn"], ["get", "nameEn"]] : ["get", "nameEn"],
                   "text-font": ["Noto Sans Bold"], "text-size": 12, "text-offset": [0, 1.1], "text-anchor": "top", "text-max-width": 10 },
-        paint: { "text-color": "#0b1220", "text-halo-color": "#fff", "text-halo-width": 1.5 } });
+        paint: { "text-color": "#131c45", "text-halo-color": "#fff", "text-halo-width": 1.5 } });
 
       map.on("click", "clusters", function (e) {
         var f = e.features[0];

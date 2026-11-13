@@ -8,7 +8,7 @@ import { signOut } from "@/app/(auth)/actions";
 import { Icon } from "@/components/common/Icon";
 
 const ITEM =
-  "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm text-foreground transition-colors hover:bg-surface-muted";
+  "flex min-h-10 w-full items-center gap-2.5 rounded-lg px-3 text-left text-sm font-medium text-foreground transition-colors hover:bg-surface-muted";
 
 /** Signed-in user's menu: saved schools, own reviews, profile, admin queue, log out. */
 export function AccountMenu({
@@ -56,11 +56,11 @@ export function AccountMenu({
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-haspopup="menu"
-        className="flex items-center gap-2 rounded-xl py-1.5 pl-1.5 pr-2.5 text-sm font-medium text-foreground transition-colors hover:bg-surface-muted"
+        className="flex min-h-10 items-center gap-2 rounded-lg py-1.5 pl-1.5 pr-2 text-sm font-semibold text-foreground transition-colors hover:bg-surface-muted"
       >
         <span
           aria-hidden
-          className="relative flex size-7 items-center justify-center rounded-full bg-accent-soft text-xs font-semibold text-accent"
+          className="relative flex size-7 items-center justify-center rounded-full bg-foreground text-xs font-bold text-surface"
         >
           {name.charAt(0).toUpperCase()}
           {waiting > 0 && (
@@ -74,7 +74,7 @@ export function AccountMenu({
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-full z-40 mt-2 w-56 rounded-[1.25rem] border border-line bg-surface p-1.5 shadow-[0_16px_40px_-20px_rgb(0_0_0/0.35)]"
+          className="pop-in absolute right-0 top-full z-40 mt-2 w-56 rounded-xl border border-line bg-surface p-1.5 shadow-[var(--shadow-pop)]"
         >
           <Link role="menuitem" href="/saved" className={ITEM}>
             <Icon name="bookmark" className="size-4 text-subtle" />
@@ -93,7 +93,7 @@ export function AccountMenu({
               <Icon name="shield" className="size-4 text-subtle" />
               {t("moderation")}
               {waiting > 0 && (
-                <span className="ml-auto rounded-full bg-accent px-1.5 py-0.5 text-xs font-semibold tabular-nums text-accent-foreground">
+                <span className="ml-auto rounded-md bg-accent px-1.5 py-0.5 text-xs font-semibold tabular-nums text-accent-foreground">
                   {waiting}
                 </span>
               )}

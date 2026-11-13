@@ -27,7 +27,7 @@ export default async function RegisterPage({
       footer={
         <>
           {t("haveAccount")}{" "}
-          <Link href={loginHref} className="font-medium text-accent underline-offset-4 hover:underline">
+          <Link href={loginHref} className="link">
             {tCommon("logIn")}
           </Link>
         </>

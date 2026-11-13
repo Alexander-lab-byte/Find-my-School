@@ -38,7 +38,7 @@ export function ReviewBody({ text }: { text: string }) {
           type="button"
           onClick={() => setExpanded((v) => !v)}
           aria-expanded={expanded}
-          className="mt-1 text-sm font-medium text-accent hover:underline"
+          className="mt-1 text-sm link"
         >
           {expanded ? t("showLess") : t("showMore")}
         </button>

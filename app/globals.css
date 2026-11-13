@@ -1,69 +1,80 @@
 @import "tailwindcss";
 
 /*
- * "Your child's path" design system.
- * Sky-blue tops, cool paper background, white rounded surfaces, one strong
- * blue accent and a warm gold for "goal" moments (destinations, matches).
+ * "Path" design system — a school guide drawn like a wayfinding system.
+ *
+ * Pale pavement ground, white sign plates, navy ink. The three school types
+ * are three "lines" (blue public, magenta private, teal international), and
+ * signal yellow marks where you are: the selected tab, chip, quiz stop or
+ * best score. Geologica sets headings and numbers; Commissioner sets text.
+ * Both faces carry the Mongolian letters (Ө, Ү) and the tugrik sign (₮).
  */
 :root {
   color-scheme: light;
-  --background: #f4f6fa;
+  --background: #edf0f5;
   --surface: #ffffff;
-  --surface-muted: #eef1f7;
-  --foreground: #0b1220;
-  --muted: #4a5468;
-  --subtle: #5f697c;
-  --line: #e3e7ef;
-  --line-strong: #cbd3e1;
-  --accent: #2448e8;
-  --accent-hover: #16309f;
+  --surface-muted: #e4e9f1;
+  --foreground: #131c45;
+  /* The navy band: hero, footer and the compare tray. Always dark, in both themes. */
+  --band: #131c45;
+  --band-line: #2a3670;
+  /* The three line colours, brightened to read on the navy band. */
+  --band-public: #5d82ff;
+  --band-private: #ee6bb0;
+  --band-intl: #3ccdae;
+  --muted: #46507a;
+  --subtle: #5d6688;
+  --line: #d5dbe7;
+  --line-strong: #aeb8cd;
+  --accent: #1b45d6;
+  --accent-hover: #1535a8;
   --accent-foreground: #ffffff;
-  --accent-soft: #e6ecff;
-  --gold: #ffc24d;
-  --gold-soft: #fff3d1;
-  --gold-foreground: #3a2a00;
-  --star: #d9930f;
-  --star-empty: #dce2ec;
-  --tone-private: #6d28d9;
-  --tone-private-soft: #f0eafe;
-  --tone-intl: #9a5806;
-  --tone-intl-soft: #fff1d3;
+  --accent-soft: #e3eafd;
+  --gold: #ffc629;
+  --gold-soft: #fff3c9;
+  --gold-foreground: #2a2100;
+  --star: #c98a00;
+  --star-empty: #d5dbe7;
+  --tone-private: #b4246f;
+  --tone-private-soft: #fbe6f1;
+  --tone-intl: #0a7c66;
+  --tone-intl-soft: #dcf3ec;
   --danger: #c0262d;
   --danger-soft: #fdeeee;
-  --sky-top: #c9dbfb;
-  --sky-deep: #7fa8f5;
-  --cloud: #ffffff;
+  --ok: #0b7a4b;
+  --ok-soft: #e0f4ea;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
-    --background: #0a1020;
-    --surface: #111a2e;
-    --surface-muted: #18233b;
-    --foreground: #e8edf7;
-    --muted: #a9b4c8;
-    --subtle: #94a0b6;
-    --line: #233049;
-    --line-strong: #33415e;
-    --accent: #8ea6ff;
-    --accent-hover: #b3c3ff;
-    --accent-foreground: #0a1020;
-    --accent-soft: #1a2547;
-    --gold: #f6c25a;
-    --gold-soft: #33280f;
-    --gold-foreground: #2a1e00;
-    --star: #f3c35a;
-    --star-empty: #2c3954;
-    --tone-private: #c9b5ff;
-    --tone-private-soft: #2a2145;
-    --tone-intl: #f6cf84;
-    --tone-intl-soft: #33270f;
-    --danger: #f97066;
-    --danger-soft: #2d1614;
-    --sky-top: #142347;
-    --sky-deep: #1d3266;
-    --cloud: #2a3a62;
+    --background: #0b1230;
+    --surface: #131c45;
+    --surface-muted: #1b2657;
+    --foreground: #eef1fa;
+    --band: #070c22;
+    --band-line: #1b2657;
+    --muted: #b4bcd8;
+    --subtle: #97a1c4;
+    --line: #27336b;
+    --line-strong: #3d4b8a;
+    --accent: #93abff;
+    --accent-hover: #b7c6ff;
+    --accent-foreground: #0b1230;
+    --accent-soft: #1d2b66;
+    --gold: #ffc629;
+    --gold-soft: #3b3010;
+    --gold-foreground: #2a2100;
+    --star: #ffc629;
+    --star-empty: #2f3c78;
+    --tone-private: #f59bca;
+    --tone-private-soft: #3c1a3a;
+    --tone-intl: #6fd9c0;
+    --tone-intl-soft: #0f3a3c;
+    --danger: #ff8078;
+    --danger-soft: #3a1620;
+    --ok: #6fdba4;
+    --ok-soft: #10382f;
   }
 }
 
@@ -72,6 +83,11 @@
   --color-surface: var(--surface);
   --color-surface-muted: var(--surface-muted);
   --color-foreground: var(--foreground);
+  --color-band: var(--band);
+  --color-band-line: var(--band-line);
+  --color-band-public: var(--band-public);
+  --color-band-private: var(--band-private);
+  --color-band-intl: var(--band-intl);
   --color-muted: var(--muted);
   --color-subtle: var(--subtle);
   --color-line: var(--line);
@@ -91,21 +107,25 @@
   --color-tone-intl-soft: var(--tone-intl-soft);
   --color-danger: var(--danger);
   --color-danger-soft: var(--danger-soft);
-  --font-sans: var(--font-manrope);
-  --font-display: var(--font-onest);
-  --shadow-card: 0 30px 60px -36px rgb(11 18 32 / 0.35);
-  --shadow-lift: 0 40px 70px -28px rgb(11 18 32 / 0.38);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --font-sans: var(--font-text);
+  --font-display: var(--font-heading);
+  --shadow-pop: 0 18px 40px -18px rgb(19 28 69 / 0.35);
   --ease-out-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 @layer base {
+  html {
+    overflow-x: clip;
+    scroll-behavior: smooth;
+  }
+
   body {
-    /* Every page starts under a soft sky, like the homepage. */
-    background:
-      linear-gradient(180deg, var(--sky-top) 0, var(--background) 520px) no-repeat,
-      var(--background);
+    background: var(--background);
     color: var(--foreground);
-    font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-text), ui-sans-serif, system-ui, sans-serif;
+    line-height: 1.6;
     /* Never let one wide element zoom the whole page out on phones. */
     overflow-x: clip;
     /* Long words with no spaces (pasted links, "AAAA…") wrap instead of overflowing. */
@@ -117,17 +137,13 @@
   }
 
   ::selection {
-    background: color-mix(in oklab, var(--accent) 22%, transparent);
+    background: var(--gold);
+    color: var(--gold-foreground);
   }
 
   :focus-visible {
-    outline: 2px solid var(--accent);
+    outline: 3px solid var(--accent);
     outline-offset: 2px;
-  }
-
-  html {
-    scroll-behavior: smooth;
-    overflow-x: clip;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -145,14 +161,71 @@
 }
 
 @layer components {
-  /* Shared text input / select / textarea style. */
+  /* --- Type --------------------------------------------------------------- */
+
+  /* The one big heading on a page. */
+  .page-title {
+    font-family: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 700;
+    font-size: clamp(1.75rem, 1.25rem + 2.2vw, 2.75rem);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+    color: var(--foreground);
+  }
+
+  /* Heading of a block inside a page. */
+  .section-title {
+    font-family: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 650;
+    font-size: 1.3125rem;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--foreground);
+  }
+
+  /* Small name for a value or a group of controls. */
+  .label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--subtle);
+  }
+
+  /* --- Surfaces ----------------------------------------------------------- */
+
+  /* A white sign plate: the one container shape used across the site. */
+  .plate {
+    border: 1px solid var(--line);
+    border-radius: 1rem;
+    background: var(--surface);
+  }
+
+  /* A plate that is one big link (school rows): it lifts a little under the pointer. */
+  .plate-link {
+    transition:
+      border-color 150ms,
+      box-shadow 200ms var(--ease-out-soft),
+      transform 200ms var(--ease-out-soft);
+  }
+  @media (hover: hover) {
+    .plate-link:hover {
+      border-color: var(--line-strong);
+      box-shadow: 0 14px 28px -20px rgb(19 28 69 / 0.45);
+      transform: translateY(-1px);
+    }
+  }
+
+  /* --- Controls ----------------------------------------------------------- */
+
   .field {
     width: 100%;
-    border-radius: 0.875rem;
+    min-height: 44px;
+    border-radius: 0.75rem;
     border: 1px solid var(--line-strong);
     background: var(--surface);
-    padding: 0.7rem 0.9rem;
-    font-size: 0.9rem;
+    padding: 0.6rem 0.85rem;
+    font-size: 0.95rem;
     color: var(--foreground);
     transition:
       border-color 150ms,
@@ -163,65 +236,90 @@
     color: var(--subtle);
   }
 
+  .field:hover {
+    border-color: var(--subtle);
+  }
+
   .field:focus {
     outline: none;
     border-color: var(--accent);
-    box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent) 16%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 22%, transparent);
   }
 
-  /* Buttons */
   .btn-primary,
   .btn-secondary,
-  .btn-gold {
+  .btn-gold,
+  .btn-quiet {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
     min-height: 44px;
-    border-radius: 9999px;
-    padding: 0.7rem 1.4rem;
-    font-weight: 700;
-    font-size: 0.95rem;
+    border-radius: 0.75rem;
+    border: 1px solid transparent;
+    padding: 0.55rem 1.1rem;
+    font-weight: 650;
+    font-size: 0.9375rem;
+    line-height: 1.2;
+    text-align: center;
     transition:
-      background-color 200ms,
-      color 200ms,
-      border-color 200ms,
-      transform 200ms var(--ease-out-soft),
-      box-shadow 200ms;
+      background-color 150ms,
+      color 150ms,
+      border-color 150ms,
+      transform 100ms;
   }
   .btn-primary {
-    background: var(--foreground);
-    color: var(--background);
-  }
-  .btn-primary:hover {
     background: var(--accent);
     color: var(--accent-foreground);
-    transform: translateY(-2px);
+  }
+  .btn-primary:hover {
+    background: var(--accent-hover);
   }
   .btn-secondary {
     background: var(--surface);
     color: var(--foreground);
-    border: 1px solid var(--line-strong);
+    border-color: var(--line-strong);
   }
   .btn-secondary:hover {
     border-color: var(--foreground);
-    transform: translateY(-2px);
   }
+  /* The signal-yellow button: one per screen at most. */
   .btn-gold {
     background: var(--gold);
     color: var(--gold-foreground);
+    border-color: color-mix(in oklab, var(--gold-foreground) 35%, var(--gold));
   }
   .btn-gold:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 14px 30px -12px rgb(255 170 40 / 0.6);
+    background: color-mix(in oklab, var(--gold) 88%, var(--gold-foreground));
+  }
+  .btn-quiet {
+    color: var(--foreground);
+  }
+  .btn-quiet:hover {
+    background: var(--surface-muted);
   }
   .btn-primary:active,
   .btn-secondary:active,
-  .btn-gold:active {
-    transform: scale(0.97);
+  .btn-gold:active,
+  .btn-quiet:active {
+    transform: translateY(1px);
+  }
+  .btn-primary:disabled,
+  .btn-secondary:disabled,
+  .btn-gold:disabled,
+  .btn-quiet:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+    transform: none;
+  }
+  /* Compact size for buttons inside rows and toolbars. */
+  .btn-sm {
+    min-height: 40px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.875rem;
   }
 
-  /* Pill filter chip; add .is-on (or aria-pressed) for the selected state. */
+  /* Toggle chip; add .is-on (or aria-pressed) for the selected state. */
   .chip {
     display: inline-flex;
     align-items: center;
@@ -229,91 +327,111 @@
     min-height: 40px;
     border-radius: 9999px;
     border: 1px solid var(--line-strong);
-    background: color-mix(in oklab, var(--surface) 88%, transparent);
-    padding: 0.5rem 1rem;
-    font-weight: 700;
-    font-size: 0.9rem;
+    background: var(--surface);
+    padding: 0.4rem 0.95rem;
+    font-weight: 600;
+    font-size: 0.875rem;
     color: var(--foreground);
     transition:
-      background-color 200ms,
-      color 200ms,
-      border-color 200ms,
-      transform 150ms var(--ease-out-soft);
+      background-color 150ms,
+      border-color 150ms;
   }
   .chip:hover {
-    border-color: var(--accent);
-    transform: translateY(-2px);
+    border-color: var(--foreground);
   }
   .chip.is-on,
   .chip[aria-pressed="true"] {
-    background: var(--foreground);
-    border-color: var(--foreground);
-    color: var(--background);
+    background: var(--gold);
+    border-color: color-mix(in oklab, var(--gold-foreground) 45%, var(--gold));
+    color: var(--gold-foreground);
   }
-  .chip.is-accent.is-on,
-  .chip.is-accent[aria-pressed="true"] {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: var(--accent-foreground);
+  .chip:disabled {
+    cursor: progress;
+    opacity: 0.6;
   }
 
-  /* Frosted glass panel used over the sky. */
-  .glass {
-    background: color-mix(in oklab, var(--surface) 62%, transparent);
-    backdrop-filter: blur(16px) saturate(160%);
-    -webkit-backdrop-filter: blur(16px) saturate(160%);
-    border: 1px solid color-mix(in oklab, var(--surface) 70%, transparent);
-  }
-
-  /* Small uppercase label above headings. */
-  .eyebrow {
-    font-size: 0.78rem;
-    font-weight: 800;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
+  /* Inline text link. */
+  .link {
+    font-weight: 600;
     color: var(--accent);
+    text-underline-offset: 3px;
+  }
+  .link:hover {
+    text-decoration: underline;
   }
 
-  /* Cartoon cloud made from overlapping ellipses. Size it with width/height. */
-  .cloud {
-    background:
-      radial-gradient(ellipse 24% 46% at 26% 62%, var(--cloud) 97%, transparent 100%),
-      radial-gradient(ellipse 30% 60% at 50% 44%, var(--cloud) 97%, transparent 100%),
-      radial-gradient(ellipse 22% 42% at 75% 60%, var(--cloud) 97%, transparent 100%),
-      radial-gradient(ellipse 46% 26% at 50% 76%, var(--cloud) 97%, transparent 100%);
-    filter: drop-shadow(0 18px 24px rgb(42 73 168 / 0.14));
+  /* --- Motion ------------------------------------------------------------- */
+
+  /* A panel that just opened (menu, suggestions, next quiz question). */
+  .pop-in {
+    animation: pop-in 180ms var(--ease-out-soft) both;
   }
 
-  /* Fade-and-rise as an element scrolls into view (supporting browsers only;
-     elsewhere it simply shows). */
+  /* Home path map: each line draws from the left once, then its stops appear. */
+  .route-draw {
+    transform-origin: left center;
+    animation: route-draw 700ms var(--ease-out-soft) both;
+  }
+  .stop-in {
+    animation: stop-in 320ms var(--ease-out-soft) both;
+  }
+
+  /*
+   * A block that eases in as it scrolls into view. CSS only: browsers without
+   * scroll-driven animations (and visitors who ask for less motion) just see it.
+   */
   @supports (animation-timeline: view()) {
-    .reveal {
-      animation: reveal-up linear both;
-      animation-timeline: view();
-      animation-range: entry 0% cover 22%;
+    @media (prefers-reduced-motion: no-preference) {
+      .reveal {
+        animation: reveal linear both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 160px;
+      }
     }
   }
 
-  .enter {
-    animation: reveal-up 0.6s var(--ease-out-soft) both;
-  }
-
-  .lift {
-    transition:
-      transform 300ms var(--ease-out-soft),
-      box-shadow 300ms var(--ease-out-soft),
-      border-color 300ms;
-  }
-  .lift:hover {
-    transform: translateY(-6px);
-    box-shadow: var(--shadow-lift);
+  /* Placeholder block while a page loads. */
+  .skeleton {
+    border-radius: 0.5rem;
+    background: var(--surface-muted);
   }
 }
 
-@keyframes reveal-up {
+@keyframes pop-in {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes route-draw {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes stop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
   }
   to {
     opacity: 1;
@@ -374,7 +492,7 @@
 }
 
 .school-map {
-  font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-text), ui-sans-serif, system-ui, sans-serif;
   background: var(--surface-muted);
 }
 
@@ -398,7 +516,7 @@
 
 .school-map .leaflet-popup-content-wrapper {
   border: 1px solid var(--line);
-  border-radius: 1.25rem;
+  border-radius: 0.875rem;
 }
 
 .school-map .leaflet-popup-content {
@@ -417,12 +535,13 @@
   border-color: var(--line);
 }
 
-.school-map .leaflet-control-attribution {
-  background: color-mix(in oklab, var(--surface) 85%, transparent);
+/* ".school-map.leaflet-container" outranks Leaflet's own white attribution box, which loads later. */
+.school-map.leaflet-container .leaflet-control-attribution {
+  background: color-mix(in oklab, var(--surface) 88%, transparent);
   color: var(--subtle);
 }
 
-.school-map .leaflet-control-attribution a {
+.school-map.leaflet-container .leaflet-control-attribution a {
   color: var(--muted);
 }
 

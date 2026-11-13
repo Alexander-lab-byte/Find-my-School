@@ -1,4 +1,4 @@
-import type { SchoolLevel } from "@prisma/client";
+import type { Curriculum, SchoolLevel } from "@prisma/client";
 import { BUDGETS, type BudgetKey } from "@/lib/labels";
 import { parseNear, schoolDistance, type LatLng } from "@/lib/geo";
 import type { SchoolCardData } from "@/lib/schools";
@@ -67,7 +67,12 @@ export function budgetFilter(budget: MatchBudget): BudgetKey | undefined {
  * A reason is a translation key in the "MatchReason" namespace plus its
  * values, so the page can show it in either language.
  */
-export type MatchReason = { key: string; values?: Record<string, string | number> };
+export type MatchReason = {
+  key: string;
+  values?: Record<string, string | number>;
+  /** Curricula to name in the sentence; the page writes them in the reader's language. */
+  curricula?: Curriculum[];
+};
 
 export type MatchResult = {
   school: SchoolCardData;
@@ -102,7 +107,7 @@ function scoreSchool(school: SchoolCardData, answers: MatchAnswers) {
   if (answers.goal === "abroad") {
     if (abroadCurricula.length > 0) {
       score += 20;
-      reasons.push({ key: "internationalCurriculum", values: { curricula: abroadCurricula.join(", ") } });
+      reasons.push({ key: "internationalCurriculum", curricula: abroadCurricula });
     }
     if (teaches("en")) {
       score += 10;

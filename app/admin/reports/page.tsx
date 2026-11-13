@@ -40,14 +40,14 @@ export default async function AdminReportsPage() {
   ]);
 
   return (
-    <main className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6">
+    <main className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 sm:py-10">
       <AdminHeader active="reports" counts={counts} />
 
       <div className="mt-6 space-y-4">
         {reports.length === 0 && <EmptyNote>{t("emptyReports")}</EmptyNote>}
 
         {reports.map((report) => (
-          <article key={report.id} className="reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)] p-5">
+          <article key={report.id} className="plate p-5">
             <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
               <Link
                 href={`/school/${report.review.school.id}/reviews`}

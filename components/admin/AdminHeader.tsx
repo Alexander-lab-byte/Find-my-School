@@ -26,8 +26,7 @@ export function AdminHeader({
 
   return (
     <>
-      <p className="eyebrow">{t("eyebrow")}</p>
-      <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-foreground">{t("title")}</h1>
+      <h1 className="page-title">{t("title")}</h1>
       <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">{t("intro")}</p>
 
       <nav aria-label={t("sections")} className="mt-6 flex gap-1 overflow-x-auto border-b border-line">
@@ -39,9 +38,9 @@ export function AdminHeader({
               key={tab.key}
               href={tab.href}
               aria-current={isActive ? "page" : undefined}
-              className={`-mb-px flex items-center gap-2 whitespace-nowrap border-b-2 px-2.5 py-3 text-sm font-medium transition-colors sm:px-4 ${
+              className={`-mb-px flex min-h-12 items-center gap-2 whitespace-nowrap border-b-[3px] px-2.5 text-[0.9375rem] font-semibold transition-colors sm:px-4 ${
                 isActive
-                  ? "border-accent text-accent"
+                  ? "border-gold text-foreground"
                   : "border-transparent text-muted hover:border-line-strong hover:text-foreground"
               }`}
             >

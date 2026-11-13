@@ -1,38 +1,10 @@
-import type { Curriculum } from "@prisma/client";
 import { useTranslations } from "next-intl";
-import { Icon, type IconName } from "@/components/common/Icon";
+import { Icon } from "@/components/common/Icon";
 
 type SchoolHighlightsProps = {
-  foundedYear: number | null;
-  studentTeacherRatio: string | null;
-  curriculum: Curriculum[];
   graduateDestinations: string[];
   notableAchievements: string[];
 };
-
-function StatTile({
-  icon,
-  label,
-  value,
-  caption,
-}: {
-  icon: IconName;
-  label: string;
-  value: string;
-  caption?: string;
-}) {
-  return (
-    <div className="relative overflow-hidden reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)] p-5">
-      <span aria-hidden className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-accent via-accent/60 to-transparent" />
-      <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.1em] text-subtle">
-        <Icon name={icon} className="size-4 text-accent" />
-        {label}
-      </div>
-      <p className="mt-3 font-display text-3xl font-bold tracking-tight text-foreground">{value}</p>
-      {caption && <p className="mt-1 text-sm text-muted">{caption}</p>}
-    </div>
-  );
-}
 
 /**
  * Graduate destinations and achievements come from public sources and
@@ -47,63 +19,18 @@ function UnverifiedNote({ text }: { text: string }) {
   );
 }
 
-/** The "report card" at the top of a school's overview: key numbers, outcomes, honours. */
-export function SchoolHighlights({
-  foundedYear,
-  studentTeacherRatio,
-  curriculum,
-  graduateDestinations,
-  notableAchievements,
-}: SchoolHighlightsProps) {
+/** Outcomes and honours on a school's overview: where graduates go, and notable achievements. */
+export function SchoolHighlights({ graduateDestinations, notableAchievements }: SchoolHighlightsProps) {
   const t = useTranslations("Highlights");
-  const tCurriculum = useTranslations("CurriculumShort");
-  const age = foundedYear ? new Date().getFullYear() - foundedYear : null;
-  const programme = curriculum.map((c) => tCurriculum(c)).join(" · ");
-  const hasStats = foundedYear || studentTeacherRatio || programme;
 
-  if (!hasStats && graduateDestinations.length === 0 && notableAchievements.length === 0) {
-    return null;
-  }
+  if (graduateDestinations.length === 0 && notableAchievements.length === 0) return null;
 
   return (
-    <div className="space-y-6">
-      {hasStats && (
-        <div className="grid gap-4 sm:grid-cols-3">
-          {foundedYear && (
-            <StatTile
-              icon="calendar"
-              label={t("founded")}
-              value={String(foundedYear)}
-              caption={age && age > 0 ? t("yearsTeaching", { years: age }) : undefined}
-            />
-          )}
-          {studentTeacherRatio && (
-            <StatTile
-              icon="users"
-              label={t("ratio")}
-              value={studentTeacherRatio}
-              caption={t("perTeacher")}
-            />
-          )}
-          {programme && (
-            <StatTile
-              icon="book"
-              label={t("programme")}
-              value={curriculum.length > 1 ? t("tracks", { count: curriculum.length }) : programme}
-              caption={curriculum.length > 1 ? programme : undefined}
-            />
-          )}
-        </div>
-      )}
-
+    <div className="space-y-5">
       {graduateDestinations.length > 0 && (
-        <section className="relative overflow-hidden reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)] p-6">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -right-10 -top-10 size-40 rounded-full bg-accent-soft"
-          />
-          <div className="relative">
-            <h2 className="flex items-center gap-2 font-display text-xl font-bold text-foreground">
+        <section className="plate p-5 sm:p-6">
+          <div>
+            <h2 className="section-title flex items-center gap-2">
               <Icon name="graduation" className="size-5 text-accent" />
               {t("graduates")}
             </h2>
@@ -112,7 +39,7 @@ export function SchoolHighlights({
               {graduateDestinations.map((destination) => (
                 <li
                   key={destination}
-                  className="rounded-xl border border-line bg-background px-3 py-1.5 text-sm font-medium text-foreground"
+                  className="rounded-lg bg-background px-3 py-1.5 text-sm font-semibold text-foreground"
                 >
                   {destination}
                 </li>
@@ -123,8 +50,8 @@ export function SchoolHighlights({
       )}
 
       {notableAchievements.length > 0 && (
-        <section className="reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)] p-6">
-          <h2 className="flex items-center gap-2 font-display text-xl font-bold text-foreground">
+        <section className="plate p-5 sm:p-6">
+          <h2 className="section-title flex items-center gap-2">
             <Icon name="trophy" className="size-5 text-star" />
             {t("achievements")}
           </h2>
@@ -132,7 +59,7 @@ export function SchoolHighlights({
           <ul className="mt-4 space-y-3">
             {notableAchievements.map((achievement) => (
               <li key={achievement} className="flex items-start gap-3">
-                <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-star/15 text-star">
+                <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-gold-soft text-foreground">
                   <Icon name="medal" className="size-4" />
                 </span>
                 <span className="pt-0.5 text-sm leading-6 text-foreground">{achievement}</span>

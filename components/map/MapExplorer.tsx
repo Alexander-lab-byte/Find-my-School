@@ -44,7 +44,7 @@ export function MapExplorer({ schools }: { schools: MapPoint[] }) {
         onSelect={setSelectedId}
       />
 
-      <div className="flex max-h-80 flex-col overflow-hidden rounded-[1.75rem] border border-line bg-surface lg:max-h-[560px]">
+      <div className="flex max-h-80 flex-col overflow-hidden rounded-2xl border border-line bg-surface lg:max-h-[560px]">
         <p className="border-b border-line px-4 py-3 text-sm font-semibold text-foreground">
           {t("listTitle", { count: schools.length })}
         </p>
