@@ -1,19 +1,19 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 
-/** The mark: a route that bends and arrives at a yellow destination. */
+/** The mark: a route that bends and arrives at a honey destination. */
 export function LogoMark({ className = "size-9" }: { className?: string }) {
   return (
     <svg viewBox="0 0 36 36" aria-hidden className={`shrink-0 ${className}`}>
-      <rect width="36" height="36" rx="9" fill="#1b45d6" />
+      <rect width="36" height="36" rx="9" fill="var(--accent)" />
       <path
         d="M10 25.5h7.5a5.5 5.5 0 0 0 5.5-5.5v-3"
         fill="none"
-        stroke="#fff"
+        stroke="var(--accent-foreground)"
         strokeWidth="3.5"
         strokeLinecap="round"
       />
-      <circle cx="23" cy="11" r="4.5" fill="#ffc629" />
+      <circle cx="23" cy="11" r="4.5" fill="var(--gold)" />
     </svg>
   );
 }

@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 import { getHomepageData, getMapSchools } from "@/lib/schools";
-import { HeroSearchBar } from "@/components/search/HeroSearchBar";
 import { reviewAverage } from "@/lib/ratings";
 import { placeName, schoolNames } from "@/lib/labels";
 import { SchoolCard } from "@/components/search/SchoolCard";
@@ -9,7 +8,7 @@ import { Icon } from "@/components/common/Icon";
 import { Stars } from "@/components/common/StarRating";
 import { EmptyState } from "@/components/common/EmptyState";
 import { PathMap } from "@/components/home/PathMap";
-import { HeroRoutes } from "@/components/home/HeroRoutes";
+import { ScrollStory } from "@/components/home/ScrollStory";
 import { LazyMap } from "@/components/map/LazyMap";
 
 export default async function Home() {
@@ -29,43 +28,20 @@ export default async function Home() {
 
   return (
     <main>
-      {/* Hero: the navy band. One search box, and the path map as the way to browse. */}
-      <section className="relative isolate overflow-hidden bg-band text-white">
-        <HeroRoutes />
-        <div className="mx-auto grid max-w-6xl gap-9 px-4 pb-24 pt-10 sm:px-6 sm:pb-28 sm:pt-14 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:items-center lg:gap-14 lg:pt-16">
+      {/* The opening: a 3D scene you scroll through, from the headline to "university". */}
+      <ScrollStory typeCounts={typeCounts} totalSchools={totalSchools} />
+
+      {/* Two ways in: browse by stage or kind of school, or answer five questions. */}
+      <section id="browse" className="mx-auto grid max-w-6xl scroll-mt-20 gap-5 px-4 pt-12 sm:px-6 sm:pt-16 lg:grid-cols-[minmax(0,7fr)_minmax(0,4fr)]">
+        <PathMap typeCounts={typeCounts} />
+        <div className="flex flex-col justify-between gap-6 rounded-2xl bg-gold p-6 text-gold-foreground shadow-[var(--shadow-pop)] sm:p-7">
           <div>
-            <h1 className="text-balance font-display text-[clamp(2.375rem,1.3rem+4.4vw,4.25rem)] font-bold leading-[1.02] tracking-[-0.035em]">
-              {t.rich("title", { hl: (chunks) => <span className="text-gold">{chunks}</span> })}
-            </h1>
-            <p className="mt-5 max-w-xl text-pretty text-[1.0625rem] leading-7 text-white/80">{t("subtitle")}</p>
-
-            <div className="mt-7 max-w-xl">
-              <HeroSearchBar />
-            </div>
-            {totalSchools > 0 && (
-              <p className="mt-3 text-sm text-white/70">
-                {t.rich("listedSoFar", {
-                  count: totalSchools,
-                  b: (chunks) => <span className="font-semibold text-white">{chunks}</span>,
-                })}
-              </p>
-            )}
-          </div>
-
-          <PathMap typeCounts={typeCounts} />
-        </div>
-      </section>
-
-      {/* The guided way in, for families who don't know where to start. It straddles the edge of the band. */}
-      <section className="relative z-10 mx-auto -mt-12 max-w-6xl px-4 sm:-mt-14 sm:px-6">
-        <div className="flex flex-col gap-5 rounded-2xl bg-gold p-6 text-gold-foreground shadow-[var(--shadow-pop)] sm:flex-row sm:items-center sm:justify-between sm:p-8">
-          <div className="max-w-2xl">
             <h2 className="font-display text-2xl font-bold tracking-[-0.02em] sm:text-[1.75rem]">{tMatch("title")}</h2>
-            <p className="mt-1.5 leading-7">{tMatch("intro")}</p>
+            <p className="mt-2 leading-7">{tMatch("intro")}</p>
           </div>
           <Link
             href="/match"
-            className="group inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-band px-5 font-semibold text-white transition-colors hover:bg-band-line"
+            className="group inline-flex min-h-12 items-center justify-center gap-2 self-start rounded-xl bg-band px-5 font-semibold text-white transition-colors hover:bg-band-line"
           >
             {t("matchStart")}
             <Icon name="arrow-right" className="size-4 transition-transform group-hover:translate-x-0.5" />

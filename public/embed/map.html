@@ -13,10 +13,10 @@
    * Options (URL ?params): lang=mn | type=PUBLIC,PRIVATE | school=<id> | lat=..&lng=..&zoom=..
    */
   :root {
-    --public: #1b45d6;
-    --private: #b4246f;
-    --intl: #0a7c66;
-    --ink: #131c45;
+    --public: #5a569f;
+    --private: #a44f77;
+    --intl: #3b7c6e;
+    --ink: #2f2c3d;
     --muted: #5b6475;
     --line: #dfe4ee;
     --card: #ffffff;
@@ -107,7 +107,7 @@
   var DISTRICT_MN = { "Baganuur": "Багануур", "Bagakhangai": "Багахангай", "Bayangol": "Баянгол", "Bayanzurkh": "Баянзүрх",
     "Chingeltei": "Чингэлтэй", "Khan-Uul": "Хан-Уул", "Nalaikh": "Налайх", "Songinokhairkhan": "Сонгинохайрхан", "Sukhbaatar": "Сүхбаатар" };
   // Same three line colours as the main site (app/globals.css).
-  var COLOR = { PUBLIC: "#1b45d6", PRIVATE: "#b4246f", INTERNATIONAL: "#0a7c66" };
+  var COLOR = { PUBLIC: "#5a569f", PRIVATE: "#a44f77", INTERNATIONAL: "#3b7c6e" };
   var TYPES = ["PUBLIC", "PRIVATE", "INTERNATIONAL"];
   var active = new Set((params.get("type") || TYPES.join(",")).toUpperCase().split(",").filter(function (t) { return TYPES.indexOf(t) > -1; }));
   if (!active.size) TYPES.forEach(function (t) { active.add(t); });
@@ -232,7 +232,7 @@
       map.addSource("schools", { type: "geojson", data: filtered(), cluster: true, clusterRadius: 42, clusterMaxZoom: 13, promoteId: "id" });
 
       map.addLayer({ id: "clusters", type: "circle", source: "schools", filter: ["has", "point_count"],
-        paint: { "circle-color": "#131c45", "circle-opacity": 0.82, "circle-stroke-color": "#fff", "circle-stroke-width": 2,
+        paint: { "circle-color": "#2f2c3d", "circle-opacity": 0.82, "circle-stroke-color": "#fff", "circle-stroke-width": 2,
                  "circle-radius": ["step", ["get", "point_count"], 15, 10, 19, 30, 24] } });
       map.addLayer({ id: "cluster-count", type: "symbol", source: "schools", filter: ["has", "point_count"],
         layout: { "text-field": ["get", "point_count_abbreviated"], "text-font": ["Noto Sans Bold"], "text-size": 12 },
@@ -247,7 +247,7 @@
       map.addLayer({ id: "school-label", type: "symbol", source: "schools", filter: ["!", ["has", "point_count"]], minzoom: 13.5,
         layout: { "text-field": LANG === "mn" ? ["coalesce", ["get", "nameMn"], ["get", "nameEn"]] : ["get", "nameEn"],
                   "text-font": ["Noto Sans Bold"], "text-size": 12, "text-offset": [0, 1.1], "text-anchor": "top", "text-max-width": 10 },
-        paint: { "text-color": "#131c45", "text-halo-color": "#fff", "text-halo-width": 1.5 } });
+        paint: { "text-color": "#2f2c3d", "text-halo-color": "#fff", "text-halo-width": 1.5 } });
 
       map.on("click", "clusters", function (e) {
         var f = e.features[0];

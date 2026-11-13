@@ -1,80 +1,88 @@
 @import "tailwindcss";
 
 /*
- * "Path" design system — a school guide drawn like a wayfinding system.
+ * "Path" design system — a school guide drawn like a wayfinding system,
+ * in a soft, warm palette.
  *
- * Pale pavement ground, white sign plates, navy ink. The three school types
- * are three "lines" (blue public, magenta private, teal international), and
- * signal yellow marks where you are: the selected tab, chip, quiz stop or
- * best score. Geologica sets headings and numbers; Commissioner sets text.
- * Both faces carry the Mongolian letters (Ө, Ү) and the tugrik sign (₮).
+ * Lavender-white ground, warm white plates, plum ink. The palette's five
+ * anchors are lavender #e0ddf9, dusty pink #d2c1ce, taupe #ad9a93, brown
+ * #8f7769 and plum #3c394c. The three school types are three "lines"
+ * (indigo public, rose private, sage international), and honey marks where
+ * you are: the selected tab, chip, quiz stop or best score. Geologica sets
+ * headings and numbers; Commissioner sets text. Both faces carry the
+ * Mongolian letters (Ө, Ү) and the tugrik sign (₮).
  */
 :root {
   color-scheme: light;
-  --background: #edf0f5;
-  --surface: #ffffff;
-  --surface-muted: #e4e9f1;
-  --foreground: #131c45;
-  /* The navy band: hero, footer and the compare tray. Always dark, in both themes. */
-  --band: #131c45;
-  --band-line: #2a3670;
-  /* The three line colours, brightened to read on the navy band. */
-  --band-public: #5d82ff;
-  --band-private: #ee6bb0;
-  --band-intl: #3ccdae;
-  --muted: #46507a;
-  --subtle: #5d6688;
-  --line: #d5dbe7;
-  --line-strong: #aeb8cd;
-  --accent: #1b45d6;
-  --accent-hover: #1535a8;
+  --background: #f4f1f8;
+  --surface: #fffdfb;
+  --surface-muted: #ebe6f2;
+  --foreground: #2f2c3d;
+  /* The plum band: home scene, footer and the compare tray. Always dark, in both themes. */
+  --band: #3c394c;
+  --band-line: #56526b;
+  /* The three line colours, lightened to read on the plum band. */
+  --band-public: #bcb9f4;
+  --band-private: #eaaac8;
+  --band-intl: #a3d6c7;
+  /* The palette's own pastels, for shapes and decoration only (never text). */
+  --pastel-lavender: #e0ddf9;
+  --pastel-pink: #d2c1ce;
+  --pastel-taupe: #ad9a93;
+  --pastel-brown: #8f7769;
+  --muted: #5c5568;
+  --subtle: #6d6477;
+  --line: #e0d8e3;
+  --line-strong: #b7a8b4;
+  --accent: #5a569f;
+  --accent-hover: #474381;
   --accent-foreground: #ffffff;
-  --accent-soft: #e3eafd;
-  --gold: #ffc629;
-  --gold-soft: #fff3c9;
-  --gold-foreground: #2a2100;
-  --star: #c98a00;
-  --star-empty: #d5dbe7;
-  --tone-private: #b4246f;
-  --tone-private-soft: #fbe6f1;
-  --tone-intl: #0a7c66;
-  --tone-intl-soft: #dcf3ec;
-  --danger: #c0262d;
-  --danger-soft: #fdeeee;
-  --ok: #0b7a4b;
-  --ok-soft: #e0f4ea;
+  --accent-soft: #e7e4f8;
+  --gold: #efc081;
+  --gold-soft: #f9eedb;
+  --gold-foreground: #3a2a14;
+  --star: #b47a27;
+  --star-empty: #e0d8e3;
+  --tone-private: #a44f77;
+  --tone-private-soft: #f6e4ec;
+  --tone-intl: #3b7c6e;
+  --tone-intl-soft: #e0efe9;
+  --danger: #b3403f;
+  --danger-soft: #fbeceb;
+  --ok: #2f6b49;
+  --ok-soft: #e2f1e7;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
-    --background: #0b1230;
-    --surface: #131c45;
-    --surface-muted: #1b2657;
-    --foreground: #eef1fa;
-    --band: #070c22;
-    --band-line: #1b2657;
-    --muted: #b4bcd8;
-    --subtle: #97a1c4;
-    --line: #27336b;
-    --line-strong: #3d4b8a;
-    --accent: #93abff;
-    --accent-hover: #b7c6ff;
-    --accent-foreground: #0b1230;
-    --accent-soft: #1d2b66;
-    --gold: #ffc629;
-    --gold-soft: #3b3010;
-    --gold-foreground: #2a2100;
-    --star: #ffc629;
-    --star-empty: #2f3c78;
-    --tone-private: #f59bca;
-    --tone-private-soft: #3c1a3a;
-    --tone-intl: #6fd9c0;
-    --tone-intl-soft: #0f3a3c;
-    --danger: #ff8078;
-    --danger-soft: #3a1620;
-    --ok: #6fdba4;
-    --ok-soft: #10382f;
+    --background: #1f1d29;
+    --surface: #2a2837;
+    --surface-muted: #353245;
+    --foreground: #f1eef6;
+    --band: #17151f;
+    --band-line: #343146;
+    --muted: #c3bccb;
+    --subtle: #b6aec0;
+    --line: #3d394d;
+    --line-strong: #5d5871;
+    --accent: #bcb9f4;
+    --accent-hover: #d6d4fb;
+    --accent-foreground: #1f1d29;
+    --accent-soft: #37345a;
+    --gold: #efc081;
+    --gold-soft: #45361f;
+    --gold-foreground: #3a2a14;
+    --star: #efc081;
+    --star-empty: #45415a;
+    --tone-private: #eaaac8;
+    --tone-private-soft: #472a3a;
+    --tone-intl: #a3d6c7;
+    --tone-intl-soft: #23403a;
+    --danger: #f19a94;
+    --danger-soft: #472526;
+    --ok: #9bd3ae;
+    --ok-soft: #24402f;
   }
 }
 
@@ -88,6 +96,10 @@
   --color-band-public: var(--band-public);
   --color-band-private: var(--band-private);
   --color-band-intl: var(--band-intl);
+  --color-pastel-lavender: var(--pastel-lavender);
+  --color-pastel-pink: var(--pastel-pink);
+  --color-pastel-taupe: var(--pastel-taupe);
+  --color-pastel-brown: var(--pastel-brown);
   --color-muted: var(--muted);
   --color-subtle: var(--subtle);
   --color-line: var(--line);
@@ -111,7 +123,7 @@
   --color-ok-soft: var(--ok-soft);
   --font-sans: var(--font-text);
   --font-display: var(--font-heading);
-  --shadow-pop: 0 18px 40px -18px rgb(19 28 69 / 0.35);
+  --shadow-pop: 0 18px 40px -18px rgb(60 57 76 / 0.38);
   --ease-out-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
@@ -211,7 +223,7 @@
   @media (hover: hover) {
     .plate-link:hover {
       border-color: var(--line-strong);
-      box-shadow: 0 14px 28px -20px rgb(19 28 69 / 0.45);
+      box-shadow: 0 14px 28px -20px rgb(60 57 76 / 0.4);
       transform: translateY(-1px);
     }
   }
@@ -545,3 +557,140 @@
   color: var(--muted);
 }
 
+
+/* --- Home scroll scene (components/home/ScrollStory.tsx) ------------------- */
+
+/* The section is tall; its stage sticks, so scrolling moves the camera instead of the page. */
+.story {
+  height: 400vh;
+}
+
+.story-world {
+  opacity: 0;
+  transition: opacity 600ms var(--ease-out-soft);
+}
+.story-world[data-ready] {
+  opacity: 1;
+}
+
+/* Every object sits at the centre of the stage; JavaScript moves it into place. --u is one scene unit. */
+.story-object {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin: 0;
+  visibility: hidden;
+  will-change: transform, opacity;
+}
+
+.story-heading {
+  width: calc(var(--u, 8px) * 104);
+  font-family: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
+  font-size: calc(var(--u, 8px) * 7.6);
+  font-weight: 700;
+  line-height: 1.05;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.story-label {
+  font-family: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
+  font-size: calc(var(--u, 8px) * 4.4);
+  font-weight: 600;
+  line-height: 1.1;
+  white-space: nowrap;
+  /* Keeps a label readable when a shape passes behind it. */
+  text-shadow: 0 0 calc(var(--u, 8px) * 1.5) var(--band);
+}
+
+/* One shape, three lives: a soft blob, a block with six faces, a stop on the road. */
+.story-shape {
+  transform-style: preserve-3d;
+  /* Not "opacity": hinting it would flatten the block's six faces into one layer. */
+  will-change: transform;
+}
+.story-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius, 50%);
+  --fill: color-mix(in oklab, var(--pastel), var(--line-color) calc(var(--tint, 0) * 100%));
+  background: var(--fill);
+  opacity: var(--fade, 1);
+}
+.story-face-front {
+  transform: translateZ(calc(var(--half) * var(--depth)));
+}
+.story-face-back {
+  opacity: calc(var(--sides, 0) * var(--fade, 1));
+  transform: rotateY(180deg) translateZ(calc(var(--half) * var(--depth)));
+}
+.story-face-right,
+.story-face-left,
+.story-face-top,
+.story-face-bottom {
+  opacity: calc(var(--sides, 0) * var(--fade, 1));
+}
+.story-face-right {
+  background: color-mix(in oklab, var(--fill) 78%, var(--band));
+  transform: rotateY(90deg) translateZ(var(--half)) scaleX(var(--depth));
+}
+.story-face-left {
+  background: color-mix(in oklab, var(--fill) 70%, var(--band));
+  transform: rotateY(-90deg) translateZ(var(--half)) scaleX(var(--depth));
+}
+.story-face-top {
+  background: color-mix(in oklab, var(--fill) 82%, white);
+  transform: rotateX(90deg) translateZ(var(--half)) scaleY(var(--depth));
+}
+.story-face-bottom {
+  background: color-mix(in oklab, var(--fill) 60%, var(--band));
+  transform: rotateX(-90deg) translateZ(var(--half)) scaleY(var(--depth));
+}
+/* The hole that turns a disc into a stop marker. */
+.story-ring {
+  position: absolute;
+  inset: 24%;
+  border-radius: 50%;
+  background: var(--band);
+  transform: scale(var(--ring, 0));
+}
+
+.story-road {
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--gold) 65%, var(--band));
+}
+.story-goal {
+  border-radius: 50%;
+  background: var(--background);
+  box-shadow: 0 0 0 calc(var(--u, 8px) * 1.4) var(--gold);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* The headline's entrance: each word tips up into place. */
+  .story-word-in {
+    animation: story-word-in 700ms var(--ease-out-soft) both;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  /* No flight: the scene is one normal screen and the page carries on below it. */
+  .story {
+    height: auto;
+  }
+  .story-motion-only {
+    display: none;
+  }
+}
+
+@keyframes story-word-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.45em) rotateX(-70deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

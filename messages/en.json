@@ -73,7 +73,12 @@
     "pathLines": "Kinds of school",
     "pathGoal": "University",
     "listedSoFar": "<b>{count}</b> {count, plural, one {school} other {schools}} listed so far, mostly in Ulaanbaatar.",
-    "matchStart": "Answer 5 questions"
+    "matchStart": "Answer 5 questions",
+    "storyKinds": "{count} schools, three kinds",
+    "storyPath": "One road, from first grade to university",
+    "storyEnd": "Find the one that fits your child",
+    "storyScroll": "Scroll",
+    "storySkip": "Skip"
   },
   "HeroSearch": {
     "placeholder": "Name, number, or district…",

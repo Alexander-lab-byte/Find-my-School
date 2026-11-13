@@ -1,26 +1,29 @@
 # Design system: "Path"
 
-Find My School is drawn like a wayfinding system — the signs and route maps you follow in a metro. A family is on a route (elementary → middle → high school → university) and has to pick a line. Everything visual comes from that idea, so new screens should too.
+Find My School is drawn like a wayfinding system — the signs and route maps you follow in a metro — in a soft, warm palette. A family is on a route (elementary → middle → high school → university) and has to pick a line. Everything visual comes from that idea, so new screens should too.
 
 All tokens live in `app/globals.css`. Use the token classes (`bg-surface`, `text-muted`, `bg-gold` …), never a hex colour in a component.
 
 ## Colour
 
+A soft, warm palette built on five anchors: lavender `#e0ddf9`, dusty pink `#d2c1ce`, taupe `#ad9a93`, brown `#8f7769` and plum `#3c394c`.
+
 | Token | Light | Use |
 | --- | --- | --- |
-| `background` | `#edf0f5` | Page ground ("pavement") |
-| `surface` | `#ffffff` | Plates: cards, header, panels |
-| `foreground` / `muted` / `subtle` | navy inks | Text, strongest to quietest |
-| `band` | `#131c45` | The navy band: home hero, footer, compare tray. Dark in both themes |
-| `accent` | `#1b45d6` | **Public line.** Also primary buttons and links |
-| `tone-private` | `#b4246f` | **Private line** |
-| `tone-intl` | `#0a7c66` | **International line** |
-| `gold` | `#ffc629` | "You are here": the current tab, selected chip, current quiz stop, best score. One gold button per screen at most |
+| `background` | `#f4f1f8` | Page ground (lavender-white) |
+| `surface` | `#fffdfb` | Plates: cards, header, panels |
+| `foreground` / `muted` / `subtle` | plum inks | Text, strongest to quietest |
+| `band` | `#3c394c` | The plum band: home scene, footer, compare tray. Dark in both themes |
+| `accent` | `#5a569f` | **Public line** (indigo). Also primary buttons and links |
+| `tone-private` | `#a44f77` | **Private line** (rose) |
+| `tone-intl` | `#3b7c6e` | **International line** (sage) |
+| `gold` | `#efc081` | Honey, "you are here": the current tab, selected chip, current quiz stop, best score. One honey button per screen at most |
+| `pastel-*` | the anchors | Shapes and decoration only. Too pale for text |
 | `ok` / `danger` | green / red | Verified, errors |
 
-The three school types are three lines. A school always carries its line colour: the stripe on its card, its monogram, its map pin, the band on its profile, its column in Compare. Use `TYPE_FILL[type]` from `components/common/Badge.tsx`; never use a line colour for anything that isn't about school type (blue is the one exception: it is also the action colour).
+The three school types are three lines. A school always carries its line colour: the stripe on its card, its monogram, its map pin, the band on its profile, its column in Compare. Use `TYPE_FILL[type]` from `components/common/Badge.tsx`; never use a line colour for anything that isn't about school type (indigo is the one exception: it is also the action colour).
 
-Dark mode follows the device (`prefers-color-scheme`) and is defined by the same tokens. Check both themes when you add a colour.
+Dark mode follows the device (`prefers-color-scheme`) and is defined by the same tokens. Check both themes when you add a colour, and run a contrast check: soft colours fail WCAG easily.
 
 ## Type
 
@@ -40,7 +43,9 @@ Both include Mongolian Cyrillic (Ө, Ү) and the tugrik sign (₮). Use `.page-t
 
 ## Motion
 
-Short and purposeful: `.pop-in` for a panel that just opened, `.route-draw` / `.stop-in` for the home path map, `.reveal` for a section that eases in on scroll (CSS only). Nothing loops. `prefers-reduced-motion` turns all of it off.
+The home page opens with a 3D scene you scroll through (`components/home/ScrollStory.tsx`): kinetic headline, three shapes that morph into blocks and then into stops on a road, and a camera that flies to "university". It is CSS 3D with one small script, no WebGL and no library, and it lives on the home page only. Keep 3D out of the working pages (search, profiles, compare).
+
+Everywhere else, motion is short and purposeful: `.pop-in` for a panel that just opened, `.route-draw` / `.stop-in` for the home path map, `.reveal` for a section that eases in on scroll (CSS only). Nothing loops. `prefers-reduced-motion` turns all of it off.
 
 ## Rules
 
