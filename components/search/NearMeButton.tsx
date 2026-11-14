@@ -49,7 +49,7 @@ export function NearMeButton({ active }: { active: boolean }) {
       <button
         type="button"
         onClick={() => update({ near: null, sort: null, page: null })}
-        className="chip is-on"
+        className="chip is-on min-h-12"
       >
         <Icon name="map-pin" className="size-4" />
         {t("active")}
@@ -61,7 +61,7 @@ export function NearMeButton({ active }: { active: boolean }) {
 
   return (
     <div className="flex flex-col items-start gap-1">
-      <button type="button" onClick={locate} disabled={state === "locating"} className="chip">
+      <button type="button" onClick={locate} disabled={state === "locating"} className="chip min-h-12">
         <Icon name="map-pin" className="size-4" />
         {state === "locating" ? t("locating") : t("button")}
       </button>

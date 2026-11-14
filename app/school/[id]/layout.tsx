@@ -43,14 +43,21 @@ export default async function SchoolLayout({ children, params }: SchoolLayoutPro
   const isSaved = await getIsSchoolSaved(id, user?.id ?? null);
 
   return (
-    <div className="flex flex-1 flex-col">
+    // One <main> around the school's header, tabs and tab content, so the page has a single banner (the site header).
+    <main className="flex flex-1 flex-col">
       <SchoolHeader school={school} isSaved={isSaved} />
-      <div className="sticky top-16 z-30 border-b border-line/70 bg-background/75 backdrop-blur-xl">
+      <div className="sticky top-16 z-30 border-b border-line bg-surface">
         <div className="mx-auto max-w-5xl px-4 sm:px-6">
-          <SchoolTabs schoolId={school.id} reviewCount={school.reviewCount} />
+          <SchoolTabs
+            schoolId={school.id}
+            reviewCount={school.reviewCount}
+            // A tab only shows when the school has something for it; the overview already says "no dormitory".
+            hasFacilities={school._count.facilities > 0 || Boolean(school.avgFacilities || school.avgLibrary)}
+            hasDormitory={Boolean(school.dormitory)}
+          />
         </div>
       </div>
-      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-10 sm:px-6">{children}</main>
-    </div>
+      <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:px-6 sm:py-10">{children}</div>
+    </main>
   );
 }

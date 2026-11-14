@@ -11,12 +11,14 @@
    * Find My School map — one self-contained page.
    * Embed it anywhere:  <iframe src="https://find-my-school-rho.vercel.app/embed/map.html" ...></iframe>
    * Options (URL ?params): lang=mn | type=PUBLIC,PRIVATE | school=<id> | lat=..&lng=..&zoom=..
+   * Used by our own pages too: site=1 (links open in the same tab, no brand chip) and
+   * ui=min (no filter bar; with school=<id> it centres on that school and rings it).
    */
   :root {
-    --public: #2448e8;
-    --private: #6d28d9;
-    --intl: #9a5806;
-    --ink: #0b1220;
+    --public: #5a569f;
+    --private: #a44f77;
+    --intl: #3b7c6e;
+    --ink: #2f2c3d;
     --muted: #5b6475;
     --line: #dfe4ee;
     --card: #ffffff;
@@ -68,10 +70,11 @@
   .facts b { color: var(--ink); font-weight: 600; }
   .open { margin-top: 4px; justify-self: start; display: inline-flex; gap: 4px; padding: 7px 12px; border-radius: 999px; background: var(--public); color: #fff; font-weight: 700; font-size: 13px; text-decoration: none; }
   .open:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-  .approx { font-size: 12px; color: #9a5806; }
+  .approx { font-size: 12px; color: #8a5a00; }
 
   .status { position: absolute; inset: 0; display: grid; place-items: center; z-index: 3; color: var(--muted); font-weight: 600; pointer-events: none; }
   @media (max-width: 480px) { .brand span { display: none; } .card { width: 230px; } }
+  .in-site .brand, .minimal .bar { display: none; }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 </head>
@@ -89,6 +92,13 @@
 
   var params = new URLSearchParams(location.search);
   var LANG = params.get("lang") === "mn" ? "mn" : "en";
+  // Inside our own pages: no brand chip, and "open school page" stays in the same tab.
+  var IN_SITE = params.get("site") === "1";
+  // A small map on a school's own page: no filter bar, that school ringed.
+  var MINIMAL = params.get("ui") === "min";
+  if (IN_SITE) document.body.classList.add("in-site");
+  if (MINIMAL) document.body.classList.add("minimal");
+  var LINK_TARGET = IN_SITE ? ' target="_top"' : ' target="_blank" rel="noopener"';
   // Our site serves the data. When this file is copied to another website, it still reads from here.
   var SITE = /find-my-school/.test(location.hostname) || location.hostname === "localhost"
     ? location.origin : "https://find-my-school-rho.vercel.app";
@@ -106,7 +116,8 @@
   }[LANG];
   var DISTRICT_MN = { "Baganuur": "Багануур", "Bagakhangai": "Багахангай", "Bayangol": "Баянгол", "Bayanzurkh": "Баянзүрх",
     "Chingeltei": "Чингэлтэй", "Khan-Uul": "Хан-Уул", "Nalaikh": "Налайх", "Songinokhairkhan": "Сонгинохайрхан", "Sukhbaatar": "Сүхбаатар" };
-  var COLOR = { PUBLIC: "#2448e8", PRIVATE: "#6d28d9", INTERNATIONAL: "#9a5806" };
+  // Same three line colours as the main site (app/globals.css).
+  var COLOR = { PUBLIC: "#5a569f", PRIVATE: "#a44f77", INTERNATIONAL: "#3b7c6e" };
   var TYPES = ["PUBLIC", "PRIVATE", "INTERNATIONAL"];
   var active = new Set((params.get("type") || TYPES.join(",")).toUpperCase().split(",").filter(function (t) { return TYPES.indexOf(t) > -1; }));
   if (!active.size) TYPES.forEach(function (t) { active.add(t); });
@@ -127,6 +138,9 @@
     var lo = p.tuitionMinAnnual, hi = p.tuitionMaxAnnual;
     return (lo && hi && lo !== hi ? money(lo) + "–" + money(hi) : money(lo || hi)) + " " + TEXT.perYear;
   }
+
+  // If the map library could not load (offline, blocked CDN), say so instead of "Loading…" forever.
+  if (!window.maplibregl) { document.getElementById("status").textContent = TEXT.failed; return; }
 
   var map = new maplibregl.Map({
     container: "map",
@@ -196,7 +210,7 @@
           "<li>" + rating + "</li>" +
         "</ul>" +
         (p.locationApproximate ? '<span class="approx">' + esc(TEXT.approx) + "</span>" : "") +
-        '<a class="open" href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(TEXT.open) + "</a>" +
+        '<a class="open" href="' + esc(p.url) + '"' + LINK_TARGET + ">" + esc(TEXT.open) + "</a>" +
       "</div></div>";
   }
 
@@ -231,7 +245,7 @@
       map.addSource("schools", { type: "geojson", data: filtered(), cluster: true, clusterRadius: 42, clusterMaxZoom: 13, promoteId: "id" });
 
       map.addLayer({ id: "clusters", type: "circle", source: "schools", filter: ["has", "point_count"],
-        paint: { "circle-color": "#0b1220", "circle-opacity": 0.82, "circle-stroke-color": "#fff", "circle-stroke-width": 2,
+        paint: { "circle-color": "#2f2c3d", "circle-opacity": 0.82, "circle-stroke-color": "#fff", "circle-stroke-width": 2,
                  "circle-radius": ["step", ["get", "point_count"], 15, 10, 19, 30, 24] } });
       map.addLayer({ id: "cluster-count", type: "symbol", source: "schools", filter: ["has", "point_count"],
         layout: { "text-field": ["get", "point_count_abbreviated"], "text-font": ["Noto Sans Bold"], "text-size": 12 },
@@ -246,7 +260,7 @@
       map.addLayer({ id: "school-label", type: "symbol", source: "schools", filter: ["!", ["has", "point_count"]], minzoom: 13.5,
         layout: { "text-field": LANG === "mn" ? ["coalesce", ["get", "nameMn"], ["get", "nameEn"]] : ["get", "nameEn"],
                   "text-font": ["Noto Sans Bold"], "text-size": 12, "text-offset": [0, 1.1], "text-anchor": "top", "text-max-width": 10 },
-        paint: { "text-color": "#0b1220", "text-halo-color": "#fff", "text-halo-width": 1.5 } });
+        paint: { "text-color": "#2f2c3d", "text-halo-color": "#fff", "text-halo-width": 1.5 } });
 
       map.on("click", "clusters", function (e) {
         var f = e.features[0];
@@ -269,7 +283,14 @@
       var focus = params.get("school");
       if (focus) {
         var f = all.features.find(function (x) { return x.properties.id === focus; });
-        if (f) { map.jumpTo({ center: f.geometry.coordinates, zoom: 15.5 }); openPopup(f); }
+        if (f && MINIMAL) {
+          // Ring the school instead of opening its card: the page around the map already describes it.
+          map.jumpTo({ center: f.geometry.coordinates, zoom: 14.5 });
+          map.addSource("focus", { type: "geojson", data: f });
+          map.addLayer({ id: "focus-ring", type: "circle", source: "focus",
+            paint: { "circle-radius": 16, "circle-color": COLOR[f.properties.type], "circle-opacity": 0.18,
+                     "circle-stroke-color": COLOR[f.properties.type], "circle-stroke-width": 2.5 } }, "school");
+        } else if (f) { map.jumpTo({ center: f.geometry.coordinates, zoom: 15.5 }); openPopup(f); }
       }
     }).catch(function () { document.getElementById("status").textContent = TEXT.failed; });
   });

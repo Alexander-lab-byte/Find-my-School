@@ -7,14 +7,14 @@ export default function SchoolProfileLoading() {
           <div className="h-4 w-24 rounded bg-surface-muted" />
           <div className="mt-6 flex flex-col gap-8 md:flex-row md:justify-between">
             <div className="flex gap-5">
-              <div className="size-16 shrink-0 rounded-[1.25rem] bg-surface-muted sm:size-20" />
+              <div className="size-16 shrink-0 rounded-xl bg-surface-muted sm:size-20" />
               <div className="space-y-3">
                 <div className="h-5 w-40 rounded bg-surface-muted" />
                 <div className="h-9 w-72 max-w-full rounded-xl bg-surface-muted" />
                 <div className="h-5 w-56 rounded bg-surface-muted" />
               </div>
             </div>
-            <div className="h-40 rounded-[1.25rem] bg-surface-muted md:w-64" />
+            <div className="h-40 rounded-xl bg-surface-muted md:w-64" />
           </div>
         </div>
       </div>
@@ -25,8 +25,8 @@ export default function SchoolProfileLoading() {
           ))}
         </div>
       </div>
-      <div className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6">
-        <div className="h-48 rounded-[1.25rem] bg-surface-muted" />
+      <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 sm:py-10">
+        <div className="h-48 rounded-xl bg-surface-muted" />
       </div>
     </div>
   );

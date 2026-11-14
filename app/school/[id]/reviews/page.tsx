@@ -23,7 +23,7 @@ function AccessCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)] p-6">
+    <div className="plate p-6">
       <span className="flex size-10 items-center justify-center rounded-xl bg-accent-soft text-accent">
         <Icon name={icon} className="size-5" />
       </span>
@@ -74,7 +74,7 @@ export default async function SchoolReviewsPage({
 
       <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px]">
         <section aria-labelledby="reviews-heading">
-          <h2 id="reviews-heading" className="font-display text-xl font-bold text-foreground">
+          <h2 id="reviews-heading" className="section-title">
             {reviews.length === 0 ? t("heading") : tCommon("reviewCount", { count: reviews.length })}
           </h2>
           <div className="mt-4 space-y-4">
@@ -86,7 +86,7 @@ export default async function SchoolReviewsPage({
         </section>
 
         <section id="write-review" aria-labelledby="write-review-heading" className="scroll-mt-20">
-          <h2 id="write-review-heading" className="font-display text-xl font-bold text-foreground">
+          <h2 id="write-review-heading" className="section-title">
             {hasActiveReview ? t("yours") : t("write")}
           </h2>
           <div className="mt-4">
@@ -101,7 +101,7 @@ export default async function SchoolReviewsPage({
                     ? t("yourHiddenBody")
                     : t.rich("yourPublishedBody", {
                         link: (chunks) => (
-                          <Link href="/my-reviews" className="font-medium text-accent hover:underline">
+                          <Link href="/my-reviews" className="link">
                             {chunks}
                           </Link>
                         ),
@@ -134,7 +134,7 @@ export default async function SchoolReviewsPage({
                     {access.ownSchool && (
                       <Link
                         href={`/school/${access.ownSchool.id}/reviews#write-review`}
-                        className="mt-2 inline-flex items-center gap-1 font-medium text-accent hover:underline hover:underline-offset-4"
+                        className="mt-2 inline-flex items-center gap-1 link"
                       >
                         {tAccess("reviewOwnSchool", { school: schoolNames(access.ownSchool, locale).primary })}
                         <Icon name="arrow-right" className="size-4" />
@@ -153,7 +153,7 @@ export default async function SchoolReviewsPage({
                 </p>
                 <Link
                   href={loginHref}
-                  className="mt-5 block rounded-full bg-accent px-4 py-2.5 text-center text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
+                  className="mt-5 btn-primary w-full"
                 >
                   {t("loginToWrite")}
                 </Link>

@@ -86,9 +86,9 @@ export function HeroSearchBar() {
   }
 
   return (
-    <form role="search" onSubmit={handleSubmit} className="relative w-full max-w-2xl text-left">
-      <div className="flex items-center gap-2 rounded-[1.25rem] border border-line-strong bg-surface p-2 shadow-[0_16px_40px_-24px_rgb(0_0_0/0.35)] transition focus-within:border-accent focus-within:ring-4 focus-within:ring-accent/15">
-        <Icon name="search" className="ml-2 size-5 shrink-0 text-subtle" />
+    <form role="search" onSubmit={handleSubmit} className="relative w-full text-left">
+      <div className="flex items-center gap-2 rounded-2xl border-2 border-foreground bg-surface p-1.5 transition-shadow focus-within:shadow-[0_0_0_4px_color-mix(in_oklab,var(--accent)_28%,transparent)]">
+        <Icon name="search" className="ml-2.5 size-5 shrink-0 text-foreground" />
         <input
           type="text"
           role="combobox"
@@ -107,11 +107,11 @@ export function HeroSearchBar() {
           onBlur={() => setIsOpen(false)}
           onKeyDown={handleKeyDown}
           placeholder={t("placeholder")}
-          className="min-w-0 flex-1 bg-transparent px-1 py-2 text-base text-foreground outline-none placeholder:text-subtle"
+          className="min-h-11 min-w-0 flex-1 bg-transparent px-1 text-base text-foreground outline-none placeholder:text-subtle"
         />
         <button
           type="submit"
-          className="shrink-0 rounded-full bg-accent px-4 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover sm:px-6"
+          className="btn-primary shrink-0 sm:px-6"
         >
           {t("search")}
         </button>
@@ -122,7 +122,7 @@ export function HeroSearchBar() {
         // isn't cancelled by the input's blur closing the list first.
         <div
           onMouseDown={(e) => e.preventDefault()}
-          className="absolute inset-x-0 top-full z-20 mt-2 overflow-hidden rounded-[1.25rem] border border-line bg-surface shadow-[0_20px_40px_-20px_rgb(0_0_0/0.3)]"
+          className="pop-in absolute inset-x-0 top-full z-20 mt-2 overflow-hidden rounded-xl border border-line bg-surface shadow-[var(--shadow-pop)]"
         >
           <ul id={listId} role="listbox" aria-label={t("matching")} className="py-1.5">
             {suggestions.map((school, i) => {
@@ -138,12 +138,12 @@ export function HeroSearchBar() {
                 <Link
                   href={`/school/${school.id}`}
                   onMouseEnter={() => setActiveIndex(i)}
-                  className={`flex items-center justify-between gap-4 px-4 py-2.5 ${
+                  className={`flex min-h-12 items-center justify-between gap-4 px-4 py-2 ${
                     i === activeIndex ? "bg-surface-muted" : ""
                   }`}
                 >
                   <span className="min-w-0">
-                    <span className="block truncate text-sm font-medium text-foreground">
+                    <span className="block truncate text-sm font-semibold text-foreground">
                       {primary}
                     </span>
                     {secondary && (
@@ -167,7 +167,7 @@ export function HeroSearchBar() {
           <button
             type="button"
             onClick={goToResults}
-            className="flex w-full items-center gap-2 border-t border-line px-4 py-3 text-sm font-medium text-accent transition-colors hover:bg-surface-muted"
+            className="flex min-h-12 w-full items-center gap-2 border-t border-line px-4 text-sm font-semibold text-accent transition-colors hover:bg-surface-muted"
           >
             {t("seeAll", { query: trimmed })}
             <Icon name="arrow-right" className="size-4" />

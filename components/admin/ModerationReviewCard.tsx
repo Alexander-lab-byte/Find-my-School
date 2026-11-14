@@ -35,7 +35,7 @@ export function ModerationReviewCard({ review }: { review: ModerationReview }) {
   const status = review.status as keyof typeof STATUS_TONE;
 
   return (
-    <article className="reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)]">
+    <article className="plate">
       <header className="flex flex-wrap items-start justify-between gap-3 border-b border-line px-5 py-4">
         <div className="min-w-0">
           <Link

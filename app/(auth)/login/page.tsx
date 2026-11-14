@@ -28,14 +28,14 @@ export default async function LoginPage({
       footer={
         <>
           {t("noAccount")}{" "}
-          <Link href={registerHref} className="font-medium text-accent underline-offset-4 hover:underline">
+          <Link href={registerHref} className="link">
             {tCommon("signUp")}
           </Link>
         </>
       }
     >
       {error === "auth-callback-failed" && (
-        <p role="alert" className="mb-6 rounded-xl bg-danger-soft px-3 py-2.5 text-sm text-danger">
+        <p role="alert" className="mb-6 rounded-lg bg-danger-soft px-3 py-2.5 text-sm font-medium text-danger">
           {t("callbackFailed")}
         </p>
       )}

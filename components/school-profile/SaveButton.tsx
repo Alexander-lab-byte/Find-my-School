@@ -32,11 +32,7 @@ export function SaveButton({ schoolId, initialSaved }: { schoolId: string; initi
         onClick={handleClick}
         disabled={isPending}
         aria-pressed={saved}
-        className={`inline-flex min-h-10 items-center gap-1.5 rounded-xl border px-3.5 text-sm font-medium transition-colors disabled:opacity-50 ${
-          saved
-            ? "border-accent/40 bg-accent-soft text-accent"
-            : "border-line bg-surface text-muted hover:border-line-strong hover:text-foreground"
-        }`}
+        className={`btn-sm ${saved ? "btn-gold" : "btn-secondary"}`}
       >
         <svg
           viewBox="0 0 24 24"

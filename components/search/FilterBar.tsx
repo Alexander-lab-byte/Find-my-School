@@ -24,15 +24,15 @@ function Option({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`flex min-h-10 w-full items-center gap-2.5 rounded-xl px-2 text-left text-sm transition-colors ${
+      className={`flex min-h-10 w-full items-center gap-2.5 rounded-lg px-2 text-left text-sm transition-colors ${
         active
-          ? "bg-accent-soft font-medium text-accent"
+          ? "bg-gold-soft font-semibold text-foreground"
           : "text-muted hover:bg-surface-muted hover:text-foreground"
       }`}
     >
       <span
         className={`flex size-4 shrink-0 items-center justify-center rounded-full border transition-colors ${
-          active ? "border-accent bg-accent text-accent-foreground" : "border-line-strong"
+          active ? "border-foreground bg-foreground text-surface" : "border-subtle"
         }`}
       >
         {active && <Icon name="check" className="size-2.5" strokeWidth={3.5} />}
@@ -47,7 +47,7 @@ function Group({ title, children }: { title: string; children: React.ReactNode }
   return (
     <fieldset className="border-t border-line pt-4">
       <legend className="sr-only">{title}</legend>
-      <p aria-hidden className="mb-2 px-2 text-xs font-semibold uppercase tracking-[0.12em] text-subtle">
+      <p aria-hidden className="label mb-1.5 px-2">
         {title}
       </p>
       <div className="space-y-0.5">{children}</div>
@@ -90,13 +90,13 @@ export function FilterBar({
         onClick={() => setIsOpen((open) => !open)}
         aria-expanded={isOpen}
         aria-controls="search-filters"
-        className="flex w-full items-center justify-between rounded-[1.25rem] border border-line bg-surface px-4 py-3 text-sm font-medium text-foreground lg:hidden"
+        className="btn-secondary w-full !justify-between lg:hidden"
       >
         <span className="flex items-center gap-2">
           <Icon name="sliders" className="size-4" />
           {t("filters")}
           {activeCount > 0 && (
-            <span className="rounded-full bg-accent px-2 py-0.5 text-xs text-accent-foreground">
+            <span className="rounded-md bg-gold px-1.5 py-0.5 text-xs font-bold tabular-nums text-gold-foreground">
               {activeCount}
             </span>
           )}
@@ -109,15 +109,15 @@ export function FilterBar({
 
       <div
         id="search-filters"
-        className={`${isOpen ? "mt-3 block" : "hidden"} space-y-4 rounded-[1.25rem] border border-line bg-surface p-4 lg:mt-0 lg:block`}
+        className={`${isOpen ? "pop-in mt-3 block" : "hidden"} plate space-y-4 p-3 lg:mt-0 lg:block`}
       >
-        <div className="flex items-center justify-between px-2">
-          <h2 className="text-sm font-semibold text-foreground">{t("filters")}</h2>
+        <div className="flex min-h-9 items-center justify-between px-2">
+          <h2 className="font-display text-base font-semibold text-foreground">{t("filters")}</h2>
           {activeCount > 0 && (
             <button
               type="button"
               onClick={clearAll}
-              className="text-xs font-medium text-accent underline-offset-4 hover:underline"
+              className="text-xs link"
             >
               {t("clearAll")}
             </button>

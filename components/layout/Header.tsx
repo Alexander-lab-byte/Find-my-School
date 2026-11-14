@@ -1,70 +1,58 @@
 import Link from "next/link";
 import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
-import { Icon } from "@/components/common/Icon";
 import { AccountMenu } from "@/components/layout/AccountMenu";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { getCurrentUser } from "@/lib/current-user";
 import { getAdminUser, getModerationCounts } from "@/lib/admin";
 import { Logo } from "@/components/layout/Logo";
 import { MobileMenu } from "@/components/layout/MobileMenu";
-import { StickyHeader } from "@/components/layout/StickyHeader";
-
-const NAV_LINK =
-  "inline-flex min-h-11 items-center rounded-full px-3.5 font-semibold text-foreground/80 transition-colors hover:bg-surface-muted hover:text-foreground";
+import { NavLinks, type NavItem } from "@/components/layout/NavLinks";
 
 export async function Header() {
   // Set by lib/supabase/middleware.ts — avoids a second network round
   // trip to Supabase's Auth server just to decide which nav links show.
   const isSignedIn = (await headers()).get("x-user-signed-in") === "1";
   const t = await getTranslations("Common");
+
   // Only signed-in visitors pay for the user lookup (name + admin flag for the menu).
   const user = isSignedIn ? await getCurrentUser() : null;
   const isAdmin = user ? Boolean(await getAdminUser()) : false;
   // Admins see how much is waiting for them on every page.
   const waiting = isAdmin ? (await getModerationCounts()).total : 0;
 
+  // The three ways into the directory. Same list on desktop and in the phone menu.
+  const items: NavItem[] = [
+    { href: "/search", label: t("browseSchools") },
+    { href: "/match", label: t("findMatch") },
+    { href: "/map", label: t("map") },
+  ];
+
   return (
-    <StickyHeader>
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+    <header className="sticky top-0 z-40 border-b border-line bg-surface">
+      <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-4 sm:px-6 lg:gap-8">
         <Logo />
+        <NavLinks items={items} label={t("mainNav")} />
 
-        <nav className="hidden items-center gap-1 text-sm md:flex">
-          <Link href="/search" className={`${NAV_LINK} flex items-center gap-2`}>
-            <Icon name="search" className="size-4" />
-            {t("browseSchools")}
-          </Link>
-          <Link href="/match" className={`${NAV_LINK} flex items-center gap-2`}>
-            <Icon name="sparkles" className="size-4" />
-            {t("findMatch")}
-          </Link>
-          <Link href="/map" className={`${NAV_LINK} flex items-center gap-2`}>
-            <Icon name="map" className="size-4" />
-            {t("map")}
-          </Link>
-          {user ? (
-            <AccountMenu name={user.name} isAdmin={isAdmin} waiting={waiting} />
-          ) : (
-            <>
-              <Link href="/login" className={NAV_LINK}>
-                {t("logIn")}
-              </Link>
-              <Link
-                href="/register"
-                className="btn-primary ml-1 !min-h-0 !px-4 !py-2"
-              >
-                {t("signUp")}
-              </Link>
-            </>
-          )}
-          <LanguageSwitcher className="ml-2" />
-        </nav>
-
-        <div className="flex items-center gap-2 md:hidden">
+        <div className="ml-auto flex items-center gap-2">
           <LanguageSwitcher />
-          <MobileMenu isSignedIn={Boolean(user)} isAdmin={isAdmin} waiting={waiting} />
+          <div className="hidden items-center gap-2 md:flex">
+            {user ? (
+              <AccountMenu name={user.name} isAdmin={isAdmin} waiting={waiting} />
+            ) : (
+              <>
+                <Link href="/login" className="btn-quiet btn-sm">
+                  {t("logIn")}
+                </Link>
+                <Link href="/register" className="btn-primary btn-sm">
+                  {t("signUp")}
+                </Link>
+              </>
+            )}
+          </div>
+          <MobileMenu items={items} isSignedIn={Boolean(user)} isAdmin={isAdmin} waiting={waiting} />
         </div>
       </div>
-    </StickyHeader>
+    </header>
   );
 }

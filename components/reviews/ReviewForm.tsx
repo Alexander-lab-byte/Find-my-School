@@ -98,7 +98,7 @@ export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: b
 
   if (success) {
     return (
-      <div role="status" className="rounded-[1.25rem] border border-accent/30 bg-accent-soft p-6 text-center">
+      <div role="status" className="rounded-xl border border-accent/30 bg-accent-soft p-6 text-center">
         <span className="mx-auto flex size-10 items-center justify-center rounded-full bg-surface text-accent">
           <Icon name="clock" className="size-5" />
         </span>
@@ -109,9 +109,9 @@ export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: b
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)] p-5">
+    <form onSubmit={handleSubmit} className="space-y-6 plate p-5">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-subtle">{t("ratings")}</p>
+        <p className="label">{t("ratings")}</p>
         <div className="mt-1 divide-y divide-line">
           <CategoryStarInput
             label={tRatings("academics")}
@@ -153,7 +153,7 @@ export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: b
       </div>
 
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-subtle">
+        <p className="label">
           {t("topics")}{" "}
           <span className="font-normal normal-case tracking-normal">{t("optional")}</span>
         </p>
@@ -164,11 +164,7 @@ export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: b
               type="button"
               onClick={() => toggleTag(value)}
               aria-pressed={tags.includes(value)}
-              className={`rounded-full border px-3 py-1 text-sm transition-colors ${
-                tags.includes(value)
-                  ? "border-accent bg-accent-soft text-accent"
-                  : "border-line text-muted hover:border-accent/40 hover:text-foreground"
-              }`}
+              className="chip"
             >
               {tTag(value)}
             </button>
@@ -179,7 +175,7 @@ export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: b
       <div>
         <label
           htmlFor="review-body"
-          className="text-xs font-semibold uppercase tracking-[0.12em] text-subtle"
+          className="label"
         >
           {t("yourReview")}
         </label>
@@ -205,7 +201,7 @@ export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: b
       </div>
 
       {error && (
-        <p role="alert" className="rounded-xl bg-danger-soft px-3 py-2.5 text-sm text-danger">
+        <p role="alert" className="rounded-lg bg-danger-soft px-3 py-2.5 text-sm font-medium text-danger">
           {t(ERROR_KEYS[error])}
           {error === "LOGIN_REQUIRED" && (
             <>
@@ -224,7 +220,7 @@ export function ReviewForm({ schoolId, hasDorm }: { schoolId: string; hasDorm: b
       <button
         type="submit"
         disabled={isPending}
-        className="w-full rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover disabled:opacity-50"
+        className="btn-primary w-full"
       >
         {isPending ? t("submitting") : t("submit")}
       </button>

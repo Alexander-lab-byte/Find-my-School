@@ -1,16 +1,16 @@
 import type { SchoolType } from "@prisma/client";
 
+// White on the line colour in light mode, dark ink on the lighter line colour in dark mode.
 const TONE_CLASSES: Record<SchoolType, string> = {
-  PUBLIC: "bg-accent-soft text-accent",
-  PRIVATE: "bg-tone-private-soft text-tone-private",
-  INTERNATIONAL: "bg-tone-intl-soft text-tone-intl",
+  PUBLIC: "bg-accent text-accent-foreground",
+  PRIVATE: "bg-tone-private text-surface",
+  INTERNATIONAL: "bg-tone-intl text-surface",
 };
 
 const SIZE_CLASSES = {
-  md: "size-12 rounded-2xl text-base",
-  lg: "size-16 rounded-[1.25rem] text-xl sm:size-20 sm:text-2xl",
+  md: "size-12 rounded-xl text-base",
+  lg: "size-16 rounded-2xl text-xl sm:size-20 sm:text-2xl",
 };
-
 const FILLER_WORDS = new Set(["of", "the", "and", "for", "school"]);
 
 function initials(name: string) {
@@ -27,7 +27,10 @@ function initials(name: string) {
     .toUpperCase();
 }
 
-/** The school's logo if it has one, otherwise its initials on a type-coloured tile. */
+/**
+ * The school's plate: its logo if it has one, otherwise its number or
+ * initials on the colour of its line (public, private, international).
+ */
 export function SchoolMonogram({
   name,
   type,
@@ -53,7 +56,7 @@ export function SchoolMonogram({
   return (
     <span
       aria-hidden
-      className={`${SIZE_CLASSES[size]} ${TONE_CLASSES[type]} flex shrink-0 items-center justify-center font-display font-bold`}
+      className={`${SIZE_CLASSES[size]} ${TONE_CLASSES[type]} flex shrink-0 items-center justify-center font-display font-bold tabular-nums`}
     >
       {initials(name)}
     </span>

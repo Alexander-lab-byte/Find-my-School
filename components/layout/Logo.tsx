@@ -1,20 +1,35 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Icon } from "@/components/common/Icon";
+
+/** The mark: a route that bends and arrives at a honey destination. */
+export function LogoMark({ className = "size-9" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 36 36" aria-hidden className={`shrink-0 ${className}`}>
+      <rect width="36" height="36" rx="9" fill="var(--accent)" />
+      <path
+        d="M10 25.5h7.5a5.5 5.5 0 0 0 5.5-5.5v-3"
+        fill="none"
+        stroke="var(--accent-foreground)"
+        strokeWidth="3.5"
+        strokeLinecap="round"
+      />
+      <circle cx="23" cy="11" r="4.5" fill="var(--gold)" />
+    </svg>
+  );
+}
 
 export function Logo({ inverted = false }: { inverted?: boolean }) {
   const t = useTranslations("Common");
-
   return (
-    <Link href="/" className="group flex items-center gap-2.5" aria-label={t("homeAria")}>
-      <span className={`flex size-9 shrink-0 items-center justify-center rounded-xl transition-transform duration-300 group-hover:-rotate-6 ${inverted ? "bg-gold text-gold-foreground" : "bg-foreground text-background"}`}>
-        <Icon name="graduation" className="size-4.5" />
-      </span>
+    <Link href="/" className="flex items-center gap-2.5" aria-label={t("homeAria")}>
+      <LogoMark />
       <span className="leading-none">
-        <span className={`block font-display text-base font-bold sm:text-lg ${inverted ? "text-background" : "text-foreground"}`}>
+        <span
+          className={`block whitespace-nowrap font-display text-base font-bold sm:text-[1.0625rem] ${inverted ? "text-white" : "text-foreground"}`}
+        >
           {t("brand")}
         </span>
-        <span className={`mt-1 hidden text-[10px] font-bold uppercase tracking-[0.18em] sm:block ${inverted ? "text-background/60" : "text-subtle"}`}>
+        <span className={`mt-1 hidden text-xs font-medium sm:block ${inverted ? "text-white/70" : "text-subtle"}`}>
           {t("tagline")}
         </span>
       </span>

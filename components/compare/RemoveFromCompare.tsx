@@ -16,7 +16,7 @@ export function RemoveFromCompare({ id, remainingIds }: { id: string; remainingI
         remove(id);
         router.replace(remainingIds.length ? `/compare?ids=${remainingIds.join(",")}` : "/compare");
       }}
-      className="mt-2 text-xs font-medium text-muted underline-offset-4 hover:text-accent hover:underline"
+      className="mt-1 inline-flex min-h-8 items-center text-sm font-medium text-muted underline-offset-4 hover:text-danger hover:underline"
     >
       {t("remove")}
     </button>

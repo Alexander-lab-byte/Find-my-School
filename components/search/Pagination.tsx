@@ -20,8 +20,7 @@ function hrefFor(params: PaginationProps["params"], page: number) {
   return qs ? `/search?${qs}` : "/search";
 }
 
-const BUTTON =
-  "flex items-center gap-1.5 rounded-xl border border-line bg-surface px-3.5 py-2 text-sm font-medium text-foreground transition-colors hover:border-line-strong hover:bg-surface-muted";
+const BUTTON = "btn-secondary btn-sm";
 
 export function Pagination({ page, pageCount, params }: PaginationProps) {
   const t = useTranslations("Pagination");
@@ -37,7 +36,7 @@ export function Pagination({ page, pageCount, params }: PaginationProps) {
       ) : (
         <span />
       )}
-      <p className="text-sm text-muted">
+      <p className="text-sm font-medium tabular-nums text-muted">
         {t("page", { page, count: pageCount })}
       </p>
       {page < pageCount ? (

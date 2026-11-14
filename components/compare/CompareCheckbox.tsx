@@ -22,19 +22,19 @@ export function CompareCheckbox({ schoolId }: { schoolId: string }) {
       onClick={() => toggle(schoolId)}
       disabled={blocked}
       title={blocked ? t("full", { max: MAX_COMPARE }) : undefined}
-      className={`relative z-10 inline-flex min-h-10 items-center gap-2 rounded-full border px-3.5 text-sm font-semibold backdrop-blur-md transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
+      className={`relative z-10 inline-flex min-h-10 items-center gap-2 rounded-lg border px-3 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-55 ${
         selected
-          ? "border-accent bg-accent text-accent-foreground"
-          : "border-white/60 bg-surface/85 text-foreground hover:border-accent"
+          ? "border-gold-foreground/40 bg-gold text-gold-foreground"
+          : "border-line-strong bg-surface text-foreground hover:border-foreground"
       }`}
     >
       <span
         aria-hidden
-        className={`flex size-4 items-center justify-center rounded-[5px] border-2 ${
-          selected ? "border-accent-foreground bg-accent-foreground text-accent" : "border-current"
+        className={`flex size-4 items-center justify-center rounded-[4px] border-[1.5px] ${
+          selected ? "border-gold-foreground bg-gold-foreground text-gold" : "border-subtle"
         }`}
       >
-        {selected && <Icon name="check" className="size-3" strokeWidth={3} />}
+        {selected && <Icon name="check" className="size-3" strokeWidth={3.5} />}
       </span>
       {t("add")}
     </button>

@@ -43,22 +43,22 @@ export default async function ProfilePage({
   const reviewSchool = domain ? await findSchoolForDomain(domain) : null;
 
   return (
-    <main className="mx-auto w-full max-w-2xl px-4 py-10 sm:px-6">
-      <p className="eyebrow">{t("eyebrow")}</p>
+    <main className="mx-auto w-full max-w-2xl px-4 py-8 sm:px-6 sm:py-10">
       <div className="mt-2 flex flex-wrap items-center gap-3">
-        <h1 className="font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+        <h1 className="page-title">
           {user.name}
         </h1>
         <Badge tone={user.isVerified || isAdmin ? "verified" : "neutral"}>
           {tRole(isAdmin ? "ADMIN" : user.role)}
         </Badge>
       </div>
+      <p className="mt-2 text-muted">
+        <span className="sr-only">{t("email")}: </span>
+        {user.email}
+      </p>
 
-      <div className="mt-8">
-        <FactGrid columns={3}>
-          <Fact label={t("email")}>
-            <span className="break-all">{user.email}</span>
-          </Fact>
+      <div className="mt-6">
+        <FactGrid columns={2}>
           <Fact label={t("reviews")}>
             <Link href="/my-reviews" className="text-accent hover:underline">
               {reviewCount}
@@ -73,7 +73,7 @@ export default async function ProfilePage({
       </div>
 
       {/* Can this person review? Explains the school-email rule in their own terms. */}
-      <div className="mt-6 flex gap-3 reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)] p-5">
+      <div className="mt-6 flex gap-3 plate p-5">
         <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent">
           <Icon name={reviewSchool ? "shield" : "lock"} className="size-4.5" />
         </span>
@@ -85,7 +85,7 @@ export default async function ProfilePage({
                 {t("canReview", { school: schoolNames(reviewSchool, locale).primary })}{" "}
                 <Link
                   href={`/school/${reviewSchool.id}/reviews#write-review`}
-                  className="font-medium text-accent hover:underline"
+                  className="link"
                 >
                   {t("writeReview")} →
                 </Link>
@@ -97,15 +97,15 @@ export default async function ProfilePage({
         </div>
       </div>
 
-      <form action={updateProfile} className="mt-6 space-y-5 reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)] p-5">
-        <h2 className="font-display text-xl font-bold text-foreground">{t("editTitle")}</h2>
+      <form action={updateProfile} className="mt-6 space-y-5 plate p-5">
+        <h2 className="section-title">{t("editTitle")}</h2>
         {saved && (
           <p role="status" className="rounded-xl bg-accent-soft px-3 py-2.5 text-sm text-accent">
             {t("saved")}
           </p>
         )}
         {error === "name" && (
-          <p role="alert" className="rounded-xl bg-danger-soft px-3 py-2.5 text-sm text-danger">
+          <p role="alert" className="rounded-lg bg-danger-soft px-3 py-2.5 text-sm font-medium text-danger">
             {t("nameRequired")}
           </p>
         )}
@@ -143,7 +143,7 @@ export default async function ProfilePage({
 
         <button
           type="submit"
-          className="rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
+          className="btn-primary"
         >
           {t("save")}
         </button>

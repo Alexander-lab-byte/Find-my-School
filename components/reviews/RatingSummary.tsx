@@ -21,7 +21,7 @@ export function RatingSummary({ overall, count, categories, writeHref }: RatingS
   // No reviews yet: an invitation instead of empty stars and dashes.
   if (!hasRatings) {
     return (
-      <div className="reveal flex flex-col items-center gap-4 rounded-[1.75rem] border border-dashed border-line-strong bg-surface p-8 text-center sm:flex-row sm:text-left">
+      <div className="flex flex-col items-center gap-4 rounded-2xl border border-dashed border-line-strong bg-surface p-8 text-center sm:flex-row sm:text-left">
         <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-accent-soft text-accent">
           <Icon name="message" className="size-5" />
         </span>
@@ -40,7 +40,7 @@ export function RatingSummary({ overall, count, categories, writeHref }: RatingS
   }
 
   return (
-    <div className="grid gap-6 reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)] p-6 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center">
+    <div className="grid gap-6 plate p-6 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center">
       <div className="text-center sm:border-r sm:border-line sm:pr-6">
         <p className="font-display text-5xl font-bold text-foreground">{overall!.toFixed(1)}</p>
         <Stars value={overall} className="mt-2 text-xl" />

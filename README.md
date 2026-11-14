@@ -1,39 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Find My School Mongolia
 
-## Getting Started
+A guide to schools in Ulaanbaatar for parents and students: search and filter schools, answer five questions to get a ranked match, compare up to three schools side by side, see them on a map, and read reviews that an admin approves before they go public. In Mongolian and English.
 
-First, run the development server:
+Built with Next.js (App Router), React, TypeScript, Tailwind CSS, Prisma + PostgreSQL (Supabase), Supabase Auth (email code), MapLibre (the map at `public/embed/map.html`) and next-intl.
+
+## Run it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # then fill in the values (see "Project setup notes")
+npm run dev                  # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Development server |
+| `npm run build` / `npm start` | Production build, then serve it |
+| `npm test` | Unit tests for the matching, fees, distance, ratings and CSV import logic |
+| `npm run typecheck` | TypeScript check |
+| `npm run lint` | ESLint |
+| `npm run db:seed` | Demo schools and reviews for local testing |
+| `npm run db:import-csv -- <file>` | Add or update schools from a CSV |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Where things are
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `app/` — pages: home, `/search`, `/match`, `/compare`, `/map`, `/school/[id]` (overview, facilities, dormitory, admissions, reviews), account pages and `/admin`.
+- `components/` — UI, grouped by feature. `lib/` — data access and plain logic (`match.ts`, `labels.ts`, `geo.ts`, …).
+- `messages/en.json`, `messages/mn.json` — every piece of interface text. Add a key to both files.
+- `docs/DESIGN.md` — the design system (colours, type, components, rules). Read it before adding UI.
+- `tests/` — unit tests (`npm test`).
 
 ## Project setup notes
 

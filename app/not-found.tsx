@@ -1,33 +1,21 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Icon } from "@/components/common/Icon";
+import { EmptyState } from "@/components/common/EmptyState";
 
 export default function NotFound() {
   const t = useTranslations("NotFound");
   const tCommon = useTranslations("Common");
 
   return (
-    <main className="mx-auto max-w-xl px-4 py-24 text-center sm:px-6">
-      <p className="eyebrow">404</p>
-      <h1 className="mt-3 font-display text-3xl font-bold text-foreground">
-        {t("title")}
-      </h1>
-      <p className="mt-2 text-muted">{t("body")}</p>
-      <div className="mt-8 flex justify-center gap-3">
-        <Link
-          href="/search"
-          className="inline-flex items-center gap-2 rounded-full bg-accent px-4 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
-        >
-          <Icon name="search" className="size-4" />
+    <main className="mx-auto w-full max-w-xl px-4 py-16 sm:px-6">
+      <EmptyState as="h1" icon="map" title={t("title")} body={t("body")}>
+        <Link href="/search" className="btn-primary">
           {tCommon("browseSchools")}
         </Link>
-        <Link
-          href="/"
-          className="rounded-xl border border-line px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-surface-muted"
-        >
+        <Link href="/" className="btn-secondary">
           {tCommon("goHome")}
         </Link>
-      </div>
+      </EmptyState>
     </main>
   );
 }

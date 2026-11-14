@@ -10,7 +10,7 @@ export function ProfileSection({
   return (
     <section>
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-        <h2 className="font-display text-xl font-bold text-foreground">{title}</h2>
+        <h2 className="section-title">{title}</h2>
         {action && <div className="whitespace-nowrap">{action}</div>}
       </div>
       <div className="mt-4">{children}</div>
@@ -43,7 +43,7 @@ export function FactGrid({
 }) {
   return (
     <dl
-      className={`grid grid-cols-1 gap-px overflow-hidden rounded-[1.25rem] border border-line bg-line ${COLUMN_CLASSES[columns]}`}
+      className={`grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-line bg-line ${COLUMN_CLASSES[columns]}`}
     >
       {children}
     </dl>
@@ -53,8 +53,8 @@ export function FactGrid({
 export function Fact({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="bg-surface p-4">
-      <dt className="text-xs font-medium uppercase tracking-[0.08em] text-subtle">{label}</dt>
-      <dd className="mt-1.5 text-sm font-medium text-foreground">{children}</dd>
+      <dt className="label">{label}</dt>
+      <dd className="mt-1 font-display text-base font-semibold text-foreground">{children}</dd>
     </div>
   );
 }
@@ -62,7 +62,7 @@ export function Fact({ label, children }: { label: string; children: React.React
 /** Prose block for longer free-text fields (living conditions, entrance exams…). */
 export function ProseCard({ children }: { children: React.ReactNode }) {
   return (
-    <div className="whitespace-pre-line reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)] p-5 text-sm leading-7 text-muted">
+    <div className="plate max-w-[70ch] whitespace-pre-line p-5 leading-7 text-foreground">
       {children}
     </div>
   );
@@ -83,12 +83,12 @@ export function IncompleteProfile({
 }) {
   if (missing.length === 0) return null;
   return (
-    <div className="rounded-[1.25rem] border border-dashed border-line-strong bg-surface-muted/50 px-5 py-4 text-sm">
+    <div className="rounded-2xl border border-dashed border-line-strong px-5 py-4 text-sm">
       <p className="font-semibold text-foreground">{title}</p>
       <p className="mt-1 leading-6 text-muted">{body}</p>
       <ul className="mt-3 flex flex-wrap gap-1.5">
         {missing.map((label) => (
-          <li key={label} className="rounded-full border border-line bg-surface px-2.5 py-1 text-xs font-medium text-muted">
+          <li key={label} className="rounded-md bg-surface-muted px-2 py-1 text-xs font-semibold text-muted">
             {label}
           </li>
         ))}
@@ -99,7 +99,7 @@ export function IncompleteProfile({
 
 export function EmptyNote({ children }: { children: React.ReactNode }) {
   return (
-    <p className="rounded-[1.25rem] border border-dashed border-line-strong px-5 py-6 text-center text-sm text-muted">
+    <p className="rounded-2xl border border-dashed border-line-strong px-5 py-8 text-center text-muted">
       {children}
     </p>
   );

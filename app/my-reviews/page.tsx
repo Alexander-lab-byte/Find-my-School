@@ -8,6 +8,7 @@ import { schoolNames } from "@/lib/labels";
 import { LoginPrompt } from "@/components/auth/LoginPrompt";
 import { Badge } from "@/components/common/Badge";
 import { Icon } from "@/components/common/Icon";
+import { EmptyState } from "@/components/common/EmptyState";
 import { Stars } from "@/components/common/StarRating";
 import { ReviewBody } from "@/components/reviews/ReviewBody";
 import { DeleteReviewButton } from "@/components/reviews/DeleteReviewButton";
@@ -45,40 +46,31 @@ export default async function MyReviewsPage() {
   ]);
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-4 py-10 sm:px-6">
-      <p className="eyebrow">{t("eyebrow")}</p>
-      <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+    <main className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
+      <h1 className="page-title">
         {t("title")}
       </h1>
       <p className="mt-2 text-sm text-muted">{t("intro")}</p>
 
       <div className="mt-8 space-y-4">
         {reviews.length === 0 && (
-          <div className="rounded-[1.25rem] border border-dashed border-line-strong bg-surface px-6 py-14 text-center">
-            <span className="mx-auto flex size-12 items-center justify-center rounded-full bg-surface-muted text-subtle">
-              <Icon name="pencil" className="size-5" />
-            </span>
-            <h2 className="mt-4 font-display text-xl font-bold text-foreground">{t("emptyTitle")}</h2>
-            <p className="mx-auto mt-2 max-w-md text-sm text-muted">{t("emptyBody")}</p>
-            <Link
-              href="/search"
-              className="mt-6 inline-flex items-center rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
-            >
+          <EmptyState icon="pencil" title={t("emptyTitle")} body={t("emptyBody")}>
+            <Link href="/search" className="btn-primary">
               {t("findSchool")}
             </Link>
-          </div>
+          </EmptyState>
         )}
 
         {reviews.map((review) => {
           const avg = reviewAverage(review.rating);
           const { primary, secondary } = schoolNames(review.school, locale);
           return (
-            <article key={review.id} className="reveal rounded-[1.75rem] border border-line bg-surface shadow-[var(--shadow-card)] p-5">
+            <article key={review.id} className="plate p-5">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0">
                   <Link
                     href={`/school/${review.school.id}/reviews`}
-                    className="font-display text-lg font-bold text-foreground hover:text-accent"
+                    className="font-display text-[1.0625rem] font-semibold text-foreground underline-offset-4 hover:underline"
                   >
                     {primary}
                   </Link>
@@ -115,7 +107,7 @@ export default async function MyReviewsPage() {
                   {t("rejectedHint")}{" "}
                   <Link
                     href={`/school/${review.school.id}/reviews#write-review`}
-                    className="font-medium text-accent hover:underline"
+                    className="link"
                   >
                     {t("writeAgain")}
                   </Link>

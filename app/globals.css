@@ -1,69 +1,88 @@
 @import "tailwindcss";
 
 /*
- * "Your child's path" design system.
- * Sky-blue tops, cool paper background, white rounded surfaces, one strong
- * blue accent and a warm gold for "goal" moments (destinations, matches).
+ * "Path" design system — a school guide drawn like a wayfinding system,
+ * in a soft, warm palette.
+ *
+ * Lavender-white ground, warm white plates, plum ink. The palette's five
+ * anchors are lavender #e0ddf9, dusty pink #d2c1ce, taupe #ad9a93, brown
+ * #8f7769 and plum #3c394c. The three school types are three "lines"
+ * (indigo public, rose private, sage international), and honey marks where
+ * you are: the selected tab, chip, quiz stop or best score. Geologica sets
+ * headings and numbers; Commissioner sets text. Both faces carry the
+ * Mongolian letters (Ө, Ү) and the tugrik sign (₮).
  */
 :root {
   color-scheme: light;
-  --background: #f4f6fa;
-  --surface: #ffffff;
-  --surface-muted: #eef1f7;
-  --foreground: #0b1220;
-  --muted: #4a5468;
-  --subtle: #5f697c;
-  --line: #e3e7ef;
-  --line-strong: #cbd3e1;
-  --accent: #2448e8;
-  --accent-hover: #16309f;
+  --background: #f4f1f8;
+  --surface: #fffdfb;
+  --surface-muted: #ebe6f2;
+  --foreground: #2f2c3d;
+  /* The plum band: home scene, footer and the compare tray. Always dark, in both themes. */
+  --band: #3c394c;
+  --band-line: #56526b;
+  /* The three line colours, lightened to read on the plum band. */
+  --band-public: #bcb9f4;
+  --band-private: #eaaac8;
+  --band-intl: #a3d6c7;
+  /* The palette's own pastels, for shapes and decoration only (never text). */
+  --pastel-lavender: #e0ddf9;
+  --pastel-pink: #d2c1ce;
+  --pastel-taupe: #ad9a93;
+  --pastel-brown: #8f7769;
+  --muted: #5c5568;
+  --subtle: #6d6477;
+  --line: #e0d8e3;
+  --line-strong: #b7a8b4;
+  --accent: #5a569f;
+  --accent-hover: #474381;
   --accent-foreground: #ffffff;
-  --accent-soft: #e6ecff;
-  --gold: #ffc24d;
-  --gold-soft: #fff3d1;
-  --gold-foreground: #3a2a00;
-  --star: #d9930f;
-  --star-empty: #dce2ec;
-  --tone-private: #6d28d9;
-  --tone-private-soft: #f0eafe;
-  --tone-intl: #9a5806;
-  --tone-intl-soft: #fff1d3;
-  --danger: #c0262d;
-  --danger-soft: #fdeeee;
-  --sky-top: #c9dbfb;
-  --sky-deep: #7fa8f5;
-  --cloud: #ffffff;
+  --accent-soft: #e7e4f8;
+  --gold: #efc081;
+  --gold-soft: #f9eedb;
+  --gold-foreground: #3a2a14;
+  --star: #b47a27;
+  --star-empty: #e0d8e3;
+  --tone-private: #a44f77;
+  --tone-private-soft: #f6e4ec;
+  --tone-intl: #3b7c6e;
+  --tone-intl-soft: #e0efe9;
+  --danger: #b3403f;
+  --danger-soft: #fbeceb;
+  --ok: #2f6b49;
+  --ok-soft: #e2f1e7;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
-    --background: #0a1020;
-    --surface: #111a2e;
-    --surface-muted: #18233b;
-    --foreground: #e8edf7;
-    --muted: #a9b4c8;
-    --subtle: #94a0b6;
-    --line: #233049;
-    --line-strong: #33415e;
-    --accent: #8ea6ff;
-    --accent-hover: #b3c3ff;
-    --accent-foreground: #0a1020;
-    --accent-soft: #1a2547;
-    --gold: #f6c25a;
-    --gold-soft: #33280f;
-    --gold-foreground: #2a1e00;
-    --star: #f3c35a;
-    --star-empty: #2c3954;
-    --tone-private: #c9b5ff;
-    --tone-private-soft: #2a2145;
-    --tone-intl: #f6cf84;
-    --tone-intl-soft: #33270f;
-    --danger: #f97066;
-    --danger-soft: #2d1614;
-    --sky-top: #142347;
-    --sky-deep: #1d3266;
-    --cloud: #2a3a62;
+    --background: #1f1d29;
+    --surface: #2a2837;
+    --surface-muted: #353245;
+    --foreground: #f1eef6;
+    --band: #17151f;
+    --band-line: #343146;
+    --muted: #c3bccb;
+    --subtle: #b6aec0;
+    --line: #3d394d;
+    --line-strong: #5d5871;
+    --accent: #bcb9f4;
+    --accent-hover: #d6d4fb;
+    --accent-foreground: #1f1d29;
+    --accent-soft: #37345a;
+    --gold: #efc081;
+    --gold-soft: #45361f;
+    --gold-foreground: #3a2a14;
+    --star: #efc081;
+    --star-empty: #45415a;
+    --tone-private: #eaaac8;
+    --tone-private-soft: #472a3a;
+    --tone-intl: #a3d6c7;
+    --tone-intl-soft: #23403a;
+    --danger: #f19a94;
+    --danger-soft: #472526;
+    --ok: #9bd3ae;
+    --ok-soft: #24402f;
   }
 }
 
@@ -72,6 +91,15 @@
   --color-surface: var(--surface);
   --color-surface-muted: var(--surface-muted);
   --color-foreground: var(--foreground);
+  --color-band: var(--band);
+  --color-band-line: var(--band-line);
+  --color-band-public: var(--band-public);
+  --color-band-private: var(--band-private);
+  --color-band-intl: var(--band-intl);
+  --color-pastel-lavender: var(--pastel-lavender);
+  --color-pastel-pink: var(--pastel-pink);
+  --color-pastel-taupe: var(--pastel-taupe);
+  --color-pastel-brown: var(--pastel-brown);
   --color-muted: var(--muted);
   --color-subtle: var(--subtle);
   --color-line: var(--line);
@@ -91,21 +119,25 @@
   --color-tone-intl-soft: var(--tone-intl-soft);
   --color-danger: var(--danger);
   --color-danger-soft: var(--danger-soft);
-  --font-sans: var(--font-manrope);
-  --font-display: var(--font-onest);
-  --shadow-card: 0 30px 60px -36px rgb(11 18 32 / 0.35);
-  --shadow-lift: 0 40px 70px -28px rgb(11 18 32 / 0.38);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --font-sans: var(--font-text);
+  --font-display: var(--font-heading);
+  --shadow-pop: 0 18px 40px -18px rgb(60 57 76 / 0.38);
   --ease-out-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 @layer base {
+  html {
+    overflow-x: clip;
+    scroll-behavior: smooth;
+  }
+
   body {
-    /* Every page starts under a soft sky, like the homepage. */
-    background:
-      linear-gradient(180deg, var(--sky-top) 0, var(--background) 520px) no-repeat,
-      var(--background);
+    background: var(--background);
     color: var(--foreground);
-    font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-text), ui-sans-serif, system-ui, sans-serif;
+    line-height: 1.6;
     /* Never let one wide element zoom the whole page out on phones. */
     overflow-x: clip;
     /* Long words with no spaces (pasted links, "AAAA…") wrap instead of overflowing. */
@@ -117,17 +149,13 @@
   }
 
   ::selection {
-    background: color-mix(in oklab, var(--accent) 22%, transparent);
+    background: var(--gold);
+    color: var(--gold-foreground);
   }
 
   :focus-visible {
-    outline: 2px solid var(--accent);
+    outline: 3px solid var(--accent);
     outline-offset: 2px;
-  }
-
-  html {
-    scroll-behavior: smooth;
-    overflow-x: clip;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -145,14 +173,71 @@
 }
 
 @layer components {
-  /* Shared text input / select / textarea style. */
+  /* --- Type --------------------------------------------------------------- */
+
+  /* The one big heading on a page. */
+  .page-title {
+    font-family: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 700;
+    font-size: clamp(1.75rem, 1.25rem + 2.2vw, 2.75rem);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+    color: var(--foreground);
+  }
+
+  /* Heading of a block inside a page. */
+  .section-title {
+    font-family: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 650;
+    font-size: 1.3125rem;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--foreground);
+  }
+
+  /* Small name for a value or a group of controls. */
+  .label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--subtle);
+  }
+
+  /* --- Surfaces ----------------------------------------------------------- */
+
+  /* A white sign plate: the one container shape used across the site. */
+  .plate {
+    border: 1px solid var(--line);
+    border-radius: 1rem;
+    background: var(--surface);
+  }
+
+  /* A plate that is one big link (school rows): it lifts a little under the pointer. */
+  .plate-link {
+    transition:
+      border-color 150ms,
+      box-shadow 200ms var(--ease-out-soft),
+      transform 200ms var(--ease-out-soft);
+  }
+  @media (hover: hover) {
+    .plate-link:hover {
+      border-color: var(--line-strong);
+      box-shadow: 0 14px 28px -20px rgb(60 57 76 / 0.4);
+      transform: translateY(-1px);
+    }
+  }
+
+  /* --- Controls ----------------------------------------------------------- */
+
   .field {
     width: 100%;
-    border-radius: 0.875rem;
+    min-height: 44px;
+    border-radius: 0.75rem;
     border: 1px solid var(--line-strong);
     background: var(--surface);
-    padding: 0.7rem 0.9rem;
-    font-size: 0.9rem;
+    padding: 0.6rem 0.85rem;
+    font-size: 0.95rem;
     color: var(--foreground);
     transition:
       border-color 150ms,
@@ -163,65 +248,90 @@
     color: var(--subtle);
   }
 
+  .field:hover {
+    border-color: var(--subtle);
+  }
+
   .field:focus {
     outline: none;
     border-color: var(--accent);
-    box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent) 16%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 22%, transparent);
   }
 
-  /* Buttons */
   .btn-primary,
   .btn-secondary,
-  .btn-gold {
+  .btn-gold,
+  .btn-quiet {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
     min-height: 44px;
-    border-radius: 9999px;
-    padding: 0.7rem 1.4rem;
-    font-weight: 700;
-    font-size: 0.95rem;
+    border-radius: 0.75rem;
+    border: 1px solid transparent;
+    padding: 0.55rem 1.1rem;
+    font-weight: 650;
+    font-size: 0.9375rem;
+    line-height: 1.2;
+    text-align: center;
     transition:
-      background-color 200ms,
-      color 200ms,
-      border-color 200ms,
-      transform 200ms var(--ease-out-soft),
-      box-shadow 200ms;
+      background-color 150ms,
+      color 150ms,
+      border-color 150ms,
+      transform 100ms;
   }
   .btn-primary {
-    background: var(--foreground);
-    color: var(--background);
-  }
-  .btn-primary:hover {
     background: var(--accent);
     color: var(--accent-foreground);
-    transform: translateY(-2px);
+  }
+  .btn-primary:hover {
+    background: var(--accent-hover);
   }
   .btn-secondary {
     background: var(--surface);
     color: var(--foreground);
-    border: 1px solid var(--line-strong);
+    border-color: var(--line-strong);
   }
   .btn-secondary:hover {
     border-color: var(--foreground);
-    transform: translateY(-2px);
   }
+  /* The signal-yellow button: one per screen at most. */
   .btn-gold {
     background: var(--gold);
     color: var(--gold-foreground);
+    border-color: color-mix(in oklab, var(--gold-foreground) 35%, var(--gold));
   }
   .btn-gold:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 14px 30px -12px rgb(255 170 40 / 0.6);
+    background: color-mix(in oklab, var(--gold) 88%, var(--gold-foreground));
+  }
+  .btn-quiet {
+    color: var(--foreground);
+  }
+  .btn-quiet:hover {
+    background: var(--surface-muted);
   }
   .btn-primary:active,
   .btn-secondary:active,
-  .btn-gold:active {
-    transform: scale(0.97);
+  .btn-gold:active,
+  .btn-quiet:active {
+    transform: translateY(1px);
+  }
+  .btn-primary:disabled,
+  .btn-secondary:disabled,
+  .btn-gold:disabled,
+  .btn-quiet:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+    transform: none;
+  }
+  /* Compact size for buttons inside rows and toolbars. */
+  .btn-sm {
+    min-height: 40px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.875rem;
   }
 
-  /* Pill filter chip; add .is-on (or aria-pressed) for the selected state. */
+  /* Toggle chip; add .is-on (or aria-pressed) for the selected state. */
   .chip {
     display: inline-flex;
     align-items: center;
@@ -229,91 +339,80 @@
     min-height: 40px;
     border-radius: 9999px;
     border: 1px solid var(--line-strong);
-    background: color-mix(in oklab, var(--surface) 88%, transparent);
-    padding: 0.5rem 1rem;
-    font-weight: 700;
-    font-size: 0.9rem;
+    background: var(--surface);
+    padding: 0.4rem 0.95rem;
+    font-weight: 600;
+    font-size: 0.875rem;
     color: var(--foreground);
     transition:
-      background-color 200ms,
-      color 200ms,
-      border-color 200ms,
-      transform 150ms var(--ease-out-soft);
+      background-color 150ms,
+      border-color 150ms;
   }
   .chip:hover {
-    border-color: var(--accent);
-    transform: translateY(-2px);
+    border-color: var(--foreground);
   }
   .chip.is-on,
   .chip[aria-pressed="true"] {
-    background: var(--foreground);
-    border-color: var(--foreground);
-    color: var(--background);
+    background: var(--gold);
+    border-color: color-mix(in oklab, var(--gold-foreground) 45%, var(--gold));
+    color: var(--gold-foreground);
   }
-  .chip.is-accent.is-on,
-  .chip.is-accent[aria-pressed="true"] {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: var(--accent-foreground);
+  .chip:disabled {
+    cursor: progress;
+    opacity: 0.6;
   }
 
-  /* Frosted glass panel used over the sky. */
-  .glass {
-    background: color-mix(in oklab, var(--surface) 62%, transparent);
-    backdrop-filter: blur(16px) saturate(160%);
-    -webkit-backdrop-filter: blur(16px) saturate(160%);
-    border: 1px solid color-mix(in oklab, var(--surface) 70%, transparent);
-  }
-
-  /* Small uppercase label above headings. */
-  .eyebrow {
-    font-size: 0.78rem;
-    font-weight: 800;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
+  /* Inline text link. */
+  .link {
+    font-weight: 600;
     color: var(--accent);
+    text-underline-offset: 3px;
+  }
+  .link:hover {
+    text-decoration: underline;
   }
 
-  /* Cartoon cloud made from overlapping ellipses. Size it with width/height. */
-  .cloud {
-    background:
-      radial-gradient(ellipse 24% 46% at 26% 62%, var(--cloud) 97%, transparent 100%),
-      radial-gradient(ellipse 30% 60% at 50% 44%, var(--cloud) 97%, transparent 100%),
-      radial-gradient(ellipse 22% 42% at 75% 60%, var(--cloud) 97%, transparent 100%),
-      radial-gradient(ellipse 46% 26% at 50% 76%, var(--cloud) 97%, transparent 100%);
-    filter: drop-shadow(0 18px 24px rgb(42 73 168 / 0.14));
+  /* --- Motion ------------------------------------------------------------- */
+
+  /* A panel that just opened (menu, suggestions, next quiz question). */
+  .pop-in {
+    animation: pop-in 180ms var(--ease-out-soft) both;
   }
 
-  /* Fade-and-rise as an element scrolls into view (supporting browsers only;
-     elsewhere it simply shows). */
+  /* Home path map: each line draws from the left once, then its stops appear. */
+  .route-draw {
+    transform-origin: left center;
+    animation: route-draw 700ms var(--ease-out-soft) both;
+  }
+  .stop-in {
+    animation: stop-in 320ms var(--ease-out-soft) both;
+  }
+
+  /*
+   * A block that eases in as it scrolls into view. CSS only: browsers without
+   * scroll-driven animations (and visitors who ask for less motion) just see it.
+   */
   @supports (animation-timeline: view()) {
-    .reveal {
-      animation: reveal-up linear both;
-      animation-timeline: view();
-      animation-range: entry 0% cover 22%;
+    @media (prefers-reduced-motion: no-preference) {
+      .reveal {
+        animation: reveal linear both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 160px;
+      }
     }
   }
 
-  .enter {
-    animation: reveal-up 0.6s var(--ease-out-soft) both;
-  }
-
-  .lift {
-    transition:
-      transform 300ms var(--ease-out-soft),
-      box-shadow 300ms var(--ease-out-soft),
-      border-color 300ms;
-  }
-  .lift:hover {
-    transform: translateY(-6px);
-    box-shadow: var(--shadow-lift);
+  /* Placeholder block while a page loads. */
+  .skeleton {
+    border-radius: 0.5rem;
+    background: var(--surface-muted);
   }
 }
 
-@keyframes reveal-up {
+@keyframes pop-in {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(6px);
   }
   to {
     opacity: 1;
@@ -321,108 +420,170 @@
   }
 }
 
-/* --- Map --------------------------------------------------------------- */
-
-/* Teardrop pin, coloured by school type (see components/map/LeafletMap). */
-.school-pin {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 50% 50% 50% 0;
-  transform: rotate(-45deg);
-  background: var(--accent);
-  border: 2px solid var(--surface);
-  box-shadow: 0 6px 14px -4px rgb(0 0 0 / 0.45);
-  transition: transform 150ms;
-}
-
-.school-pin > span {
-  width: 10px;
-  height: 10px;
-  border-radius: 9999px;
-  background: var(--surface);
-}
-
-.school-pin--private {
-  background: var(--tone-private);
-}
-
-.school-pin--international {
-  background: var(--tone-intl);
-}
-
-/* Placed from a landmark, not the school's own building: faded, no centre dot. */
-.school-pin--approximate {
-  opacity: 0.6;
-}
-
-.school-pin--approximate > span {
-  visibility: hidden;
-}
-
-/* The school picked in the map's list. */
-.school-pin--selected {
-  transform: rotate(-45deg) scale(1.35);
-  box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent) 30%, transparent), 0 8px 18px -4px rgb(0 0 0 / 0.5);
-}
-
-.leaflet-marker-icon:hover .school-pin,
-.leaflet-marker-icon:focus-visible .school-pin {
-  transform: rotate(-45deg) scale(1.12);
-}
-
-.school-map {
-  font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
-  background: var(--surface-muted);
-}
-
-/* Quieter basemap: mostly greyscale, so the coloured pins carry the meaning. */
-.school-map .leaflet-tile-pane {
-  filter: grayscale(0.85) contrast(0.92) brightness(1.04);
-}
-
-@media (prefers-color-scheme: dark) {
-  .school-map .leaflet-tile-pane {
-    filter: grayscale(0.9) invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9);
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
 
-.school-map .leaflet-popup-content-wrapper,
-.school-map .leaflet-popup-tip {
-  background: var(--surface);
-  color: var(--foreground);
-  box-shadow: 0 16px 40px -18px rgb(0 0 0 / 0.45);
+@keyframes route-draw {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
 }
 
-.school-map .leaflet-popup-content-wrapper {
-  border: 1px solid var(--line);
-  border-radius: 1.25rem;
+@keyframes stop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
-.school-map .leaflet-popup-content {
-  margin: 14px 16px;
-  line-height: 1.4;
+/* --- Home scroll scene (components/home/ScrollStory.tsx) ------------------- */
+
+/* The section is tall; its stage sticks, so scrolling moves the camera instead of the page. */
+.story {
+  height: 400vh;
 }
 
-.school-map .leaflet-container a.leaflet-popup-close-button,
-.school-map a.leaflet-popup-close-button {
-  color: var(--subtle);
+.story-world {
+  opacity: 0;
+  transition: opacity 600ms var(--ease-out-soft);
+}
+.story-world[data-ready] {
+  opacity: 1;
 }
 
-.school-map .leaflet-control-zoom a {
-  background: var(--surface);
-  color: var(--foreground);
-  border-color: var(--line);
+/* Every object sits at the centre of the stage; JavaScript moves it into place. --u is one scene unit. */
+.story-object {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin: 0;
+  visibility: hidden;
+  will-change: transform, opacity;
 }
 
-.school-map .leaflet-control-attribution {
-  background: color-mix(in oklab, var(--surface) 85%, transparent);
-  color: var(--subtle);
+.story-heading {
+  width: calc(var(--u, 8px) * 104);
+  font-family: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
+  font-size: calc(var(--u, 8px) * 7.6);
+  font-weight: 700;
+  line-height: 1.05;
+  text-align: center;
+  text-wrap: balance;
 }
 
-.school-map .leaflet-control-attribution a {
-  color: var(--muted);
+.story-label {
+  font-family: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
+  font-size: calc(var(--u, 8px) * 4.4);
+  font-weight: 600;
+  line-height: 1.1;
+  white-space: nowrap;
+  /* Keeps a label readable when a shape passes behind it. */
+  text-shadow: 0 0 calc(var(--u, 8px) * 1.5) var(--band);
 }
 
+/* One shape, three lives: a soft blob, a block with six faces, a stop on the road. */
+.story-shape {
+  transform-style: preserve-3d;
+  /* Not "opacity": hinting it would flatten the block's six faces into one layer. */
+  will-change: transform;
+}
+.story-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius, 50%);
+  --fill: color-mix(in oklab, var(--pastel), var(--line-color) calc(var(--tint, 0) * 100%));
+  background: var(--fill);
+  opacity: var(--fade, 1);
+}
+.story-face-front {
+  transform: translateZ(calc(var(--half) * var(--depth)));
+}
+.story-face-back {
+  opacity: calc(var(--sides, 0) * var(--fade, 1));
+  transform: rotateY(180deg) translateZ(calc(var(--half) * var(--depth)));
+}
+.story-face-right,
+.story-face-left,
+.story-face-top,
+.story-face-bottom {
+  opacity: calc(var(--sides, 0) * var(--fade, 1));
+}
+.story-face-right {
+  background: color-mix(in oklab, var(--fill) 78%, var(--band));
+  transform: rotateY(90deg) translateZ(var(--half)) scaleX(var(--depth));
+}
+.story-face-left {
+  background: color-mix(in oklab, var(--fill) 70%, var(--band));
+  transform: rotateY(-90deg) translateZ(var(--half)) scaleX(var(--depth));
+}
+.story-face-top {
+  background: color-mix(in oklab, var(--fill) 82%, white);
+  transform: rotateX(90deg) translateZ(var(--half)) scaleY(var(--depth));
+}
+.story-face-bottom {
+  background: color-mix(in oklab, var(--fill) 60%, var(--band));
+  transform: rotateX(-90deg) translateZ(var(--half)) scaleY(var(--depth));
+}
+/* The hole that turns a disc into a stop marker. */
+.story-ring {
+  position: absolute;
+  inset: 24%;
+  border-radius: 50%;
+  background: var(--band);
+  transform: scale(var(--ring, 0));
+}
+
+.story-road {
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--gold) 65%, var(--band));
+}
+.story-goal {
+  border-radius: 50%;
+  background: var(--background);
+  box-shadow: 0 0 0 calc(var(--u, 8px) * 1.4) var(--gold);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* The headline's entrance: each word tips up into place. */
+  .story-word-in {
+    animation: story-word-in 700ms var(--ease-out-soft) both;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  /* No flight: the scene is one normal screen and the page carries on below it. */
+  .story {
+    height: auto;
+  }
+  .story-motion-only {
+    display: none;
+  }
+}
+
+@keyframes story-word-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.45em) rotateX(-70deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

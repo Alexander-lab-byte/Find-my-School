@@ -6,10 +6,10 @@ import { budgetFilter, parseMatchAnswers, rankSchools, type MatchAnswers, type M
 import { formatLocation, schoolNames, tuitionSummary } from "@/lib/labels";
 import { roundLocation } from "@/lib/geo";
 import { MatchQuiz } from "@/components/match/MatchQuiz";
-import { Badge, TYPE_TONE } from "@/components/common/Badge";
+import { Badge, TYPE_FILL } from "@/components/common/Badge";
 import { Icon } from "@/components/common/Icon";
 import { SchoolMonogram } from "@/components/common/SchoolMonogram";
-import { SkyClouds } from "@/components/common/SkyClouds";
+import { EmptyState } from "@/components/common/EmptyState";
 import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -57,18 +57,10 @@ export default async function MatchPage({ searchParams }: MatchPageProps) {
   if (!answers || editing) {
     const districts = await getDistricts();
     return (
-      <main>
-        <div className="relative isolate">
-          <SkyClouds />
-          <div className="mx-auto max-w-6xl px-4 pb-4 pt-10 text-center sm:px-6">
-            <p className="eyebrow">{t("eyebrow")}</p>
-            <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-              {t("title")}
-            </h1>
-            <p className="mx-auto mt-2 max-w-xl text-muted">{t("intro")}</p>
-          </div>
-        </div>
-        <div className="px-4 pb-20 pt-6 sm:px-6">
+      <main className="mx-auto w-full max-w-2xl px-4 py-8 sm:px-6 sm:py-12">
+        <h1 className="page-title">{t("title")}</h1>
+        <p className="mt-2 text-muted">{t("intro")}</p>
+        <div className="plate mt-7 p-5 sm:p-8">
           <MatchQuiz districts={districts} />
         </div>
       </main>
@@ -88,8 +80,12 @@ export default async function MatchPage({ searchParams }: MatchPageProps) {
   const tType = await getTranslations("SchoolType");
   const tTuition = await getTranslations("Tuition");
   const tPlace = await getTranslations("Place");
-  const reasonText = (reason: MatchReason) =>
-    tReason.has(reason.key) ? tReason(reason.key, reason.values) : reason.key;
+  const tCurriculum = await getTranslations("CurriculumShort");
+  const reasonText = (reason: MatchReason) => {
+    if (!tReason.has(reason.key)) return reason.key;
+    const curricula = reason.curricula?.map((c) => tCurriculum(c)).join(", ");
+    return tReason(reason.key, curricula ? { ...reason.values, curricula } : reason.values);
+  };
 
   // A short summary of what they asked for, so the results make sense.
   const summary = [
@@ -103,92 +99,98 @@ export default async function MatchPage({ searchParams }: MatchPageProps) {
   ].filter(Boolean) as string[];
 
   return (
-    <main>
-      <div className="relative isolate">
-        <SkyClouds />
-        <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
-          <p className="eyebrow">{t("eyebrow")}</p>
-          <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            {ranked.length > 0 ? t("resultsTitle", { count: ranked.length }) : t("noneTitle")}
-          </h1>
-          <ul className="mt-4 flex flex-wrap gap-2" aria-label={t("yourAnswers")}>
-            {summary.map((item) => (
-              <li key={item}>
-                <Badge>{item}</Badge>
-              </li>
-            ))}
-          </ul>
-          <div className="mt-5 flex flex-wrap gap-3">
-            <Link href={editHref(params)} className="btn-secondary">
-              <Icon name="pencil" className="size-4" />
-              {t("changeAnswers")}
-            </Link>
-            {ranked.length > SHOW && (
-              <Link href={searchHref(answers)} className="btn-secondary">
-                {t("seeAllInSearch", { count: ranked.length })}
-                <Icon name="arrow-right" className="size-4" />
-              </Link>
-            )}
-          </div>
-        </div>
+    <main className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
+      <h1 className="page-title">
+        {ranked.length > 0 ? t("resultsTitle", { count: ranked.length }) : t("noneTitle")}
+      </h1>
+      <ul className="mt-4 flex flex-wrap gap-1.5" aria-label={t("yourAnswers")}>
+        {summary.map((item) => (
+          <li key={item}>
+            <Badge>{item}</Badge>
+          </li>
+        ))}
+      </ul>
+      <div className="mt-5 flex flex-wrap gap-3">
+        <Link href={editHref(params)} className="btn-secondary">
+          <Icon name="pencil" className="size-4" />
+          {t("changeAnswers")}
+        </Link>
+        {ranked.length > SHOW && (
+          <Link href={searchHref(answers)} className="btn-secondary">
+            {t("seeAllInSearch", { count: ranked.length })}
+            <Icon name="arrow-right" className="size-4" />
+          </Link>
+        )}
       </div>
 
-      <div className="mx-auto max-w-4xl px-4 pb-20 sm:px-6">
+      <div className="mt-8">
         {ranked.length === 0 ? (
-          <div className="rounded-[1.25rem] border border-dashed border-line-strong bg-surface px-6 py-12 text-center">
-            <p className="mx-auto max-w-md text-muted">{t("noneBody")}</p>
-            <Link href={editHref(params)} className="btn-primary mt-6">
+          <EmptyState icon="search" title={t("noneTitle")} body={t("noneBody")}>
+            <Link href={editHref(params)} className="btn-primary">
               {t("changeAnswers")}
             </Link>
-          </div>
+          </EmptyState>
         ) : (
-          <ol className="space-y-4">
+          // The ranking drawn as a route: one numbered stop per school, best fit first.
+          <ol className="relative space-y-3 sm:before:absolute sm:before:bottom-8 sm:before:left-[1.125rem] sm:before:top-8 sm:before:w-1 sm:before:-translate-x-1/2 sm:before:rounded-full sm:before:bg-line-strong">
             {shown.map(({ school, percent, reasons, cautions }, index) => {
               const { primary, secondary } = schoolNames(school, locale);
+              const best = index === 0;
               return (
-                <li
-                  key={school.id}
-                  className="lift reveal relative rounded-[1.75rem] border border-line bg-surface p-5 shadow-[var(--shadow-card)] sm:p-6"
-                >
-                  <div className="flex items-start gap-4">
-                    <span className="hidden font-display text-2xl font-bold tabular-nums text-subtle sm:block">
-                      {index + 1}
-                    </span>
-                    <SchoolMonogram name={school.nameEn} type={school.type} logoUrl={school.logoUrl} size="lg" />
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-start justify-between gap-2">
+                <li key={school.id} className="relative sm:pl-14">
+                  <span
+                    aria-hidden
+                    className={`absolute left-0 top-5 hidden size-9 items-center justify-center rounded-full border-[3px] font-display text-sm font-bold tabular-nums sm:flex ${
+                      best
+                        ? "border-gold-foreground/60 bg-gold text-gold-foreground"
+                        : "border-line-strong bg-surface text-foreground"
+                    }`}
+                  >
+                    {index + 1}
+                  </span>
+                  <article className="plate plate-link group relative grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-4 overflow-hidden p-4 pl-5 sm:p-5 sm:pl-6">
+                    <span aria-hidden className={`absolute inset-y-0 left-0 w-1 ${TYPE_FILL[school.type]}`} />
+                    <SchoolMonogram name={school.nameEn} type={school.type} logoUrl={school.logoUrl} />
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
                         <div className="min-w-0">
-                          <h2 className="font-display text-lg font-bold leading-snug text-foreground">
+                          <h2 className="font-display text-[1.0625rem] font-semibold leading-snug text-foreground">
                             <Link
                               href={`/school/${school.id}`}
-                              className="after:absolute after:inset-0 after:rounded-[1.75rem] after:content-[''] hover:text-accent"
+                              className="after:absolute after:inset-0 after:rounded-2xl after:content-[''] group-hover:underline group-hover:decoration-2 group-hover:underline-offset-4"
                             >
+                              <span className="sm:hidden">{index + 1}. </span>
                               {primary}
                             </Link>
                           </h2>
                           {secondary && <p className="text-sm text-muted">{secondary}</p>}
                         </div>
-                        <span
-                          className="shrink-0 rounded-full bg-accent-soft px-3 py-1 text-sm font-bold tabular-nums text-accent"
-                          title={t("percentHint")}
-                        >
-                          {t("percent", { percent })}
-                        </span>
+                        {/* How good the fit is: the number, and the same number as a bar. */}
+                        <div className="w-28 shrink-0" title={t("percentHint")}>
+                          <p
+                            className={`inline-block rounded-md px-2 py-1 font-display text-sm font-bold tabular-nums ${
+                              best ? "bg-gold text-gold-foreground" : "bg-gold-soft text-foreground"
+                            }`}
+                          >
+                            {t("percent", { percent })}
+                          </p>
+                          <span aria-hidden className="mt-1.5 block h-1.5 overflow-hidden rounded-full bg-surface-muted">
+                            <span className="block h-full rounded-full bg-gold" style={{ width: `${percent}%` }} />
+                          </span>
+                        </div>
                       </div>
-
-                      <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted">
-                        <Badge tone={TYPE_TONE[school.type]}>{tType(school.type)}</Badge>
+                      <p className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted">
+                        <span className="font-medium text-foreground">{tType(school.type)}</span>
                         <span>{formatLocation(tPlace, school)}</span>
-                        <span className="font-medium text-foreground">
+                        <span className="font-display font-semibold tabular-nums text-foreground">
                           {tuitionSummary(tTuition, school.type, school.tuitionMinAnnual, school.tuitionMaxAnnual)}
                         </span>
                       </p>
-
                       {reasons.length > 0 && (
-                        <ul className="mt-4 space-y-1.5 text-sm">
+                        <ul className="mt-3 space-y-1.5 text-sm">
                           {reasons.map((reason) => (
                             <li key={reason.key} className="flex items-start gap-2 text-foreground">
-                              <Icon name="check" className="mt-0.5 size-4 shrink-0 text-emerald-600 dark:text-emerald-400" strokeWidth={2.5} />
+                              <Icon name="check" className="mt-1 size-4 shrink-0 text-ok" strokeWidth={2.5} />
                               {reasonText(reason)}
                             </li>
                           ))}
@@ -198,24 +200,25 @@ export default async function MatchPage({ searchParams }: MatchPageProps) {
                         <ul className="mt-2 space-y-1.5 text-sm">
                           {cautions.map((reason) => (
                             <li key={reason.key} className="flex items-start gap-2 text-muted">
-                              <Icon name="info" className="mt-0.5 size-4 shrink-0 text-subtle" />
+                              <Icon name="info" className="mt-1 size-4 shrink-0 text-subtle" />
                               {reasonText(reason)}
                             </li>
                           ))}
                         </ul>
                       )}
+                      {/* Above the stretched link, so ticking it doesn't open the school. */}
+                      <div className="mt-4">
+                        <CompareCheckbox schoolId={school.id} />
+                      </div>
                     </div>
-                  </div>
-                  {/* Above the stretched link, so ticking it doesn't open the school. */}
-                  <div className="relative z-10 mt-4 flex justify-end">
-                    <CompareCheckbox schoolId={school.id} />
-                  </div>
+                  </article>
                 </li>
               );
             })}
           </ol>
         )}
-        <p className="mt-8 text-center text-xs leading-5 text-subtle">{t("howItWorks")}</p>
+
+        <p className="mt-8 max-w-2xl text-sm leading-6 text-muted">{t("howItWorks")}</p>
       </div>
     </main>
   );
