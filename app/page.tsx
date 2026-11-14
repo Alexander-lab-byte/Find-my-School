@@ -9,7 +9,7 @@ import { Stars } from "@/components/common/StarRating";
 import { EmptyState } from "@/components/common/EmptyState";
 import { PathMap } from "@/components/home/PathMap";
 import { ScrollStory } from "@/components/home/ScrollStory";
-import { LazyMap } from "@/components/map/LazyMap";
+import { SchoolsMapFrame } from "@/components/map/SchoolsMapFrame";
 
 export default async function Home() {
   const [{ schools, totalSchools, typeCounts, districts, recentReviews }, { pinned }] = await Promise.all([
@@ -125,7 +125,7 @@ export default async function Home() {
                 </ul>
               </nav>
             )}
-            {pinned.length > 0 && <LazyMap schools={pinned} height={440} />}
+            {pinned.length > 0 && <SchoolsMapFrame locale={locale} title={tMap("title")} className="h-[440px]" />}
           </div>
         </section>
       )}

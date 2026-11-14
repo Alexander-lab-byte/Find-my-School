@@ -11,6 +11,8 @@
    * Find My School map — one self-contained page.
    * Embed it anywhere:  <iframe src="https://find-my-school-rho.vercel.app/embed/map.html" ...></iframe>
    * Options (URL ?params): lang=mn | type=PUBLIC,PRIVATE | school=<id> | lat=..&lng=..&zoom=..
+   * Used by our own pages too: site=1 (links open in the same tab, no brand chip) and
+   * ui=min (no filter bar; with school=<id> it centres on that school and rings it).
    */
   :root {
     --public: #5a569f;
@@ -72,6 +74,7 @@
 
   .status { position: absolute; inset: 0; display: grid; place-items: center; z-index: 3; color: var(--muted); font-weight: 600; pointer-events: none; }
   @media (max-width: 480px) { .brand span { display: none; } .card { width: 230px; } }
+  .in-site .brand, .minimal .bar { display: none; }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 </head>
@@ -89,6 +92,13 @@
 
   var params = new URLSearchParams(location.search);
   var LANG = params.get("lang") === "mn" ? "mn" : "en";
+  // Inside our own pages: no brand chip, and "open school page" stays in the same tab.
+  var IN_SITE = params.get("site") === "1";
+  // A small map on a school's own page: no filter bar, that school ringed.
+  var MINIMAL = params.get("ui") === "min";
+  if (IN_SITE) document.body.classList.add("in-site");
+  if (MINIMAL) document.body.classList.add("minimal");
+  var LINK_TARGET = IN_SITE ? ' target="_top"' : ' target="_blank" rel="noopener"';
   // Our site serves the data. When this file is copied to another website, it still reads from here.
   var SITE = /find-my-school/.test(location.hostname) || location.hostname === "localhost"
     ? location.origin : "https://find-my-school-rho.vercel.app";
@@ -128,6 +138,9 @@
     var lo = p.tuitionMinAnnual, hi = p.tuitionMaxAnnual;
     return (lo && hi && lo !== hi ? money(lo) + "–" + money(hi) : money(lo || hi)) + " " + TEXT.perYear;
   }
+
+  // If the map library could not load (offline, blocked CDN), say so instead of "Loading…" forever.
+  if (!window.maplibregl) { document.getElementById("status").textContent = TEXT.failed; return; }
 
   var map = new maplibregl.Map({
     container: "map",
@@ -197,7 +210,7 @@
           "<li>" + rating + "</li>" +
         "</ul>" +
         (p.locationApproximate ? '<span class="approx">' + esc(TEXT.approx) + "</span>" : "") +
-        '<a class="open" href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(TEXT.open) + "</a>" +
+        '<a class="open" href="' + esc(p.url) + '"' + LINK_TARGET + ">" + esc(TEXT.open) + "</a>" +
       "</div></div>";
   }
 
@@ -270,7 +283,14 @@
       var focus = params.get("school");
       if (focus) {
         var f = all.features.find(function (x) { return x.properties.id === focus; });
-        if (f) { map.jumpTo({ center: f.geometry.coordinates, zoom: 15.5 }); openPopup(f); }
+        if (f && MINIMAL) {
+          // Ring the school instead of opening its card: the page around the map already describes it.
+          map.jumpTo({ center: f.geometry.coordinates, zoom: 14.5 });
+          map.addSource("focus", { type: "geojson", data: f });
+          map.addLayer({ id: "focus-ring", type: "circle", source: "focus",
+            paint: { "circle-radius": 16, "circle-color": COLOR[f.properties.type], "circle-opacity": 0.18,
+                     "circle-stroke-color": COLOR[f.properties.type], "circle-stroke-width": 2.5 } }, "school");
+        } else if (f) { map.jumpTo({ center: f.geometry.coordinates, zoom: 15.5 }); openPopup(f); }
       }
     }).catch(function () { document.getElementById("status").textContent = TEXT.failed; });
   });

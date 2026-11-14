@@ -2,7 +2,7 @@
 
 A guide to schools in Ulaanbaatar for parents and students: search and filter schools, answer five questions to get a ranked match, compare up to three schools side by side, see them on a map, and read reviews that an admin approves before they go public. In Mongolian and English.
 
-Built with Next.js (App Router), React, TypeScript, Tailwind CSS, Prisma + PostgreSQL (Supabase), Supabase Auth (email code), Leaflet and next-intl.
+Built with Next.js (App Router), React, TypeScript, Tailwind CSS, Prisma + PostgreSQL (Supabase), Supabase Auth (email code), MapLibre (the map at `public/embed/map.html`) and next-intl.
 
 ## Run it
 

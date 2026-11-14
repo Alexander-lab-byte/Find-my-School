@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { getSchoolOverview } from "@/lib/schools";
 import { ratingCategories } from "@/lib/ratings";
 import { displayUrl, externalUrl, formatLocation, tuitionSummary } from "@/lib/labels";
@@ -14,7 +14,7 @@ import {
   factColumns,
 } from "@/components/school-profile/ProfileSection";
 import { SchoolHighlights } from "@/components/school-profile/SchoolHighlights";
-import { SchoolMap } from "@/components/map/SchoolMap";
+import { SchoolsMapFrame } from "@/components/map/SchoolsMapFrame";
 import { SCHOOL_PHOTOS } from "@/lib/school-photos";
 
 type Contact = {
@@ -45,6 +45,7 @@ export default async function SchoolOverviewPage({
   const tPlace = await getTranslations("Place");
 
   const tIncomplete = await getTranslations("Incomplete");
+  const locale = await getLocale();
   // Free-licensed photo of the building, when we have one (credit is required).
   const photo = SCHOOL_PHOTOS[school.nameEn];
 
@@ -168,17 +169,7 @@ export default async function SchoolOverviewPage({
         )}
         {school.latitude != null && school.longitude != null && (
           <div>
-            <SchoolMap
-              height={200}
-              schools={[
-                {
-                  ...school,
-                  id,
-                  latitude: school.latitude,
-                  longitude: school.longitude,
-                },
-              ]}
-            />
+            <SchoolsMapFrame locale={locale} title={tMap("title")} schoolId={id} className="h-[240px]" />
             {school.locationApproximate && (
               <p className="mt-1.5 text-xs text-muted">{tMap("approximateNote")}</p>
             )}

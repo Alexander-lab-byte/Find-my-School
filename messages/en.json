@@ -405,10 +405,8 @@
     "onMap": "{count, plural, one {# school} other {# schools}} on the map",
     "approximate": "Approximate location",
     "approximateNote": "Pin shows the approximate location.",
-    "viewProfile": "View school",
     "notPinnedTitle": "Not on the map yet",
-    "notPinnedBody": "We haven't confirmed exact locations for these schools yet.",
-    "listTitle": "{count, plural, one {# school} other {# schools}}"
+    "notPinnedBody": "We haven't confirmed exact locations for these schools yet."
   },
   "Compare": {
     "title": "Compare schools",

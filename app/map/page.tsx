@@ -3,7 +3,7 @@ import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 import { getMapSchools } from "@/lib/schools";
 import { formatLocation, schoolNames } from "@/lib/labels";
-import { MapExplorer } from "@/components/map/MapExplorer";
+import { SchoolsMapFrame } from "@/components/map/SchoolsMapFrame";
 import { Icon } from "@/components/common/Icon";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -11,16 +11,9 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("title") };
 }
 
-const LEGEND = [
-  ["PUBLIC", "bg-accent"],
-  ["PRIVATE", "bg-tone-private"],
-  ["INTERNATIONAL", "bg-tone-intl"],
-] as const;
-
 export default async function MapPage() {
   const { pinned, unpinned } = await getMapSchools();
   const t = await getTranslations("Map");
-  const tType = await getTranslations("SchoolType");
   const tPlace = await getTranslations("Place");
   const locale = await getLocale();
 
@@ -31,23 +24,16 @@ export default async function MapPage() {
       </h1>
       <p className="mt-2 max-w-2xl text-muted">{t("intro")}</p>
 
-      <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted">
+      <p className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-1 text-sm text-muted">
         <span className="font-medium text-foreground">{t("onMap", { count: pinned.length })}</span>
-        {LEGEND.map(([type, color]) => (
-          <span key={type} className="inline-flex items-center gap-2">
-            <span aria-hidden className={`size-2.5 rounded-full ${color}`} />
-            {tType(type)}
-          </span>
-        ))}
         <span className="inline-flex items-center gap-2">
           <span aria-hidden className="size-2.5 rounded-full bg-muted opacity-60" />
           {t("approximate")}
         </span>
-      </div>
+      </p>
 
-      <div className="mt-4">
-        <MapExplorer schools={pinned} />
-      </div>
+      {/* Tap a dot for the school's card; the chips on the map filter by kind of school. */}
+      <SchoolsMapFrame locale={locale} title={t("title")} className="mt-4 h-[min(72svh,44rem)] min-h-[26rem]" />
 
       {unpinned.length > 0 && (
         <section className="mt-10">
