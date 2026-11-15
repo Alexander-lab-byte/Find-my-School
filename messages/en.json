@@ -238,7 +238,10 @@
     "genericError": "Something went wrong. Please try again.",
     "reviews": "Reviews",
     "save": "Save",
-    "saved": "Saved"
+    "saved": "Saved",
+    "share": "Share",
+    "copied": "Link copied",
+    "shareText": "Look at this school on Find My School"
   },
   "Highlights": {
     "founded": "Founded",
@@ -276,7 +279,9 @@
     "dorms": "Dormitory",
     "emptyTitle": "No reviews yet",
     "emptyBody": "Be the first to rate this school. Your review helps other families decide.",
-    "emptyCta": "Write the first review"
+    "emptyCta": "Write the first review",
+    "grade": "Grade {grade}",
+    "gradeNote": "Letter grades come from parent and student ratings: 5★ = A+, 4★ = B+, 3★ = C, under 2★ = F."
   },
   "Facilities": {
     "overall": "Facilities overall",
@@ -672,5 +677,11 @@
     "noReviews": "No reviews yet, so visit the school before deciding",
     "noPin": "Not on the map yet, so distance is unknown",
     "feeUnknown": "Fees aren't listed. Ask the school"
+  },
+  "Polls": {
+    "title": "What families say",
+    "agree": "rate the {category} 4★ or higher",
+    "answers": "{count, plural, one {# answer} other {# answers}}",
+    "needMore": "More opinions are needed. Polls appear once {min} families have rated this school."
   }
 }

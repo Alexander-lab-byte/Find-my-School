@@ -3,6 +3,28 @@ import { useTranslations } from "next-intl";
 import { Stars } from "@/components/common/StarRating";
 import { Icon } from "@/components/common/Icon";
 import type { RatingCategory } from "@/lib/ratings";
+import { gradeTone, letterGrade } from "@/lib/grades";
+
+const TONE = {
+  good: "bg-ok-soft text-ok",
+  fair: "bg-gold-soft text-gold-foreground",
+  low: "bg-danger-soft text-danger",
+} as const;
+
+/** A report-card letter (A+ … F) from a star average. The letter itself carries the meaning. */
+export function GradeBadge({ value, label, size = "sm" }: { value: number | null; label: (grade: string) => string; size?: "sm" | "lg" }) {
+  const grade = letterGrade(value);
+  if (!grade) return null;
+  return (
+    <span
+      aria-label={label(grade)}
+      title={label(grade)}
+      className={`inline-flex items-center justify-center rounded-lg font-display font-bold tabular-nums ${TONE[gradeTone(grade)]} ${size === "lg" ? "min-w-12 px-2.5 py-1 text-xl" : "min-w-9 px-1.5 py-0.5 text-xs"}`}
+    >
+      {grade}
+    </span>
+  );
+}
 
 type RatingSummaryProps = {
   overall: number | null;
@@ -42,7 +64,10 @@ export function RatingSummary({ overall, count, categories, writeHref }: RatingS
   return (
     <div className="grid gap-6 plate p-6 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center">
       <div className="text-center sm:border-r sm:border-line sm:pr-6">
-        <p className="font-display text-5xl font-bold text-foreground">{overall!.toFixed(1)}</p>
+        <div className="flex items-center justify-center gap-3">
+          <p className="font-display text-5xl font-bold text-foreground">{overall!.toFixed(1)}</p>
+          <GradeBadge value={overall} label={(g) => t("grade", { grade: g })} size="lg" />
+        </div>
         <Stars value={overall} className="mt-2 text-xl" />
         <p className="mt-2 text-sm text-muted">{tCommon("reviewCount", { count })}</p>
       </div>
@@ -64,10 +89,12 @@ export function RatingSummary({ overall, count, categories, writeHref }: RatingS
                 <span className="w-8 text-right font-medium tabular-nums text-foreground">
                   {value!.toFixed(1)}
                 </span>
+                <GradeBadge value={value} label={(g) => t("grade", { grade: g })} />
               </dd>
             </div>
           ))}
       </dl>
+      <p className="text-xs text-subtle sm:col-span-2">{t("gradeNote")}</p>
     </div>
   );
 }
