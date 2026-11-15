@@ -8,6 +8,7 @@ import { SchoolMonogram } from "@/components/common/SchoolMonogram";
 import { Stars } from "@/components/common/StarRating";
 import { SaveButton } from "@/components/school-profile/SaveButton";
 import { CompareButton } from "@/components/compare/CompareButton";
+import { ShareButton } from "@/components/school-profile/ShareButton";
 import { displayUrl, externalUrl, formatLocation, schoolNames } from "@/lib/labels";
 
 type School = NonNullable<Awaited<ReturnType<typeof getSchoolHeader>>>;
@@ -36,6 +37,7 @@ export function SchoolHeader({
         <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
           <BackButton fallbackHref="/search" label={tCommon("backToSearch")} />
           <div className="flex items-start gap-2">
+            <ShareButton name={primary} />
             <CompareButton schoolId={school.id} />
             <SaveButton schoolId={school.id} initialSaved={isSaved} />
           </div>

@@ -16,6 +16,9 @@ import {
 import { SchoolHighlights } from "@/components/school-profile/SchoolHighlights";
 import { SchoolsMapFrame } from "@/components/map/SchoolsMapFrame";
 import { SCHOOL_PHOTOS } from "@/lib/school-photos";
+import { prisma } from "@/lib/prisma";
+import { parentPolls } from "@/lib/grades";
+import { ParentPolls } from "@/components/reviews/ParentPolls";
 
 type Contact = {
   icon: IconName;
@@ -36,7 +39,15 @@ export default async function SchoolOverviewPage({
 
   if (!school) notFound();
 
+  // Parent polls come from the same ratings the averages use: no review, or a published one.
+  const pollRatings = await prisma.rating.findMany({
+    where: { schoolId: id, OR: [{ reviewId: null }, { review: { status: "PUBLISHED" } }] },
+    select: { academics: true, teachers: true, facilities: true, environment: true },
+  });
+  const polls = parentPolls(pollRatings, ["teachers", "academics", "facilities", "environment"]);
+
   const t = await getTranslations("Overview");
+  const tPolls = await getTranslations("Polls");
   const tHighlights = await getTranslations("Highlights");
   const tCurriculum = await getTranslations("Curriculum");
   const tLanguage = await getTranslations("Language");
@@ -140,6 +151,12 @@ export default async function SchoolOverviewPage({
             writeHref={`/school/${id}/reviews#write-review`}
           />
         </ProfileSection>
+
+        {school.reviewCount > 0 && (
+          <ProfileSection title={tPolls("title")}>
+            <ParentPolls polls={polls} />
+          </ProfileSection>
+        )}
 
         <IncompleteProfile
           title={tIncomplete("title")}
